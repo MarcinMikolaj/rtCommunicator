@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Welcome back !</title>
+    <!-- Font Awesome script -->
+    <script src="https://kit.fontawesome.com/91d2f81fc7.js" crossorigin="anonymous"></script>
+    <!-- Swiper JS link -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css" />
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- Style for LoginPage  -->
+    <link rel="stylesheet" href="./css/LoginPage.css">
+</head>
+
+<body>
+
+    <!-- login page wrapper -->
+    <div class="login_page_wrapper">
+
+        <!-- Left side of the login page wrapper  -->
+        <div class="left_side_login_page_wrapper">
+
+            <!-- Application logo -->
+            <div class="logo">
+                <i class="fa-solid fa-dragon"></i>
+                <p class="logo_text">rtCommunicator</p>
+            </div>
+
+            <!-- Welcome message -->
+            <div class="welcome_message">
+                <h1>Welcome back !</h1>
+                <p>Welcome back, please enter your account details to log in.</p>
+            </div>
+
+
+
+            <!-- Error message (display if the credentials are not correct) -->
+            <p class="error_message">You entered an incorrect email address or password, please try again.</p>
+
+
+
+            <!-- Credentials box for email/login box -->
+            <div class="credentials_box">
+                <p class="credentials_heading">Email</p>
+                <div class="credentials_input_box">
+                    <i class="fa-solid fa-user credentials_input_icone"></i>
+                    <input class="credentials_input" type="text" placeholder="Enter your email">
+                </div>
+            </div>
+
+            <!-- Credentials box for password input -->
+            <div class="credentials_box">
+                <p class="credentials_heading">Password</p>
+                <div class="credentials_input_box">
+                    <i class="fa-solid fa-lock credentials_input_icone"></i>
+                    <input class="credentials_input credentials_password_input" type="password"
+                        placeholder="Enter your password">
+                    <div class="d">
+                        <i class="fa-solid fa-eye show_or_hidden_eye_btn show_password_eye_btn"></i>
+                        <i class="fa-solid fa-eye-slash show_or_hidden_eye_btn hide_password_eye_btn"></i>
+                    </div>
+                </div>
+            </div>
+
+
+            <!-- Addiotional options box (remember me, forgot password) -->
+            <div class="addiotional_options_box">
+                <div class="remeber_me_box">
+                    <p>Remember me</p>
+                    <input class="remember_me_input" type="checkbox">
+                </div>
+
+                <button class="forgot_password_btn">Forgot my password</button>
+
+            </div>
+
+
+            <!-- Button Section (sign in by credentials) -->
+            <button type="default" class="sign_in_by_platform_box sign_in_by_credentials_btn">
+                <i class="fa-solid fa-thumbs-up sign_in_by_platform_icone"></i>
+                <p type="default">Sign in</p>
+            </button>
+
+            <!-- Button Section (sign in by Google) -->
+            <button type="default" class="sign_in_by_platform_box sign_in_by_google_btn">
+                <i class="fa-brands fa-google sign_in_by_platform_icone"></i>
+                <p>Sign in with Google</p>
+            </button>
+
+            <!-- Button Section (sign in by Facebook) -->
+            <button type="default" class="sign_in_by_platform_box sign_in_by_facebook_btn">
+                <i class="fa-brands fa-facebook-f sign_in_by_platform_icone"></i>
+                <p>Sign in with Facebook</p>
+            </button>
+
+
+            <!-- Create account link -->
+            <div class="create_accout_link">
+                <p>Don't have an account yet ? </p>
+                <button class="create_accout_link_btn">Sign up for free !</button>
+            </div>
+
+        </div>
+
+
+
+        <!-- Right side of the login page wrapper -->
+        <div class="right_side_login_page_wrapper">
+
+            <!-- Slider main container -->
+            <div class="swiper">
+                <!-- Additional required wrapper -->
+                <div class="swiper-wrapper">
+                    <!-- Slides -->
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_3.jpg" alt=""></div>
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_2.jpg" alt=""></div>
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_4.jpg" alt=""></div>
+
+                </div>
+                <!-- If we need pagination -->
+                <div class="swiper-pagination"></div>
+
+                <!-- If we need navigation buttons -->
+                <div class="swiper-button-prev"></div>
+                <div class="swiper-button-next"></div>
+
+                <!-- If we need scrollbar -->
+                <div class="swiper-scrollbar"></div>
+            </div>
+
+
+        </div>
+
+        <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+        <script src="./javascript/LoginPage.js"></script>
+    </div>
+
+</body>
+
+</html>
