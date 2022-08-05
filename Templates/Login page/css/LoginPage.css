@@ -56,19 +56,23 @@ body {
           flex-grow: 1;
   padding: 20px 30px;
   border-right: 1px solid #303030;
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
 .login_page_wrapper .left_side_login_page_wrapper .logo {
-  position: absolute;
-  left: 20px;
-  top: 20px;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  justify-self: flex-end;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
       -ms-flex-direction: row;
           flex-direction: row;
+  margin-bottom: 20px;
+  padding-bottom: 40px;
   color: orangered;
   font-size: 20px;
   font-weight: 600;
@@ -219,37 +223,17 @@ body {
   border-bottom: 1px solid white;
   font-size: 15px;
   color: white;
+  -webkit-transition: color 0.3s, border-bottom-color 0.3s;
+  transition: color 0.3s, border-bottom-color 0.3s;
   cursor: pointer;
 }
 
-.login_page_wrapper .right_side_login_page_wrapper {
-  display: -webkit-box;
-  display: -ms-flexbox;
-  display: flex;
-  -webkit-box-align: center;
-      -ms-flex-align: center;
-          align-items: center;
-  -webkit-box-pack: center;
-      -ms-flex-pack: center;
-          justify-content: center;
-  height: 100%;
-  width: 800px;
+.login_page_wrapper .left_side_login_page_wrapper .addiotional_options_box .forgot_password_btn:hover {
+  color: orangered;
+  border-bottom-color: orangered;
 }
 
-.login_page_wrapper .right_side_login_page_wrapper .swiper {
-  width: 75%;
-  height: 87%;
-}
-
-.login_page_wrapper .right_side_login_page_wrapper .swiper .swiper-wrapper .swiper-slide .picture {
-  -o-object-fit: cover;
-     object-fit: cover;
-  border-radius: 15px;
-  height: 100%;
-  width: 100%;
-}
-
-.sign_in_by_platform_box {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_platform_box {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -274,32 +258,42 @@ body {
   cursor: pointer;
 }
 
-.sign_in_by_platform_box .sign_in_by_platform_icone {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_platform_box .sign_in_by_platform_icone {
   margin-right: 10px;
   font-size: 18px;
 }
 
-.sign_in_by_credentials_btn {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_credentials_btn {
   background-color: #ef5734;
   background-image: linear-gradient(315deg, #ef5734 0%, #ffcc2f 74%);
 }
 
-.sign_in_by_credentials_btn:hover {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_credentials_btn:hover {
   background-color: #ef5734;
-  background-image: linear-gradient(315deg, #ef5734 0%, #ffcc2f 100%);
+  background-image: linear-gradient(115deg, #ef5734 0%, #ffcc2f 100%);
 }
 
-.sign_in_by_google_btn {
-  background-color: white;
-  color: #333;
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_google_btn {
+  background-color: #fc5296;
+  background-image: linear-gradient(315deg, #fc5296 0%, #f67062 74%);
 }
 
-.sign_in_by_facebook_btn {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_google_btn:hover {
+  background-color: #fc5296;
+  background-image: linear-gradient(115deg, #fc5296 0%, #f67062 100%);
+}
+
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_facebook_btn {
   background-color: #2a2a72;
   background-image: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
 }
 
-.create_accout_link {
+.login_page_wrapper .left_side_login_page_wrapper .sign_in_by_facebook_btn:hover {
+  background-color: #2a2a72;
+  background-image: linear-gradient(115deg, #2a2a72 0%, #009ffd 100%);
+}
+
+.login_page_wrapper .left_side_login_page_wrapper .create_accout_link {
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -315,54 +309,149 @@ body {
           align-items: center;
   margin-top: 20px;
   padding: 5px 5px;
+  font-size: 15px;
 }
 
-.create_accout_link_btn {
-  margin-left: 5px;
+.login_page_wrapper .left_side_login_page_wrapper .create_accout_link .create_accout_link_btn {
+  margin-left: 8px;
   border: none;
   border-bottom: 1px solid white;
   background: transparent;
   color: white;
   -webkit-transition: background-color 0.3s, color 0.3s;
   transition: background-color 0.3s, color 0.3s;
+  font-size: 15px;
+  -webkit-transition: color 0.3s, border-bottom-color 0.3s;
+  transition: color 0.3s, border-bottom-color 0.3s;
   cursor: pointer;
 }
 
-.create_accout_link_btn:hover {
-  color: #e23636;
-  background-color: white;
+.login_page_wrapper .left_side_login_page_wrapper .create_accout_link .create_accout_link_btn:hover {
+  color: orangered;
+  border-bottom-color: orangered;
 }
 
-@media (max-width: 1280px) {
+.login_page_wrapper .right_side_login_page_wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  width: 700px;
+}
+
+.login_page_wrapper .right_side_login_page_wrapper .swiper {
+  width: 75%;
+  height: 87%;
+}
+
+.login_page_wrapper .right_side_login_page_wrapper .swiper .swiper-wrapper .swiper-slide .picture {
+  position: relative;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 20px;
+  height: 100%;
+  width: 100%;
+}
+
+.img_filter {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  top: 0;
+  border-radius: 20px;
+  background-color: #333f5a;
+  opacity: 0.2;
+}
+
+.img_describe {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  padding: 25px 25px;
+  border: none;
+  border-radius: 15px;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+  background-color: #f1f1f1;
+  color: #161616;
+  font-size: 20px;
+  opacity: 0.8;
+  text-align: center;
+}
+
+@media (max-width: 1750px) {
   .login_page_wrapper {
-    -webkit-box-orient: vertical;
-    -webkit-box-direction: normal;
-        -ms-flex-direction: column;
-            flex-direction: column;
-    -webkit-box-flex: 1;
-        -ms-flex-positive: 1;
-            flex-grow: 1;
-    width: 100%;
-    height: 100vh;
+    width: 90%;
   }
   .login_page_wrapper .right_side_login_page_wrapper {
-    display: none;
+    width: 500px !important;
+  }
+  .login_page_wrapper .welcome_message h1 {
+    font-size: 22px;
   }
 }
 
-@-webkit-keyframes zoom {
-  to {
-    -webkit-transform: translate(-50%, -50%) scale(2);
-            transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
+@media (max-width: 1750px) and (max-width: 1279px) {
+  .login_page_wrapper {
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: reverse;
+        -ms-flex-direction: column-reverse;
+            flex-direction: column-reverse;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    min-height: 100vh;
+    width: 100% !important;
+  }
+  .login_page_wrapper .left_side_login_page_wrapper {
+    width: 100% !important;
+    overflow-y: scroll;
+  }
+  .login_page_wrapper .right_side_login_page_wrapper {
+    height: 200px;
+    width: 90% !important;
+  }
+  .login_page_wrapper .logo {
+    margin-bottom: 0px;
+    padding-bottom: 0px !important;
   }
 }
 
-@keyframes zoom {
-  to {
-    -webkit-transform: translate(-50%, -50%) scale(2);
-            transform: translate(-50%, -50%) scale(2);
-    opacity: 0;
+@media (max-width: 1750px) and (max-width: 768px) {
+  .right_side_login_page_wrapper {
+    display: none !important;
+  }
+  .create_accout_link {
+    -webkit-box-orient: vertical !important;
+    -webkit-box-direction: normal !important;
+        -ms-flex-direction: column !important;
+            flex-direction: column !important;
+  }
+}
+
+@media (max-width: 1750px) {
+  @-webkit-keyframes zoom {
+    to {
+      -webkit-transform: translate(-50%, -50%) scale(2);
+              transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
+  }
+  @keyframes zoom {
+    to {
+      -webkit-transform: translate(-50%, -50%) scale(2);
+              transform: translate(-50%, -50%) scale(2);
+      opacity: 0;
+    }
   }
 }
 /*# sourceMappingURL=LoginPage.css.map */

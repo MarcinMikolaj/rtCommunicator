@@ -45,12 +45,13 @@
 
 
 
-            <!-- Credentials box for email/login box -->
+            <!-- Credentials box for email/login input box -->
             <div class="credentials_box">
-                <p class="credentials_heading">Email</p>
+                <p class="credentials_heading">Login</p>
                 <div class="credentials_input_box">
                     <i class="fa-solid fa-user credentials_input_icone"></i>
-                    <input class="credentials_input" type="text" placeholder="Enter your email">
+                    <input class="credentials_input credentials_login_input" type="text"
+                        placeholder="Enter your email/login" name="">
                 </div>
             </div>
 
@@ -60,7 +61,7 @@
                 <div class="credentials_input_box">
                     <i class="fa-solid fa-lock credentials_input_icone"></i>
                     <input class="credentials_input credentials_password_input" type="password"
-                        placeholder="Enter your password">
+                        placeholder="Enter your password" name="">
                     <div class="d">
                         <i class="fa-solid fa-eye show_or_hidden_eye_btn show_password_eye_btn"></i>
                         <i class="fa-solid fa-eye-slash show_or_hidden_eye_btn hide_password_eye_btn"></i>
@@ -118,20 +119,20 @@
                 <!-- Additional required wrapper -->
                 <div class="swiper-wrapper">
                     <!-- Slides -->
-                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_3.jpg" alt=""></div>
-                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_2.jpg" alt=""></div>
-                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_4.jpg" alt=""></div>
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_3.jpg" alt="">
+                        <div class="img_filter"></div>
+                        <p class="img_describe">Pisanie, Dzwonienie, Video rozmowy !</p>
+                    </div>
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_2.jpg" alt="">
+                        <div class="img_filter"></div>
+                        <p class="img_describe">W pełni darmowe konto !</p>
+                    </div>
+                    <div class="swiper-slide"><img class="picture" src="./pictures/friends_4.jpg" alt="">
+                        <div class="img_filter"></div>
+                        <p class="img_describe">Dołącz do nas już dziś !</p>
+                    </div>
 
                 </div>
-                <!-- If we need pagination -->
-                <div class="swiper-pagination"></div>
-
-                <!-- If we need navigation buttons -->
-                <div class="swiper-button-prev"></div>
-                <div class="swiper-button-next"></div>
-
-                <!-- If we need scrollbar -->
-                <div class="swiper-scrollbar"></div>
             </div>
 
 

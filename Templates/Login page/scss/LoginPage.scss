@@ -1,0 +1,322 @@
+* {
+	box-sizing: border-box;
+	margin: 0;
+	padding: 0;
+}
+
+body {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	height: 100vh;
+	font-family: 'Roboto', sans-serif;
+	background-color: #333;
+}
+
+.login_page_wrapper {
+	display: flex;
+	flex-direction: row;
+	border: none;
+	border-radius: 15px;
+	height: 90%;
+	width: 75%;
+	color: white;
+	background-color: rgb(41, 41, 41);
+
+	.left_side_login_page_wrapper {
+		position: relative;
+		display: flex;
+		flex-direction: column;
+		justify-content: center;
+		align-items: center;
+		flex-grow: 1;
+		padding: 20px 30px;
+		border-right: 1px solid rgb(48, 48, 48);
+		overflow-y: auto;
+		overflow-x: hidden;
+		.logo {
+			display: flex;
+			align-self: flex-start;
+			justify-self: flex-end;
+			flex-direction: row;
+			margin-bottom: 20px;
+			padding-bottom: 40px;
+			color: orangered;
+			font-size: 20px;
+			font-weight: 600;
+			.logo_text {
+				margin-left: 5px;
+			}
+		}
+		.welcome_message {
+			display: flex;
+			flex-direction: column;
+			width: 100%;
+			margin-bottom: 50px;
+		}
+		.error_message {
+			display: none;
+			color: rgb(253, 37, 37);
+		}
+		.credentials_box {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			margin: 10px;
+			.credentials_heading {
+				align-self: flex-start;
+				margin-bottom: 4px;
+				font-size: 14px;
+			}
+			.credentials_input_box {
+				display: flex;
+				flex-direction: row;
+				align-items: center;
+				height: 50px; //input credential box height
+				width: 100%;
+				border: 1px solid white;
+				border-radius: 5px;
+				padding: 0px 10px;
+				background-color: transparent;
+				.credentials_input {
+					flex-grow: 1;
+					height: 100%;
+					border: none;
+					background-color: transparent;
+					color: white;
+					&:focus {
+						outline: none;
+					}
+				}
+				.credentials_input_icone {
+					margin-right: 7px;
+				}
+				.show_or_hidden_eye_btn {
+					display: flex;
+					align-items: center;
+					justify-content: center;
+					height: 100%;
+					font-size: 14px;
+					cursor: pointer;
+				}
+
+				.hide_password_eye_btn {
+					display: none;
+				}
+			}
+		}
+		.addiotional_options_box {
+			display: flex;
+			flex-direction: row;
+			justify-content: space-between;
+			align-items: center;
+			width: 100%;
+			margin-top: 10px;
+			margin-bottom: 10px;
+			color: white;
+			.remeber_me_box {
+				display: flex;
+				flex-direction: row;
+				font-size: 15px;
+				.remember_me_input {
+					margin-left: 5px;
+					border: none;
+					cursor: pointer;
+				}
+			}
+			.forgot_password_btn {
+				border: none;
+				background-color: transparent;
+				border-bottom: 1px solid white;
+				font-size: 15px;
+				color: white;
+				transition: color 0.3s, border-bottom-color 0.3s;
+				cursor: pointer;
+				&:hover {
+					color: orangered;
+					border-bottom-color: orangered;
+				}
+			}
+		}
+		.sign_in_by_platform_box {
+			display: flex;
+			flex-direction: row;
+			align-items: center;
+			justify-content: center;
+			width: 100%;
+			margin-top: 20px;
+			padding: 15px 25px;
+			border: none;
+			border-radius: 15px;
+			font-size: 16px;
+			background-color: transparent;
+			color: white;
+			cursor: pointer;
+			.sign_in_by_platform_icone {
+				margin-right: 10px;
+				font-size: 18px;
+			}
+		}
+
+		.sign_in_by_credentials_btn {
+			background-color: #ef5734;
+			background-image: linear-gradient(315deg, #ef5734 0%, #ffcc2f 74%);
+			&:hover {
+				background-color: #ef5734;
+				background-image: linear-gradient(115deg, #ef5734 0%, #ffcc2f 100%);
+			}
+		}
+
+		.sign_in_by_google_btn {
+			background-color: #fc5296;
+			background-image: linear-gradient(315deg, #fc5296 0%, #f67062 74%);
+			&:hover {
+				background-color: #fc5296;
+				background-image: linear-gradient(115deg, #fc5296 0%, #f67062 100%);
+			}
+		}
+
+		.sign_in_by_facebook_btn {
+			background-color: #2a2a72;
+			background-image: linear-gradient(315deg, #2a2a72 0%, #009ffd 74%);
+			&:hover {
+				background-color: #2a2a72;
+				background-image: linear-gradient(115deg, #2a2a72 0%, #009ffd 100%);
+			}
+		}
+		.create_accout_link {
+			display: flex;
+			flex-direction: row;
+			justify-content: center;
+			align-items: center;
+			margin-top: 20px;
+			padding: 5px 5px;
+			font-size: 15px;
+			.create_accout_link_btn {
+				margin-left: 8px;
+				border: none;
+				border-bottom: 1px solid white;
+				background: transparent;
+				color: white;
+				transition: background-color 0.3s, color 0.3s;
+				font-size: 15px;
+				transition: color 0.3s, border-bottom-color 0.3s;
+				cursor: pointer;
+				&:hover {
+					color: orangered;
+					border-bottom-color: orangered;
+				}
+			}
+		}
+	}
+	.right_side_login_page_wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 100%;
+		width: 700px;
+		.swiper {
+			width: 75%;
+			height: 87%;
+
+			.swiper-wrapper {
+				.swiper-slide {
+					.picture {
+						position: relative;
+						object-fit: cover;
+						border-radius: 20px;
+						height: 100%;
+						width: 100%;
+					}
+				}
+			}
+		}
+	}
+}
+
+.img_filter {
+	position: absolute;
+	height: 100%;
+	width: 100%;
+	top: 0;
+	border-radius: 20px;
+	background-color: #333f5a;
+	opacity: 0.2;
+}
+
+.img_describe {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	padding: 25px 25px;
+	border: none;
+	border-radius: 15px;
+	transform: translate(-50%, -50%);
+	background-color: #f1f1f1;
+	color: rgb(22, 22, 22);
+	font-size: 20px;
+	opacity: 0.8;
+	text-align: center;
+}
+
+// --- Responsivenss ---
+
+$breakpoint_1750: 1750px;
+$breakpoint_1279: 1279px;
+$breakpoint_768: 768px;
+
+@media (max-width: $breakpoint_1750) {
+	.login_page_wrapper {
+		width: 90%;
+		.right_side_login_page_wrapper {
+			width: 500px !important;
+		}
+		.welcome_message {
+			h1 {
+				font-size: 22px;
+			}
+		}
+	}
+
+	@media (max-width: $breakpoint_1279) {
+		.login_page_wrapper {
+			flex-direction: column-reverse;
+			align-items: center;
+			justify-content: flex-end;
+			min-height: 100vh;
+			width: 100% !important;
+			.left_side_login_page_wrapper {
+				width: 100% !important;
+				overflow-y: scroll;
+			}
+			.right_side_login_page_wrapper {
+				height: 200px;
+				width: 90% !important;
+			}
+			.logo {
+				margin-bottom: 0px;
+				padding-bottom: 0px !important;
+			}
+		}
+	}
+
+	@media (max-width: $breakpoint_768) {
+		.right_side_login_page_wrapper {
+			display: none !important;
+		}
+		.create_accout_link {
+			flex-direction: column !important;
+		}
+	}
+
+	// --- Functions ---
+
+	@keyframes zoom {
+		to {
+			transform: translate(-50%, -50%) scale(2);
+			opacity: 0;
+		}
+	}
+}
