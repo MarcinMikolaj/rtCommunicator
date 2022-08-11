@@ -17,7 +17,7 @@ body {
           align-items: center;
   height: 100vh;
   font-family: 'Roboto', sans-serif;
-  background-color: #333;
+  background-color: #292929;
 }
 
 .login_page_wrapper {
@@ -32,6 +32,9 @@ body {
   border-radius: 15px;
   height: 90%;
   width: 75%;
+  border: 1px solid #313131;
+  -webkit-box-shadow: 0 0 10px #1f1f1f;
+          box-shadow: 0 0 10px #1f1f1f;
   color: white;
   background-color: #292929;
 }
@@ -55,7 +58,6 @@ body {
       -ms-flex-positive: 1;
           flex-grow: 1;
   padding: 20px 30px;
-  border-right: 1px solid #303030;
   overflow-y: auto;
   overflow-x: hidden;
 }
@@ -359,7 +361,7 @@ body {
   width: 100%;
 }
 
-.img_filter {
+.login_page_wrapper .right_side_login_page_wrapper .swiper .swiper-wrapper .img_filter {
   position: absolute;
   height: 100%;
   width: 100%;
@@ -369,35 +371,56 @@ body {
   opacity: 0.2;
 }
 
-.img_describe {
+.login_page_wrapper .right_side_login_page_wrapper .swiper .swiper-wrapper .img_describe {
   position: absolute;
   top: 50%;
   left: 50%;
-  padding: 25px 25px;
+  padding: 35px 25px;
   border: none;
-  border-radius: 15px;
+  border-radius: 50%;
   -webkit-transform: translate(-50%, -50%);
           transform: translate(-50%, -50%);
-  background-color: #f1f1f1;
-  color: #161616;
-  font-size: 20px;
-  opacity: 0.8;
+  background-color: #292929;
+  color: #fbfbfb;
+  font-size: 18px;
+  opacity: 0.95;
   text-align: center;
 }
 
-@media (max-width: 1750px) {
+@media (max-width: 1650px) {
   .login_page_wrapper {
-    width: 90%;
+    width: 77%;
   }
   .login_page_wrapper .right_side_login_page_wrapper {
-    width: 500px !important;
+    width: 600px !important;
   }
   .login_page_wrapper .welcome_message h1 {
     font-size: 22px;
   }
 }
 
-@media (max-width: 1750px) and (max-width: 1279px) {
+@media (max-width: 1500px) {
+  .login_page_wrapper {
+    width: 82%;
+  }
+  .login_page_wrapper .right_side_login_page_wrapper {
+    width: 500px !important;
+  }
+}
+
+@media (max-width: 1300px) {
+  .login_page_wrapper {
+    width: 95%;
+  }
+  .login_page_wrapper .right_side_login_page_wrapper {
+    width: 450px !important;
+  }
+  .login_page_wrapper .welcome_message h1 {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 1000px) {
   .login_page_wrapper {
     -webkit-box-orient: vertical;
     -webkit-box-direction: reverse;
@@ -417,8 +440,11 @@ body {
     overflow-y: scroll;
   }
   .login_page_wrapper .right_side_login_page_wrapper {
-    height: 200px;
-    width: 90% !important;
+    height: 180px;
+    width: 100% !important;
+  }
+  .login_page_wrapper .right_side_login_page_wrapper .swiper {
+    width: 85%;
   }
   .login_page_wrapper .logo {
     margin-bottom: 0px;
@@ -426,7 +452,7 @@ body {
   }
 }
 
-@media (max-width: 1750px) and (max-width: 768px) {
+@media (max-width: 768px) {
   .right_side_login_page_wrapper {
     display: none !important;
   }
@@ -438,20 +464,19 @@ body {
   }
 }
 
-@media (max-width: 1750px) {
-  @-webkit-keyframes zoom {
-    to {
-      -webkit-transform: translate(-50%, -50%) scale(2);
-              transform: translate(-50%, -50%) scale(2);
-      opacity: 0;
-    }
+@-webkit-keyframes zoom {
+  to {
+    -webkit-transform: translate(-50%, -50%) scale(2);
+            transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
   }
-  @keyframes zoom {
-    to {
-      -webkit-transform: translate(-50%, -50%) scale(2);
-              transform: translate(-50%, -50%) scale(2);
-      opacity: 0;
-    }
+}
+
+@keyframes zoom {
+  to {
+    -webkit-transform: translate(-50%, -50%) scale(2);
+            transform: translate(-50%, -50%) scale(2);
+    opacity: 0;
   }
 }
 /*# sourceMappingURL=LoginPage.css.map */

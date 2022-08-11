@@ -1,3 +1,6 @@
+$border_color: rgb(49, 49, 49);
+$login_page_wrapper_background_color: rgb(41, 41, 41);
+
 * {
 	box-sizing: border-box;
 	margin: 0;
@@ -10,7 +13,7 @@ body {
 	align-items: center;
 	height: 100vh;
 	font-family: 'Roboto', sans-serif;
-	background-color: #333;
+	background-color: rgb(41, 41, 41);
 }
 
 .login_page_wrapper {
@@ -20,9 +23,10 @@ body {
 	border-radius: 15px;
 	height: 90%;
 	width: 75%;
+	border: 1px solid $border_color;
+	box-shadow: 0 0 10px rgb(31, 31, 31);
 	color: white;
 	background-color: rgb(41, 41, 41);
-
 	.left_side_login_page_wrapper {
 		position: relative;
 		display: flex;
@@ -31,7 +35,7 @@ body {
 		align-items: center;
 		flex-grow: 1;
 		padding: 20px 30px;
-		border-right: 1px solid rgb(48, 48, 48);
+		// border-right: 1px solid rgb(48, 48, 48);
 		overflow-y: auto;
 		overflow-x: hidden;
 		.logo {
@@ -220,7 +224,6 @@ body {
 		.swiper {
 			width: 75%;
 			height: 87%;
-
 			.swiper-wrapper {
 				.swiper-slide {
 					.picture {
@@ -231,47 +234,49 @@ body {
 						width: 100%;
 					}
 				}
+				.img_filter {
+					position: absolute;
+					height: 100%;
+					width: 100%;
+					top: 0;
+					border-radius: 20px;
+					background-color: #333f5a;
+					opacity: 0.2;
+				}
+
+				.img_describe {
+					position: absolute;
+					top: 50%;
+					left: 50%;
+					padding: 35px 25px;
+					border: none;
+					border-radius: 50%;
+					transform: translate(-50%, -50%);
+					background-color: $login_page_wrapper_background_color;
+					color: rgb(251, 251, 251);
+					font-size: 18px;
+					opacity: 0.95;
+					text-align: center;
+				}
 			}
 		}
 	}
 }
 
-.img_filter {
-	position: absolute;
-	height: 100%;
-	width: 100%;
-	top: 0;
-	border-radius: 20px;
-	background-color: #333f5a;
-	opacity: 0.2;
-}
-
-.img_describe {
-	position: absolute;
-	top: 50%;
-	left: 50%;
-	padding: 25px 25px;
-	border: none;
-	border-radius: 15px;
-	transform: translate(-50%, -50%);
-	background-color: #f1f1f1;
-	color: rgb(22, 22, 22);
-	font-size: 20px;
-	opacity: 0.8;
-	text-align: center;
-}
-
 // --- Responsivenss ---
 
-$breakpoint_1750: 1750px;
-$breakpoint_1279: 1279px;
+// Breakpoints
+$breakpoint_1650: 1650px;
+$breakpoint_1500: 1500px;
+$breakpoint_1300: 1300px;
+$breakpoint_1000: 1000px;
 $breakpoint_768: 768px;
 
-@media (max-width: $breakpoint_1750) {
+@media (max-width: $breakpoint_1650) {
 	.login_page_wrapper {
-		width: 90%;
+		width: 77%;
 		.right_side_login_page_wrapper {
-			width: 500px !important;
+			width: 600px !important;
 		}
 		.welcome_message {
 			h1 {
@@ -279,44 +284,69 @@ $breakpoint_768: 768px;
 			}
 		}
 	}
+}
 
-	@media (max-width: $breakpoint_1279) {
-		.login_page_wrapper {
-			flex-direction: column-reverse;
-			align-items: center;
-			justify-content: flex-end;
-			min-height: 100vh;
-			width: 100% !important;
-			.left_side_login_page_wrapper {
-				width: 100% !important;
-				overflow-y: scroll;
-			}
-			.right_side_login_page_wrapper {
-				height: 200px;
-				width: 90% !important;
-			}
-			.logo {
-				margin-bottom: 0px;
-				padding-bottom: 0px !important;
-			}
-		}
-	}
-
-	@media (max-width: $breakpoint_768) {
+@media (max-width: $breakpoint_1500) {
+	.login_page_wrapper {
+		width: 82%;
 		.right_side_login_page_wrapper {
-			display: none !important;
-		}
-		.create_accout_link {
-			flex-direction: column !important;
+			width: 500px !important;
 		}
 	}
+}
 
-	// --- Functions ---
-
-	@keyframes zoom {
-		to {
-			transform: translate(-50%, -50%) scale(2);
-			opacity: 0;
+@media (max-width: $breakpoint_1300) {
+	.login_page_wrapper {
+		width: 95%;
+		.right_side_login_page_wrapper {
+			width: 450px !important;
 		}
+		.welcome_message {
+			h1 {
+				font-size: 22px;
+			}
+		}
+	}
+}
+
+@media (max-width: $breakpoint_1000) {
+	.login_page_wrapper {
+		flex-direction: column-reverse;
+		align-items: center;
+		justify-content: flex-end;
+		min-height: 100vh;
+		width: 100% !important;
+		.left_side_login_page_wrapper {
+			width: 100% !important;
+			overflow-y: scroll;
+		}
+		.right_side_login_page_wrapper {
+			height: 180px;
+			width: 100% !important;
+			.swiper {
+				width: 85%;
+			}
+		}
+		.logo {
+			margin-bottom: 0px;
+			padding-bottom: 0px !important;
+		}
+	}
+}
+
+@media (max-width: $breakpoint_768) {
+	.right_side_login_page_wrapper {
+		display: none !important;
+	}
+	.create_accout_link {
+		flex-direction: column !important;
+	}
+}
+
+// --- Functions ---
+@keyframes zoom {
+	to {
+		transform: translate(-50%, -50%) scale(2);
+		opacity: 0;
 	}
 }
