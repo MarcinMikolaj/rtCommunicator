@@ -1,4 +1,4 @@
-package project.rtc.oauth2;
+package project.rtc.authorization.oauth2.provider;
 
 import java.util.Map;
 
@@ -27,5 +27,6 @@ public class GoogleOAuth2UserInfo extends OAuth2UserInfo {
 	public String getImageUrl() {
 		return (String) attributes.get("picture");
 	}
-
+	
+	
 }

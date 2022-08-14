@@ -13,38 +13,37 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-import project.rtc.oauth2.CustomOAuth2UserService;
+import project.rtc.authorization.oauth2.CustomOAuth2UserService;
 
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
-//@ComponentScan("project.rtc.authorization.credentials.CustomOidcUserService;")
 public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	
-//	private CustomOidcUserService customOidcUserService;
 	private CustomOAuth2UserService customOAuth2UserService;
-	
-	@Autowired
+	private CustomUserDetailsService customUserDetailsService;
 	private PasswordEncoder passwordEncoder;
 	
-//	@Autowired
-//	public void setCustomOidcUserService(CustomOidcUserService customOidcUserService) {
-//		this.customOidcUserService = customOidcUserService;
-//	}
-	
+	@Autowired
+	public void setCustomUserDetailsService(CustomUserDetailsService customUserDetailsService) {
+		this.customUserDetailsService = customUserDetailsService;
+	}
+    
 	@Autowired
 	public void setCustomOAuth2UserService(CustomOAuth2UserService customOAuth2UserService) {
 		this.customOAuth2UserService = customOAuth2UserService;
 	}
 	
+	@Autowired
+	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
+		this.passwordEncoder = passwordEncoder;
+	}
+	
 	
 	@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-		
-		auth.inMemoryAuthentication().withUser("user1").password(passwordEncoder.encode("pass1")).roles("USER");
-		auth.inMemoryAuthentication().withUser("user2").password(passwordEncoder.encode("pass2")).roles("USER");
-		
-//		auth.userDetailsService(userDetailServiceImpl);
+		auth.inMemoryAuthentication().withUser("root").password(passwordEncoder.encode("root")).roles("ROOT");
+		auth.userDetailsService(customUserDetailsService);
 	}
 	
     @Override
@@ -73,15 +72,7 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 		           .userService(customOAuth2UserService)
 		           .and()
 		   .and()
-		   .logout().logoutSuccessUrl("/app/logout/success").permitAll()
-		;  
-		      
-		      
-//		        .redirectionEndpoint().baseUri("/login/oauth2/code/**")
-//		      .and()
-//		        .userInfoEndpoint()
-//		           .oidcUserService(customOidcUserService)
-//		      .and()
-		   
+		   .logout().logoutSuccessUrl("/app/logout/success").permitAll();  
+		      		 
 	}
 }

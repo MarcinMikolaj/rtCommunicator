@@ -42,11 +42,11 @@ public class LoginPageController {
 	@RequestMapping(path = "/test", method = RequestMethod.GET)
 	public String ge2t() {
 		
-		Credentials credentials = new Credentials("login123", "haslo123");
-		credentialsRepository.save(credentials);
+//		Credentials credentials = new Credentials("login123", "haslo123");
+//		credentialsRepository.save(credentials);
 		
 		
-		System.out.println("Znalazłem: " + credentialsRepository.findByLogin("login123").toString());
+//		System.out.println("Znalazłem: " + credentialsRepository.findByLogin("login123").toString());
 		
 		
 		return "index";

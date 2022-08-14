@@ -1,7 +1,6 @@
-package project.rtc.oauth2;
+package project.rtc.authorization.oauth2;
 
-import java.util.Optional;
-
+import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -15,6 +14,8 @@ import project.rtc.ConsoleColors;
 import project.rtc.authorization.credentials.Credentials;
 import project.rtc.authorization.credentials.CredentialsRepository;
 import project.rtc.authorization.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.oauth2.provider.OAuth2UserInfo;
+import project.rtc.authorization.oauth2.provider.OAuth2UserInfoFactory;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService{
@@ -56,11 +57,8 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 		Credentials credentials = credentialsRepository.findByEmail(oAuth2UserInfo.getEmail());
 		
 		if(credentials != null) {
-			
-			if(!credentials.getProvider().equals(AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId()).toString())) {
-				System.out.println("Okazało sie że: " + credentials.getProvider() + " oraz " 
-			+ AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId()) + " są różne !!");
-				throw new OAuth2AuthenticationProcess("You already have account with this email (google or fb)");
+			if(!credentials.getProvider().equals(AuthProvider.valueOf(userRequest.getClientRegistration().getRegistrationId()).toString())) {				
+				throw new OAuth2AuthenticationException("You already have an account with this email address !");
 			}
 			
 			updateCredentials(userRequest, oAuth2UserInfo);
@@ -80,8 +78,7 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 	private Credentials createNewCredentials(OAuth2UserRequest userRequest, OAuth2UserInfo oAuth2UserInfo) {
 		
 		Credentials credentials = new Credentials();
-		credentials.setLogin(oAuth2UserInfo.getEmail());
-		credentials.setPassword(passwordEncoder.encode("12345678"));
+		credentials.setPassword(passwordEncoder.encode(generatePassword()));
 		credentials.setEmail(oAuth2UserInfo.getEmail());
 		credentials.setName(oAuth2UserInfo.getName());
 		credentials.setProvider(userRequest.getClientRegistration().getRegistrationId());
@@ -89,6 +86,16 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 		
 		return credentialsRepository.save(credentials);
 		
+	}
+	
+	// Allows you to generate a password
+	private String generatePassword() {
+		
+		String characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+		String password = RandomStringUtils.random(10, characters);
+		System.out.println("Wygenerowałem chasło: " + password);
+		
+		return password;
 	}
 
 }

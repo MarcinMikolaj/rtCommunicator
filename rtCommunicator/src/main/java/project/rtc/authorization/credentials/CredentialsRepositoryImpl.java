@@ -1,7 +1,5 @@
 package project.rtc.authorization.credentials;
 
-import java.util.Optional;
-
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
@@ -65,27 +63,6 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 		}
 	}
 	
-	@Override
-	public Credentials findByLogin(String login) {
-		
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		EntityTransaction entityTransaction = entityManager.getTransaction();
-		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.findByLogin", Credentials.class);
-		typedQuery.setParameter("login", login);
-		
-		try {
-			entityTransaction.begin();
-			Credentials credentials = typedQuery.getSingleResult();
-			entityTransaction.commit();
-			entityManager.close();
-			return credentials;
-		} catch (NoResultException noResultException) {
-			System.out.println(ConsoleColors.BLUE + "CredentialsRepositoryImpl.findByLogin: NoResultException for input data: " + login  + " " 
-		+ noResultException.getMessage() + ConsoleColors.RESET);
-			entityManager.close();
-			return null;
-		}
-	}
 	
 	@Override
 	public Credentials findByEmail(String email) {

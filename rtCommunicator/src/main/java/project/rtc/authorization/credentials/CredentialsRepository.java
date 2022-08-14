@@ -13,9 +13,6 @@ public interface CredentialsRepository {
 	
 	// Find Credentials object in data base by email
 	public Credentials findByEmail(String email);
-	
-	// Find Credentials object in data base by login
-	public Credentials findByLogin(String login);
 
 	// Allows you to create a query to the database
 	public void createQueryJPQL(String jpql);

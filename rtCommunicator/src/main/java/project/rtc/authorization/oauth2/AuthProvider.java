@@ -1,4 +1,4 @@
-package project.rtc.oauth2;
+package project.rtc.authorization.oauth2;
 
 public enum AuthProvider {
 	
