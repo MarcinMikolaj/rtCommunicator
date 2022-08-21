@@ -1,4 +1,4 @@
-package project.rtc;
+package project.rtc.utils;
 
 public class ConsoleColors {
 

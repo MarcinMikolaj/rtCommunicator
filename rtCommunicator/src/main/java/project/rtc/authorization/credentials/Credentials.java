@@ -1,7 +1,9 @@
 package project.rtc.authorization.credentials;
 
 import java.util.Collection;
+import java.util.Map;
 
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,15 +14,16 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import project.rtc.authorization.oauth2.AuthProvider;
+import project.rtc.authorization.oauth2.provider.AuthProvider;
 
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Credentials.findByEmail", query = "SELECT c FROM Credentials c WHERE c.email = :email")
 })
 @Table(name = "credentials")
-public class Credentials implements UserDetails {
+public class Credentials implements UserDetails, OAuth2User {
 	
 	private static final long serialVersionUID = -7340660922729835855L;
 	
@@ -49,6 +52,16 @@ public class Credentials implements UserDetails {
 		this.email = email;
 		this.name = name;
 		this.provider = AuthProvider.local.toString();
+	}
+	
+	
+
+	public Long getId() {
+		return id;
+	}
+
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public void setPassword(String password) {
@@ -115,7 +128,11 @@ public class Credentials implements UserDetails {
 	public boolean isEnabled() {
 		return true;
 	}
-	
-	
 
+	@Override
+	public Map<String, Object> getAttributes() {
+		return null;
+	}
+	
+	
 }

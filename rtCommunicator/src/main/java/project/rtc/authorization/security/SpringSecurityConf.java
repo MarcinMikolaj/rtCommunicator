@@ -6,14 +6,21 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
+import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import project.rtc.authorization.oauth2.CustomOAuth2UserService;
+import project.rtc.authorization.security.jwt.JwtTokenAuthenticationFilter;
 
 @SuppressWarnings("deprecation")
 @Configuration
@@ -22,6 +29,8 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	
 	private CustomOAuth2UserService customOAuth2UserService;
 	private CustomUserDetailsService customUserDetailsService;
+	private AuthenticationSuccessHandler authenticationSuccessHandler;
+	private JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
 	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
@@ -35,8 +44,26 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Autowired
+	public void setJwtTokenAuthenticationFilter(JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter) {
+		this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
+	}
+	
+	@Autowired
 	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
 		this.passwordEncoder = passwordEncoder;
+	}
+	
+	
+	@Autowired
+	private void setAuthenticationSuccessHandler(OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler) {
+		this.authenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
+	}
+	
+	
+	@Bean(BeanIds.AUTHENTICATION_MANAGER)
+	@Override
+	public AuthenticationManager authenticationManager() throws Exception {
+		return super.authenticationManager();
 	}
 	
 	
@@ -49,30 +76,47 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
     @Override
 	protected void configure(HttpSecurity http) throws Exception {
 		http
-		.csrf().disable()
-		  .authorizeRequests()
-		    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-		      .antMatchers("/resources/**").permitAll()
-		      .antMatchers("static/LoginPage/**").permitAll()
-		      .antMatchers("/").authenticated()
-		      .antMatchers(HttpMethod.GET, "/app/panel").authenticated()
-		      .antMatchers(HttpMethod.GET, "/test").permitAll()
-		  .and()
-		  .formLogin()
-		      .loginPage("/app/login").permitAll()
-		      .usernameParameter("username")
-		      .passwordParameter("password")  
-		      .defaultSuccessUrl("/app/panel")
-		  .and()
-		      .oauth2Login()
+		   .csrf()
+		       .disable()
+		    .formLogin()
+		        .disable()
+		     .httpBasic()
+                .disable()
+		    .authorizeRequests()
+			    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+			       .antMatchers("/resources/**").permitAll()
+			       .antMatchers("static/LoginPage/**").permitAll()
+			       .antMatchers("/error",
+	                        "/favicon.ico",
+	                        "/**/*.png",
+	                        "/**/*.gif",
+	                        "/**/*.svg",
+	                        "/**/*.jpg",
+	                        "/**/*.html",
+	                        "/**/*.css",
+	                        "/**/*.js")
+	                        .permitAll()       
+	               .antMatchers("/auth/**", "/oauth2/**").permitAll()	              
+			       .antMatchers("/app/login").permitAll()
+			       .antMatchers("/app/logout").permitAll()
+			       .anyRequest().authenticated()
+			       .and()			       
+		    .oauth2Login()	        
 		        .redirectionEndpoint()
 		            .baseUri("/login/oauth2/code/**")
 		            .and()
 		        .userInfoEndpoint()
 		           .userService(customOAuth2UserService)
 		           .and()
-		   .and()
-		   .logout().logoutSuccessUrl("/app/logout/success").permitAll();  
-		      		 
+		        .successHandler(authenticationSuccessHandler)
+		       .and()
+		   .logout()
+		        .clearAuthentication(true)
+		        .deleteCookies("JSESSIONID")
+		        .logoutSuccessUrl("/app/login");  
+		
+		// Add JWT token filter 
+		http.addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+				      		 
 	}
 }

@@ -44,7 +44,7 @@
             <p class="error_message">You entered an incorrect email address or password, please try again.</p>
 
 
-            <form class="credentials-from" th:method="post" th:action="@{/app/login}" action="app/login">
+            <form class="credentials-from" th:method="post" th:action="@{/app/login}">
             
             <!-- Credentials box for email/login input box -->
             <div class="credentials_box">
@@ -52,7 +52,7 @@
                 <div class="credentials_input_box">
                     <i class="fa-solid fa-user credentials_input_icone"></i>
                     <input class="credentials_input credentials_login_input" type="text"
-                        placeholder="Enter your login or email" name="username">
+                        placeholder="Enter your login or email" name="email">
                 </div>
             </div>
 

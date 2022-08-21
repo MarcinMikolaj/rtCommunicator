@@ -1,6 +1,7 @@
 // Declare the variable
 let showPasswordEyeBtn; //Click this button to show password
 let hidePasswordEyeBtn; //Click this button to hide password
+let createAccoutLinkBtn; //Click to create new account
 
 let signInByCredentials; //Click this button to sign in by credentials
 let signInByGoogleBtn; //Click this button to sign in by Google
@@ -8,6 +9,8 @@ let signInByFacebookBtn; //Click this button to sign in by Facebook
 
 let credentialsLoginInput; // login input
 let credentialsPasswordInput; // password input
+
+let grantedAuthorizationToken;
 
 let credentialsForm;
 
@@ -19,10 +22,12 @@ const prepareDOMElements = () => {
 	signInByFacebookBtn = document.querySelector('.sign_in_by_facebook_btn');
 
 	//login , password inputs
+	credentialsLoginInput = document.querySelector('.credentials_login_input');
 	credentialsPasswordInput = document.querySelector(
 		'.credentials_password_input'
 	);
-	credentialsLoginInput = document.querySelector('.credentials_login_input');
+	
+	createAccoutLinkBtn = document.querySelector('.create_accout_link_btn');
 	
 	credentialsForm = document.querySelector('.credentials-from');
 	
@@ -45,6 +50,8 @@ const prepareDOMEvents = () => {
 	// show and hide password
 	showPasswordEyeBtn.addEventListener('click', showPasswordEye);
 	hidePasswordEyeBtn.addEventListener('click', hidePasswordEye);
+	
+	createAccoutLinkBtn.addEventListener('click', redirectToAppPanel);
 };
 
 const main = () => {
@@ -60,18 +67,16 @@ const signInFuction_enter_key = (event) => {
 };
 
 const signInFuction = () => {
-	credentialsForm.submit();
+	//credentialsForm.submit();
+	sendCredentialsToServer(credentialsLoginInput.value, credentialsPasswordInput.value)
 	reset();
 };
-
 
 
 const reset = () => {
 	credentialsLoginInput.value = '';
 	credentialsPasswordInput.value = '';
 };
-
-
 
 
 //Redirect to sign in by Google site
@@ -83,6 +88,48 @@ const signInByGoogleRedirect = () => {
 const signInByFacebookRedirect = () => {
 	window.location.href = "http://localhost:8080/oauth2/authorization/facebook";
 }
+
+const sendCredentialsToServer = (email, password) => {
+	fetch('http://localhost:8080/app/login', {
+		method: 'POST',
+		headers: {
+			'Accept': 'application/json',
+			'Content-type': 'application/json',
+		},
+		'Access-Control-Allow-Origin': '*',
+		body: JSON.stringify({
+			email: email,
+			password: password,
+		}),
+	}).then((response) => {grantedAuthorizationToken = response.headers.get('Authorization')})
+	  .then(() => console.log(grantedAuthorizationToken))
+	  //.then(() => setCookie('token',grantedAuthorizationToken, 1))
+	  .then(() => redirectToAppPanel(grantedAuthorizationToken))
+};
+
+
+const redirectToAppPanel = () => {
+	
+	window.location.href = "http://localhost:8080/app/panel";
+	
+	//console.log('authorizationToken');
+	//console.log(grantedAuthorizationToken);
+	
+	//fetch('http://localhost:8080/app/redirect/panel', {
+	//	method: 'POST',
+	//	headers: {
+	//		'Content-Type': 'application/json',
+	//		'Authorization': grantedAuthorizationToken,
+	//	},
+		//redirect: 'follow'
+	//})
+};
+
+
+//.then((response) => {return response.text()})
+//	  .then((html) => {document.body.innerHTML = html})
+//	  .catch((err) => console.log(err))
+
 
 
 const showPasswordEye = () => {

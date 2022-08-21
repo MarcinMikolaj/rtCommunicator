@@ -10,12 +10,13 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import project.rtc.ConsoleColors;
 import project.rtc.authorization.credentials.Credentials;
 import project.rtc.authorization.credentials.CredentialsRepository;
 import project.rtc.authorization.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.oauth2.provider.AuthProvider;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfo;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfoFactory;
+import project.rtc.utils.ConsoleColors;
 
 @Service
 public class CustomOAuth2UserService extends DefaultOAuth2UserService{
@@ -38,7 +39,6 @@ public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 		
 		OAuth2User oAuth2User = super.loadUser(userRequest);
 		
-	
 		try {
 			return processOAuth2User(userRequest, oAuth2User);
 		} catch (AuthenticationException e) {

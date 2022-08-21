@@ -12,7 +12,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import project.rtc.ConsoleColors;
+import project.rtc.utils.ConsoleColors;
 
 @Repository
 public class CredentialsRepositoryImpl implements CredentialsRepository {
@@ -79,7 +79,7 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 			entityManager.close();
 			return credentials;
 		} catch (NoResultException noResultException) {
-			System.out.println(ConsoleColors.BLUE + noResultException.getMessage() + ConsoleColors.RESET);
+			System.out.println(ConsoleColors.BLUE + "CredentialsRepositoryImpl.findByEmail: " +  noResultException.getMessage() + ConsoleColors.RESET);
 			entityManager.close();
 			return null;
 		}

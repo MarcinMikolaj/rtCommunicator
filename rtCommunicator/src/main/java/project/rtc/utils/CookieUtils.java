@@ -1,4 +1,4 @@
-package project.rtc.authorization.security;
+package project.rtc.utils;
 
 import java.util.Base64;
 import java.util.Optional;
@@ -12,8 +12,6 @@ import org.springframework.util.SerializationUtils;
 public class CookieUtils {
 	
 	
-	// Get cookie
-	// name - cookie name
 	public static Optional<Cookie> getCookie(HttpServletRequest request, String name){
 		
 		Cookie[] cookies = request.getCookies();
@@ -32,12 +30,11 @@ public class CookieUtils {
 	// Allows you to add a cookie to the HTTP response
     // expireTime - This is maximum age in seconds age when the cookie will expire.
 	// comment - Describe cookie purpose
-	public static void addCookie(HttpServletResponse response, String name, String value, int expireTime, String comment) {
+	public static void addCookie(HttpServletResponse response, String name, String value, int expireTime) {
 		
 		Cookie cookie = new Cookie(name, value);
 		
 		cookie.setPath("/");
-		cookie.setComment(comment);
 		cookie.setMaxAge(expireTime);
 		cookie.setHttpOnly(true);
 		
@@ -45,6 +42,7 @@ public class CookieUtils {
 		
 	}
 	
+	// Remove Cookies from request
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {
         Cookie[] cookies = request.getCookies();
         if (cookies != null && cookies.length > 0) {
@@ -53,6 +51,8 @@ public class CookieUtils {
                     cookie.setValue("");
                     cookie.setPath("/");
                     cookie.setMaxAge(0);
+                    cookie.setSecure(true);
+                    cookie.setHttpOnly(true);
                     response.addCookie(cookie);
                 }
             }

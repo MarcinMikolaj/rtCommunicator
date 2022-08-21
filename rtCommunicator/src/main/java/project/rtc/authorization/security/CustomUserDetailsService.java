@@ -6,10 +6,10 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import project.rtc.ConsoleColors;
 import project.rtc.authorization.credentials.Credentials;
 import project.rtc.authorization.credentials.CredentialsRepository;
 import project.rtc.authorization.credentials.CredentialsRepositoryImpl;
+import project.rtc.utils.ConsoleColors;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
