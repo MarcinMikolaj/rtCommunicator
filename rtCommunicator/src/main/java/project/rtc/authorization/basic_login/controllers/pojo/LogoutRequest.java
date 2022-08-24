@@ -1,4 +1,4 @@
-package project.rtc.authorization.controllers;
+package project.rtc.authorization.basic_login.controllers.pojo;
 
 public class LogoutRequest {
 	

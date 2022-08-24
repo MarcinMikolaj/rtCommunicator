@@ -1,4 +1,4 @@
-package project.rtc.authorization.controllers;
+package project.rtc.authorization.basic_login.controllers;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import project.rtc.authorization.basic_login.controllers.pojo.LogoutRequest;
 import project.rtc.authorization.security.jwt.JwtTokenAuthenticationFilter;
 
 @RestController

@@ -1,4 +1,4 @@
-package project.rtc.authorization.credentials;
+package project.rtc.authorization.basic_login.credentials;
 
 import java.util.Collection;
 import java.util.Map;
@@ -20,7 +20,8 @@ import project.rtc.authorization.oauth2.provider.AuthProvider;
 
 @Entity
 @NamedQueries({
-    @NamedQuery(name = "Credentials.findByEmail", query = "SELECT c FROM Credentials c WHERE c.email = :email")
+    @NamedQuery(name = "Credentials.findByEmail", query = "SELECT c FROM Credentials c WHERE c.email = :email"),
+    @NamedQuery(name = "Credentials.updatePasswordByEmail", query = "UPDATE Credentials c SET c.password = :password WHERE c.email = :email")
 })
 @Table(name = "credentials")
 public class Credentials implements UserDetails, OAuth2User {

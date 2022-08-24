@@ -2,6 +2,7 @@
 let showPasswordEyeBtn; //Click this button to show password
 let hidePasswordEyeBtn; //Click this button to hide password
 let createAccoutLinkBtn; //Click to create new account
+let forgotPasswordBtn; //Click to redirect 'forgot password' site
 
 let signInByCredentials; //Click this button to sign in by credentials
 let signInByGoogleBtn; //Click this button to sign in by Google
@@ -9,6 +10,9 @@ let signInByFacebookBtn; //Click this button to sign in by Facebook
 
 let credentialsLoginInput; // login input
 let credentialsPasswordInput; // password input
+let rememberMeInput;
+
+let errorMessage; // This error should be display after unauthorized login
 
 let grantedAuthorizationToken;
 
@@ -20,30 +24,34 @@ const prepareDOMElements = () => {
 	signInByCredentials = document.querySelector('.sign_in_by_credentials_btn');
 	signInByGoogleBtn = document.querySelector('.sign_in_by_google_btn');
 	signInByFacebookBtn = document.querySelector('.sign_in_by_facebook_btn');
+	forgotPasswordBtn = document.querySelector('.forgot_password_btn');
 
-	//login , password inputs
+	//login, password, remember-me inputs
 	credentialsLoginInput = document.querySelector('.credentials_login_input');
 	credentialsPasswordInput = document.querySelector(
 		'.credentials_password_input'
 	);
+	rememberMeInput = document.querySelector('.remember_me_input');
+	 
 	
-	createAccoutLinkBtn = document.querySelector('.create_accout_link_btn');
-	
+	createAccoutLinkBtn = document.querySelector('.create_accout_link_btn');	
 	credentialsForm = document.querySelector('.credentials-from');
 	
-
+	//error message
+	errorMessage = document.querySelector('.error_message');
+	
 	// show, hide password buttons
 	showPasswordEyeBtn = document.querySelector('.show_password_eye_btn');
 	hidePasswordEyeBtn = document.querySelector('.hide_password_eye_btn');
 };
 
 const prepareDOMEvents = () => {
-	//Call sign in function by click or enter event
+	// call sign in function by click or enter event
 	signInByCredentials.addEventListener('click', signInFuction);
 	credentialsPasswordInput.addEventListener('keyup', signInFuction_enter_key);
 	credentialsLoginInput.addEventListener('keyup', signInFuction_enter_key);
 	
-	//Sign in by google or facebook redirect
+	// sign in by google or facebook redirect
 	signInByGoogleBtn.addEventListener('click', signInByGoogleRedirect);
 	signInByFacebookBtn.addEventListener('click', signInByFacebookRedirect);
 
@@ -51,13 +59,18 @@ const prepareDOMEvents = () => {
 	showPasswordEyeBtn.addEventListener('click', showPasswordEye);
 	hidePasswordEyeBtn.addEventListener('click', hidePasswordEye);
 	
+	//create account
 	createAccoutLinkBtn.addEventListener('click', redirectToAppPanel);
+	
+	//redirect to 'forgot password'
+	forgotPasswordBtn.addEventListener('click', forgotPasswordRedirect);
 };
 
 const main = () => {
 	prepareDOMElements();
 	prepareDOMEvents();
 	reset();
+	errorMessage.style.display = 'none';
 };
 
 const signInFuction_enter_key = (event) => {
@@ -67,8 +80,9 @@ const signInFuction_enter_key = (event) => {
 };
 
 const signInFuction = () => {
-	//credentialsForm.submit();
-	sendCredentialsToServer(credentialsLoginInput.value, credentialsPasswordInput.value)
+	console.log(rememberMeInput.checked);
+	sendCredentialsToServer(
+		credentialsLoginInput.value, credentialsPasswordInput.value, rememberMeInput.checked);
 	reset();
 };
 
@@ -89,7 +103,13 @@ const signInByFacebookRedirect = () => {
 	window.location.href = "http://localhost:8080/oauth2/authorization/facebook";
 }
 
-const sendCredentialsToServer = (email, password) => {
+
+//Redirect to Forgot passsword site
+const forgotPasswordRedirect = () => {
+	window.location.href = "http://localhost:8080/app/forgot";
+}
+
+const sendCredentialsToServer = (email, password, remember_me) => {
 	fetch('http://localhost:8080/app/login', {
 		method: 'POST',
 		headers: {
@@ -100,36 +120,24 @@ const sendCredentialsToServer = (email, password) => {
 		body: JSON.stringify({
 			email: email,
 			password: password,
+			remember_me: remember_me
 		}),
-	}).then((response) => {grantedAuthorizationToken = response.headers.get('Authorization')})
-	  .then(() => console.log(grantedAuthorizationToken))
-	  //.then(() => setCookie('token',grantedAuthorizationToken, 1))
-	  .then(() => redirectToAppPanel(grantedAuthorizationToken))
+	}).then((response) => {
+		if(response.status === 200){	
+			redirectToAppPanel(grantedAuthorizationToken)
+		} else if(response.status === 401) {
+			errorMessage.style.display = 'flex';
+		} else {
+			//
+	    }
+    }).catch((error) => console.log(error))
 };
 
 
 const redirectToAppPanel = () => {
-	
 	window.location.href = "http://localhost:8080/app/panel";
 	
-	//console.log('authorizationToken');
-	//console.log(grantedAuthorizationToken);
-	
-	//fetch('http://localhost:8080/app/redirect/panel', {
-	//	method: 'POST',
-	//	headers: {
-	//		'Content-Type': 'application/json',
-	//		'Authorization': grantedAuthorizationToken,
-	//	},
-		//redirect: 'follow'
-	//})
 };
-
-
-//.then((response) => {return response.text()})
-//	  .then((html) => {document.body.innerHTML = html})
-//	  .catch((err) => console.log(err))
-
 
 
 const showPasswordEye = () => {
@@ -162,18 +170,16 @@ const swiper = new Swiper('.swiper', {
 	loop: true,
 	grabCursor: true,
 
-	// If we need pagination
+	
 	pagination: {
 		el: '.swiper-pagination',
 	},
 
-	// Navigation arrows
 	navigation: {
 		nextEl: '.swiper-button-next',
 		prevEl: '.swiper-button-prev',
 	},
 
-	// And if we need scrollbar
 	scrollbar: {
 		el: '.swiper-scrollbar',
 	},

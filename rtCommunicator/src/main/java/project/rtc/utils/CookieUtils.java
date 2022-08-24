@@ -11,25 +11,8 @@ import org.springframework.util.SerializationUtils;
 
 public class CookieUtils {
 	
-	
-	public static Optional<Cookie> getCookie(HttpServletRequest request, String name){
-		
-		Cookie[] cookies = request.getCookies();
-		
-		if(cookies != null && cookies.length > 0) {
-			for(Cookie cookie: cookies) {
-				if(cookie.getName().equals(name)) {
-					return Optional.of(cookie);
-				}
-			}
-		}
-		
-		return Optional.empty();
-	}
-	
 	// Allows you to add a cookie to the HTTP response
     // expireTime - This is maximum age in seconds age when the cookie will expire.
-	// comment - Describe cookie purpose
 	public static void addCookie(HttpServletResponse response, String name, String value, int expireTime) {
 		
 		Cookie cookie = new Cookie(name, value);
@@ -37,10 +20,34 @@ public class CookieUtils {
 		cookie.setPath("/");
 		cookie.setMaxAge(expireTime);
 		cookie.setHttpOnly(true);
-		
 		response.addCookie(cookie);
 		
 	}
+	
+	// Allows you to add a cookie to the HTTP response
+     public static void addCookie(HttpServletResponse response, String name, String value) {
+		
+		Cookie cookie = new Cookie(name, value);
+		
+		cookie.setPath("/");
+		cookie.setHttpOnly(true);
+		response.addCookie(cookie);	
+	}
+     
+     public static Optional<Cookie> getCookie(HttpServletRequest request, String name){
+ 		
+ 		Cookie[] cookies = request.getCookies();
+ 		
+ 		if(cookies != null && cookies.length > 0) {
+ 			for(Cookie cookie: cookies) {
+ 				if(cookie.getName().equals(name)) {
+ 					return Optional.of(cookie);
+ 				}
+ 			}
+ 		}
+ 		
+ 		return Optional.empty();
+ 	}
 	
 	// Remove Cookies from request
 	public static void deleteCookie(HttpServletRequest request, HttpServletResponse response, String name) {

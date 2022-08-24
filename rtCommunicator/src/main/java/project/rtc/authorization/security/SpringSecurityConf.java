@@ -20,6 +20,7 @@ import org.springframework.security.web.authentication.AuthenticationSuccessHand
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 
 import project.rtc.authorization.oauth2.CustomOAuth2UserService;
+import project.rtc.authorization.oauth2.OAuth2AuthenticationSuccessHandler;
 import project.rtc.authorization.security.jwt.JwtTokenAuthenticationFilter;
 
 @SuppressWarnings("deprecation")
@@ -31,7 +32,6 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	private CustomUserDetailsService customUserDetailsService;
 	private AuthenticationSuccessHandler authenticationSuccessHandler;
 	private JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
-	private PasswordEncoder passwordEncoder;
 	
 	@Autowired
 	public void setCustomUserDetailsService(CustomUserDetailsService customUserDetailsService) {
@@ -49,12 +49,6 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	}
 	
 	@Autowired
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
-	
-	
-	@Autowired
 	private void setAuthenticationSuccessHandler(OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler) {
 		this.authenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
 	}
@@ -69,7 +63,6 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	
 	@Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception{
-		auth.inMemoryAuthentication().withUser("root").password(passwordEncoder.encode("root")).roles("ROOT");
 		auth.userDetailsService(customUserDetailsService);
 	}
 	
@@ -85,7 +78,6 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 		    .authorizeRequests()
 			    .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
 			       .antMatchers("/resources/**").permitAll()
-			       .antMatchers("static/LoginPage/**").permitAll()
 			       .antMatchers("/error",
 	                        "/favicon.ico",
 	                        "/**/*.png",
@@ -99,9 +91,15 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	               .antMatchers("/auth/**", "/oauth2/**").permitAll()	              
 			       .antMatchers("/app/login").permitAll()
 			       .antMatchers("/app/logout").permitAll()
+			       .antMatchers("/app/forgot").permitAll()
+			       .antMatchers("/app/forgot/send").permitAll()
+			       .antMatchers("/app/forgot/password/tk/**").permitAll()
+			       .antMatchers("/app/forgot/credentials/update").permitAll()
 			       .anyRequest().authenticated()
 			       .and()			       
-		    .oauth2Login()	        
+		    .oauth2Login()
+		        .loginPage("/app/login")
+		            .permitAll()
 		        .redirectionEndpoint()
 		            .baseUri("/login/oauth2/code/**")
 		            .and()
@@ -111,9 +109,7 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 		        .successHandler(authenticationSuccessHandler)
 		       .and()
 		   .logout()
-		        .clearAuthentication(true)
-		        .deleteCookies("JSESSIONID")
-		        .logoutSuccessUrl("/app/login");  
+		        .disable();
 		
 		// Add JWT token filter 
 		http.addFilterBefore(jwtTokenAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);

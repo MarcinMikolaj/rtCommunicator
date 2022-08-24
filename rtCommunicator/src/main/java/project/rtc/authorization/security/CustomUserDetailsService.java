@@ -6,9 +6,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.credentials.Credentials;
-import project.rtc.authorization.credentials.CredentialsRepository;
-import project.rtc.authorization.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.Credentials;
+import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
 import project.rtc.utils.ConsoleColors;
 
 @Service

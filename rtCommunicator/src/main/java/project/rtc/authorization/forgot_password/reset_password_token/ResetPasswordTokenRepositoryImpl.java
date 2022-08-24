@@ -1,4 +1,4 @@
-package project.rtc.authorization.credentials;
+package project.rtc.authorization.forgot_password.reset_password_token;
 
 import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
@@ -6,32 +6,29 @@ import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceUnit;
-
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-
 import project.rtc.utils.ConsoleColors;
 
 @Repository
-public class CredentialsRepositoryImpl implements CredentialsRepository {
+public class ResetPasswordTokenRepositoryImpl implements ResetPasswordTokenRepository{
 	
 	@PersistenceUnit
 	private EntityManagerFactory entityManagerFactory;
 
 	@Override
-	public Credentials save(Credentials credentials) {
-		
+	public PasswordResetToken save(PasswordResetToken resetPasswordToken) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
 		
 		try {
 			entityTransaction.begin();
-			entityManager.persist(credentials);
+			entityManager.persist(resetPasswordToken);
 			entityTransaction.commit();
 			entityManager.close();
-			return credentials;
+			return resetPasswordToken;
 		} catch (EntityExistsException entityExistsException) {
 			System.out.println(entityExistsException.getMessage().toString());
 			entityManager.close();
@@ -41,59 +38,49 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 			entityManager.close();
 			return null;
 		}
-		
 	}
 
 	@Override
-	public boolean update(Credentials credentials) {
+	public PasswordResetToken findByToken(String token) {
 		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
+		TypedQuery<PasswordResetToken> typedQuery = entityManager.createNamedQuery("PasswordResetToken.findByToken", PasswordResetToken.class);
+		typedQuery.setParameter("token", token);
 		
 		try {
 			entityTransaction.begin();
-			entityManager.merge(credentials);
+			PasswordResetToken passwordResetToken = typedQuery.getSingleResult();
 			entityTransaction.commit();
 			entityManager.close();
-			return true;
-		} catch (IllegalArgumentException illegalArgumentException) {
-			System.out.println(illegalArgumentException.getMessage().toString());
-			entityManager.close();
-			return false;
-		}
-	}
-	
-	
-	@Override
-	public Credentials findByEmail(String email) {
-		
-		EntityManager entityManager = entityManagerFactory.createEntityManager();
-		EntityTransaction entityTransaction = entityManager.getTransaction();
-		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.findByEmail", Credentials.class);
-		typedQuery.setParameter("email", email);
-		
-		try {
-			entityTransaction.begin();
-			Credentials credentials = typedQuery.getSingleResult();
-			entityTransaction.commit();
-			entityManager.close();
-			return credentials;
+			return passwordResetToken;
 		} catch (NoResultException noResultException) {
-			System.out.println(ConsoleColors.BLUE + "CredentialsRepositoryImpl.findByEmail: " +  noResultException.getMessage() + ConsoleColors.RESET);
+			System.out.println(ConsoleColors.BLUE + "ResetPasswordTokenRepositoryImpl.findByToken: " +  noResultException.getMessage() + ConsoleColors.RESET);
 			entityManager.close();
 			return null;
 		}
 	}
 
 	@Override
-	public void createQueryJPQL(String jpql) {
+	public int removeByToken(String token) {
+		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
-		Query query = entityManager.createQuery(jpql);
-		entityTransaction.begin();
-		query.executeUpdate();
-		entityTransaction.commit();
-		entityManager.close();		
+		Query query = entityManager.createNamedQuery("PasswordResetToken.removeByToken");
+		query.setParameter("token", token);
+		
+		try {
+			entityTransaction.begin();
+			int result = query.executeUpdate();
+			entityTransaction.commit();
+			entityManager.close();
+			return result;
+		} catch (NoResultException noResultException) {
+			System.out.println(ConsoleColors.BLUE + "ResetPasswordTokenRepositoryImpl.findByToken: " +  noResultException.getMessage() + ConsoleColors.RESET);
+			entityManager.close();
+			return 0;
+		}
 	}
-
+	
+	
 }

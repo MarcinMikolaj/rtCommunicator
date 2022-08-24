@@ -1,4 +1,4 @@
-package project.rtc.authorization.security;
+package project.rtc.authorization.oauth2;
 
 import java.io.IOException;
 
@@ -30,7 +30,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
 			Authentication authentication) throws IOException, ServletException {
 		
-		String jwtToken = jwtTokenProvider.createJwtToken(authentication, getEmailByAuthentication(authentication));
+		String jwtToken = jwtTokenProvider.createJwtToken(authentication, getEmailByAuthentication(authentication), null, null);
 		CookieUtils.addCookie(response, "jwt", jwtToken, 1800000);
 		response.addHeader("Authorization", "Bearer " + jwtToken);
 			

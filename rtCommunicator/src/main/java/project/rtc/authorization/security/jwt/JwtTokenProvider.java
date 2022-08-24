@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Date;
 import java.util.HashMap;
 
-import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -28,21 +27,48 @@ public class JwtTokenProvider {
 	private final Long expireTime = (long) 1800000; //30min
 	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 	
+	
     // Create JSON Web Token  
-	public String createJwtToken(Authentication authentication, String email) {
-				
-        // Create token header		
-		Map<String, Object> headersForJwtToken = new HashMap<String, Object>();
-		headersForJwtToken.put("typ", "JWT");
-		headersForJwtToken.put("alg", "HS512");
+	public String createJwtToken(Authentication authentication, String email, Date issuedAt,
+			Date expitation) {
 		
 		Long currentTimeInMili = System.currentTimeMillis();
+		
+		if(issuedAt == null) {
+			issuedAt = new Date(currentTimeInMili);
+		}
+		
+		if(expitation == null) {
+			expitation = new Date(currentTimeInMili + expireTime);
+		}
+		
+        // Create token header		
+		Map<String, Object> headersForJwtToken = new HashMap<String, Object>();
+		headersForJwtToken.put("alg", "HS512");
+		headersForJwtToken.put("typ", "JWT");
 		
 		String token = Jwts.builder()
 				.setHeader(headersForJwtToken)
 				.setSubject(email)
-				.setIssuedAt(new Date(currentTimeInMili))
-				.setExpiration(new Date(currentTimeInMili + expireTime))
+				.setIssuedAt(issuedAt)
+				.setExpiration(expitation)
+				.signWith(SignatureAlgorithm.HS512, jwtSecretKey)
+		        .compact();
+		
+		return token;
+	}
+	
+	public String createJwtToken(String subject, Date issuedAt, Date expiration) {
+		
+		Map<String, Object> headersForJwtToken = new HashMap<String, Object>();
+		headersForJwtToken.put("alg", "HS512");
+		headersForJwtToken.put("typ", "JWT");
+		
+		String token = Jwts.builder()
+				.setHeader(headersForJwtToken)
+				.setSubject(subject)
+				.setIssuedAt(issuedAt)
+				.setExpiration(expiration)
 				.signWith(SignatureAlgorithm.HS512, jwtSecretKey)
 		        .compact();
 		
@@ -50,22 +76,31 @@ public class JwtTokenProvider {
 		
 	}
 	
-	//Return token expiration time
-	public Date getTokenExpirationTime(String jwtToken) {
-		return getTokenBody(jwtToken).getExpiration();
+	public Date getTokentIssuedAt(String jwtToken) {
+		
+		if(validateToken(jwtToken)) {
+			return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(jwtToken).getBody().getIssuedAt();
+		}
+		
+		return null;
 	}
 	
-	//Return token expiration time
-	public String getTokenSubject(String jwtToken) {	
-		return getTokenBody(jwtToken).getSubject();
+    public Date getTokentExpiration(String jwtToken) {
+		
+		if(validateToken(jwtToken)) {
+			return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(jwtToken).getBody().getExpiration();
+		}
+		
+		return null;
 	}
 	
-	private Claims getTokenBody(String jwtToken) {
-		Claims claims = Jwts.parser()
-				.setSigningKey(jwtSecretKey)
-				.parseClaimsJws(jwtToken)
-				.getBody();
-		return claims;
+	
+	public String getTokenSubject(String jwtToken) {
+		if(validateToken(jwtToken)) {
+			return Jwts.parser().setSigningKey(jwtSecretKey).parseClaimsJws(jwtToken).getBody().getSubject();
+		}
+		
+		return null;
 	}
 	
 	public boolean validateToken(String jwtToken) {
