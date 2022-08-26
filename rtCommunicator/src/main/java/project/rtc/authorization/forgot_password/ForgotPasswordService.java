@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import project.rtc.authorization.basic_login.credentials.Credentials;
 import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
@@ -61,17 +60,15 @@ public class ForgotPasswordService {
 	}
 	
 	
-	
-	
 	// This method is called to begin the password change process for the user.
     // Allows you to assign a token for a given account for which the password is to be updated.
 	// And it sends to the user's e-mail address a link redirecting to enter a new password
-	public void startTheProcessOfChangingThePassword(String email, HttpServletResponse response) throws IOException {
+	public boolean startTheProcessOfChangingThePassword(String email, HttpServletResponse response) throws IOException {
 		
 		Credentials credentials = credentialsRepository.findByEmail(email);
 		
 		if(credentials == null) {
-			throw new NullPointerException("ForgotPasswordService.send: User with this credentials not exist");
+			return true;
 		}
 		
 		PasswordResetToken resetPasswordToken = assignNewToken(email, 1800000);
@@ -85,10 +82,11 @@ public class ForgotPasswordService {
 		
 		try {
 			mailSenderService.sendMessage(email, subject, text);
+			return true;
 		} catch (MessagingException e) {
 			System.out.println("ForgotPasswordService.send: The message could not be sent, mailSenderService problem");
-		}
-		
+			return false;
+		} 
 	}
 	
 	

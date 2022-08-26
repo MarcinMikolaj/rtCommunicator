@@ -28,18 +28,16 @@ public class ForgotPasswordRestController {
 	public ResponseEntity<String> handleTheRequestToChangeThePassword(
 			@RequestBody ForgotPasswordRequest forgotPasswordRequest, HttpServletResponse response) throws IOException{
 		
-		try {
-			forgotPasswordService.startTheProcessOfChangingThePassword(forgotPasswordRequest.getEmail(), response);
-			return new ResponseEntity<String>(HttpStatus.OK);
-		
-		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-		}
+			boolean result = forgotPasswordService.startTheProcessOfChangingThePassword(forgotPasswordRequest.getEmail(), response);
+			
+			if(result)
+				return new ResponseEntity<String>(HttpStatus.OK);
+			else
+				return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
+			
+    }	
 	
-}	
-	
-	@RequestMapping(path = "/app/forgot/credentials/update", method = RequestMethod.POST)
+	@RequestMapping(path = "/app/forgot/credentials/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> handleTheAttemptToChangeThePassword(@RequestBody ChangePasswordRequest changePasswordRequest){
 		
 	boolean result = forgotPasswordService.changePasswordIfTokenIsCorrect(changePasswordRequest.getToken(), changePasswordRequest.getPassword());
