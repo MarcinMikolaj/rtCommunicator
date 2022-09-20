@@ -24,7 +24,7 @@ public class CookieUtils {
 		
 	}
 	
-	// Allows you to add a cookie to the HTTP response
+	 // Allows you to add a cookie to the HTTP response
      public static void addCookie(HttpServletResponse response, String name, String value) {
 		
 		Cookie cookie = new Cookie(name, value);

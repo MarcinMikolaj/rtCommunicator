@@ -1,0 +1,190 @@
+.manage-room-box {
+  position: relative;
+  display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  padding: 0 15px;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  height: 100vh;
+  width: 100vw;
+  border-left: 1px solid #363636;
+}
+
+.manage-room-box .manage-room-option-list {
+  width: 100%;
+  list-style-type: none;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option {
+  width: 100%;
+  margin: 20px 0;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-describe-big {
+  margin-bottom: 5px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-describe-small {
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-message-box .manager-room-option-message {
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  min-height: 30px;
+  margin: 5px 0;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-message-box i {
+  margin-right: 10px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-success-message {
+  background-color: #7cdb48;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-success-message:hover {
+  background-color: #58e30c;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-fail-message {
+  background-color: #db4848;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manager-room-option-fail-message:hover {
+  background-color: #dc2323;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box .manage-room-option-i {
+  margin: 0 8px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box .manage-room-option-input {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  padding: 10px 0;
+  border: none;
+  font-size: 14px;
+  background-color: transparent;
+  color: white;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box .manage-room-option-input:focus {
+  outline: none;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box .manage-room-option-btn {
+  height: 100%;
+  min-width: 100px;
+  border: none;
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  font-family: 'Roboto', sans-serif;
+  background-color: #555555;
+  color: white;
+  cursor: pointer;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-input-box .manage-room-option-btn:hover {
+  background-color: orangered;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-button-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  height: 40px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  border-radius: 5px;
+  background-color: #555555;
+  cursor: pointer;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-button-box i {
+  margin-right: 5px;
+}
+
+.manage-room-box .manage-room-option-list .manage-room-option .manage-room-option-button-box:hover {
+  background-color: orangered;
+}
+
+.manage-room-box .close-manage-room-box-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  padding: 10px 10px;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+  font-size: 30px;
+  color: white;
+  background: transparent;
+  cursor: pointer;
+}
+
+.manage-room-box .close-manage-room-box-btn:hover {
+  color: orangered;
+}
+/*# sourceMappingURL=ManagerRoomBoxStyle.css.map */

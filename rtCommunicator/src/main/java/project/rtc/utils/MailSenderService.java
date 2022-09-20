@@ -1,4 +1,4 @@
-package project.rtc.authorization.forgot_password;
+package project.rtc.utils;
 
 import javax.mail.MessagingException;
 

@@ -45,7 +45,7 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 	}
 
 	@Override
-	public boolean update(Credentials credentials) {
+	public Credentials update(Credentials credentials) {
 		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -55,11 +55,11 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 			entityManager.merge(credentials);
 			entityTransaction.commit();
 			entityManager.close();
-			return true;
+			return credentials;
 		} catch (IllegalArgumentException illegalArgumentException) {
 			System.out.println(illegalArgumentException.getMessage().toString());
 			entityManager.close();
-			return false;
+			return null;
 		}
 	}
 	
@@ -105,6 +105,19 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 		query.setParameter("password", password);
 		entityTransaction.begin();
 		int result = query.executeUpdate();
+		entityTransaction.commit();
+		entityManager.close();
+		return result;
+	}
+
+	@Override
+	public boolean existByEmail(String email) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		Query query = entityManager.createNamedQuery("Credentials.existByEmail");
+		query.setParameter("email", email);
+		entityTransaction.begin();
+		boolean result = (boolean) query.getSingleResult();
 		entityTransaction.commit();
 		entityManager.close();
 		return result;

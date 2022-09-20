@@ -1,4 +1,4 @@
-package project.rtc.authorization.security.jwt;
+package project.rtc.utils.jwt;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
@@ -6,12 +6,18 @@ import org.springframework.stereotype.Service;
 
 import java.util.Map;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+
 import java.util.Date;
 import java.util.HashMap;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.SignatureAlgorithm;
+import project.rtc.exceptions.NoAuthorizationTokenException;
+import project.rtc.utils.ConsoleColors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,11 +27,11 @@ import io.jsonwebtoken.*;
 //This class allows you to generate new JSON Web Token, get Token information like
 //expire time or subject and validate the token
 @Service
-public class JwtTokenProvider {
+public class JwtTokenProviderImpl implements JwtTokenProvider {
 	
 	private final String jwtSecretKey = "co3js8cjwh33Su3nx927dns92mvheoskwhdwhwndh3946dhb2w8ck30wh2cbxHh2oShwhsGjrHwoB83w6dhIdbwh3gdw83H63h";
 	private final Long expireTime = (long) 1800000; //30min
-	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+	private static final Logger logger = LoggerFactory.getLogger(JwtTokenProviderImpl.class);
 	
 	
     // Create JSON Web Token  
@@ -120,6 +126,24 @@ public class JwtTokenProvider {
         }
 		
 		return false;
+	}
+	
+	// Return JSON Web Token from cookie as string using HttpServletRequest.
+	// Returns null in the absence of an cooki 'jwt' attribute.
+	public String getJwtTokenFromCookie(HttpServletRequest request) throws NoAuthorizationTokenException {
+				
+		Cookie[] cookies = request.getCookies();
+		String jwtToken = null;
+			
+		for(Cookie cookie: cookies) {
+			
+			if(cookie.getName().toString().equals("jwt")) {
+				jwtToken = cookie.getValue().toString();
+				return jwtToken;
+			}
+		}
+		
+		  throw new NoAuthorizationTokenException("JwtTokenProviderImpl.getJwtTokenFromCookie: No authorization token in client cooki request.");
 	}
 		
 }

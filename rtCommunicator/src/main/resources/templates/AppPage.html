@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>rtCommunicator</title>
+    <!-- Font Awesome script -->
+    <script src="https://kit.fontawesome.com/91d2f81fc7.js" crossorigin="anonymous"></script>
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- style -->
+    <link rel="stylesheet" th:href="@{../AppPage/css/AppPanel.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{../AppPage/css/ManagerRoomBoxStyle.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{../AppPage/css/CreateGroupBoxStyle.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{../AppPage/css/AddFriendBoxStyle.css}" type="text/css">
+    
+</head>
+
+<body>
+
+    <div class="wrapper">
+
+        <div class="menu-box">
+            <div class="menu-option open-friends-box-btn">
+                <i class="fa-solid fa-comment-dots menu-option-img"></i>
+                <p class="menu-option-description">Chats</p>
+            </div>
+            <div class="menu-option open-add-friend-box-btn">
+                <i class="fa-solid fa-user-group menu-option-img"></i>
+                <p class="menu-option-description">Add new friends</p>
+            </div>
+            <div class="menu-option open-create-group-box-btn">
+                <i class="fa-solid fa-people-line menu-option-img"></i>
+                <p class="menu-option-description">Create room</p>
+            </div>
+            <div class="menu-option">
+                <i class="fa-solid fa-user-pen menu-option-img"></i>
+                <p class="menu-option-description">Manage account</p>
+            </div>
+            <div class="menu-option">
+                <i class="fa-solid fa-triangle-exclamation menu-option-img"></i>
+                <p class="menu-option-description">Report problem</p>
+            </div>
+            <div class="menu-option logout-btn">
+                <i class="fa-solid fa-arrow-right-from-bracket menu-option-img"></i>
+                <p class="menu-option-description">log out</p>
+            </div>
+        </div>
+
+
+        <!-- Add friend box -->
+        <div class="add-friend-box">
+            <button class="show-menu-btn-for-friend-box show-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <div class="add-friend-title">
+                <p>Add your friend</p>
+                <i class="fa-regular fa-face-smile add-friend-title-icone"></i>
+            </div>
+            <div class="add-friend-success-message">
+                <p>The invitation has been delivered</p>
+                <i class="fa-solid fa-thumbs-up add-friend-success-message-icone"></i>
+            </div>
+            <div class="add-friend-failure-message">
+                <p>User not found</p>
+                <i class="fa-solid fa-exclamation add-friend-failure-message-icone"></i>
+            </div>
+            <p class="add-friend-description">You can add your friend via their nickname, remember to include upper and
+                lower case letters.</p>
+            <input class="add-friend-input" type="text" placeholder="enter the user's nickname">
+            <button class="add-new-friend-btn" type="default">
+                <i class="fa-solid fa-user-plus add-new-friend-btn-icone"></i>
+                <p>Send an invitation</p>
+            </button>
+        </div>
+
+        <div class="create-group-box">
+            <button class="show-menu-btn-for-create-group-box show-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            <h2>Create Room</h2>
+            <div class="create-group-description-box">
+                <p>Enter the name of the room you want to create</p>
+            </div>
+            <ul class="manager-room-option-message-box m_r_o_b_create_room"></ul>
+            <div class="create-group-input-box">
+                <input class="create-group-input create-room-input" type="text" placeholder="Room name">
+                <button class="create-group-btn create-room-btn">
+                    <i class="fa-solid fa-plus"></i>
+                    <p>Create</p>
+                </button>
+            </div>
+        </div>
+
+
+        <!-- friends-box -->
+        <div class="friends-box">
+
+            <div class="communicator-manager">
+                <img class="my-profile-img" src="./img/my-profile-img.jpg" alt="fried img">
+                <p>Chats</p>
+                <button class="show-menu-btn">
+                    <i class="fa-solid fa-bars show-menu-btn"></i>
+                </button>
+            </div>
+
+            <!-- Search your freinds -->
+            <div class="search-box">
+                <div class="search-friend-input-wrapper">
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    <input class="search-friend-input" type="text" placeholder="Search">
+                </div>
+            </div>
+
+            <!-- Friends list of the currently logged in user -->
+            <ul id="room-list" class="room-list">
+            <li style="display: none;" class="friend"></li>
+            </ul>
+        </div>
+
+        
+        <div class="communicator-box">
+            <div class="communicator-top">
+                <div class="communicator-top-first-box">
+                    <i class="fa-solid fa-arrow-left show-only-friends-box-btn"></i>
+                    <img class="chosen-friend-img" src="./img/man-1.jpg" alt="">
+                    <p class="chosen-friend-nick">Stalker</p>
+                </div>
+                <div class="communicator-top-second-box">
+                    <i class="fa-solid fa-phone communicator-feature-icone open-video-call-btn"></i>
+                    <i class="fa-solid fa-video communicator-feature-icone open-phone-call-btn"></i>
+                    <i class="fa-solid fa-address-card communicator-feature-icone open-manage-room-btn"></i>
+                </div>
+            </div>
+            <ul class="communicator-content">
+                <li class="left-message-box">
+                    <img class="current-friend-img" src="./img/man-1.jpg" alt="">
+                    <p class="left-message">Hej co u cb słychać ?</p>
+                </li>
+                <p class="message-date">24.12.2021, 17:44</p>
+                <li class="left-message-box">
+                    <img class="current-friend-img" src="./img/man-1.jpg" alt="">
+                    <p class="left-message">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias quas
+                        quisquam quasi sequi deleniti ea in, adipisci similique sit ex, vitae aspernatur eveniet
+                        recusandae excepturi atque dolore temporibus, porro sed!</p>
+                </li>
+                <li class="right-message-box">
+                    <p class="right-message">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias quas
+                        quisquam quasi sequi deleniti ea in, adipisci similique sit ex, vitae aspernatur eveniet
+                        recusandae excepturi atque dolore temporibus, porro sed!</p>
+                </li>
+                <li class="left-message-box">
+                    <img class="current-friend-img" src="./img/man-1.jpg" alt="">
+                    <p class="left-message">Lorem ipsum dolor sit amet consectetur adipisicing elit. Quas maxime esse
+                        numquam sequi, neque enim eveniet! Placeat voluptate dolorem, illo odio iusto facilis nulla.
+                        Dolorum ab possimus numquam, harum iusto nam quod accusamus a, modi non sequi corrupti,
+                        voluptatem autem assumenda! Nostrum tempore consequatur veritatis sapiente aliquid quibusdam
+                        voluptatibus vero nobis, dolores aperiam perferendis necessitatibus ipsum fugit, facilis commodi
+                        expedita cupiditate quos pariatur enim ipsam minima eligendi neque atque? Minus aperiam earum
+                        ipsum veritatis perferendis quos. Consectetur dolorum et optio tenetur obcaecati recusandae
+                        ratione excepturi. Ad unde cumque nobis exercitationem ex, accusamus odio cupiditate maxime
+                        quasi perferendis nam eos quisquam.</p>
+                </li>
+                <li class="right-message-box">
+                    <p class="right-message">Lorem ipsum dolor sit amet consectetur adipisicing elit. Molestias quas
+                        quisquam quasi sequi deleniti ea in, adipisci similique sit ex, vitae aspernatur eveniet
+                        recusandae excepturi atque dolore temporibus, porro sed!</p>
+                </li>
+            </ul>
+            <div class="communicator-botom">
+                <div class="enter-message-input-box">
+                    <input class="enter-message-input" type="text" placeholder="enter message...">
+                    <i class="fa-solid fa-paper-plane send-message-btn"></i>
+                </div>
+            </div>
+
+            <!-- communicator -->
+        </div>
+
+        <!-- manager room box -->
+        <div class="manage-room-box">
+            <button class="close-manage-room-box-btn">
+                <i class="fa-regular fa-circle-xmark"></i>
+            </button>
+            <h1>Room Manager</h1>
+            <ul class="manage-room-option-list">
+            
+            
+                <!-- Add new user to actual room -->
+                <li class="manage-room-option">
+                    <p class="manage-room-option-describe-big">Add user to room.</p>
+                    <ul class="manager-room-option-message-box m_r_o_b_add_user_to_room"></ul>
+                    <div class="manage-room-option-input-box">
+                        <i class="fa-solid fa-user-plus manage-room-option-i"></i>
+                        <input class="manage-room-option-input add-new-user-to-room-input" type="text" placeholder="Enter user nick">
+                        <button class="manage-room-option-btn add-new-user-to-room-btn" type="default">Add</button>
+                    </div>
+                </li>
+
+                <!--remove user from actual room -->
+                <li class="manage-room-option">
+                    <p class="manage-room-option-describe-big">Remove user from room.</p>
+                    <ul class="manager-room-option-message-box m_r_o_b_remove_user_from_room"></ul>
+                    <div class="manage-room-option-input-box">
+                        <i class="fa-solid fa-user-xmark manage-room-option-i"></i>
+                        <input class="manage-room-option-input remove-user-from-room-input" type="text" placeholder="Enter user nick">
+                        <button class="manage-room-option-btn remove-user-from-room-btn" type="default">Remove</button>
+                    </div>
+                </li>
+      
+                <!-- rename room option -->
+                <li class="manage-room-option">
+                    <p class="manage-room-option-describe">Rename room.</p>
+                    <p class="manage-room-option-describe-small">Enter a new room name</p>
+                    <ul class="manager-room-option-message-box m_r_o_b_rename_room"></ul>
+                    <div class="manage-room-option-input-box">
+                        <i class="fa-solid fa-pencil manage-room-option-i"></i>
+                        <input class="manage-room-option-input rename-room-input" type="text" placeholder="Room name">
+                        <button class="manage-room-option-btn rename-room-btn" type="default">Rename</button>
+                    </div>
+                </li>
+      
+                <!--remove room -->
+                <li class="manage-room-option">
+                    <p class="manage-room-option-describe">Remove room.</p>
+                    <p class="manage-room-option-describe-small">Confirm by entering the name of the room</p>
+                    <ul class="manager-room-option-message-box m_r_o_b_remove_room"></ul>
+                    <div class="manage-room-option-input-box">
+                        <i class="fa-solid fa-trash-can manage-room-option-i"></i>
+                        <input class="manage-room-option-input remove-room-input" type="text" placeholder="Room name">
+                        <button class="manage-room-option-btn remove-room-btn" type="default">Remove</button>
+                    </div>
+                </li>
+                
+                <!-- Leave the room -->
+                <li class="manage-room-option">
+                    <p class="manage-room-option-describe">Leave room.</p>
+                    <p class="manage-room-option-describe-small">Click to confirm leaving the room</p>
+                    <ul class="manager-room-option-message-box m_r_o_b_leave_room"></ul>
+                    <div class="manage-room-option-button-box leave-room-btn">
+                        <i class="fa-solid fa-right-from-bracket"></i>
+                        <p>Leave the room</p>
+                    </div>
+                </li>
+
+            </ul>
+        <!-- manager room box -->
+        </div>
+
+    <!-- wrapper -->
+    </div>
+
+    <!-- scripts -->
+    <script type="module" th:src="@{../AppPage/js/App.js}"></script>
+    
+</body>
+
+</html>

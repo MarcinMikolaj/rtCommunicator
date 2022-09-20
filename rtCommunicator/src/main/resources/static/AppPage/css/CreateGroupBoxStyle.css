@@ -1,0 +1,148 @@
+.create-group-box {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  padding: 0 15px;
+}
+
+.create-group-box .show-menu-btn-for-create-group-box {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  color: white;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 27px;
+  cursor: pointer;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+}
+
+.create-group-box .show-menu-btn-for-create-group-box:hover {
+  color: orangered;
+}
+
+.create-group-box .create-group-description-box {
+  margin-bottom: 10px;
+  font-size: 14px;
+  text-align: center;
+}
+
+.create-group-box .manager-room-option-message-box {
+	width: 100%;
+}
+
+.create-group-box .manager-room-option-message-box .manager-room-option-message {
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  min-height: 30px;
+  padding: 0 5px;
+  margin: 5px 0;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.create-group-box .manager-room-option-message-box i {
+  margin-right: 10px;
+}
+
+.create-group-box .manager-room-option-success-message {
+  background-color: #7cdb48;
+}
+
+.create-group-box .manager-room-option-success-message:hover {
+  background-color: #58e30c;
+}
+
+.create-group-box .manager-room-option-fail-message {
+  background-color: #db4848;
+}
+
+.create-group-box .manager-room-option-fail-message:hover {
+  background-color: #dc2323;
+}
+
+.create-group-box .create-group-input-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+}
+
+.create-group-box .create-group-input-box .create-group-input {
+  padding: 10px 10px;
+  border: 1px solid white;
+  border-radius: 5px;
+  background: transparent;
+  color: white;
+}
+
+.create-group-box .create-group-input-box .create-group-input:focus {
+  outline: none;
+}
+
+.create-group-box .create-group-input-box .create-group-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 20px;
+  padding: 10px 0;
+  border: none;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+  background-color: #414141;
+  cursor: pointer;
+}
+
+.create-group-box .create-group-input-box .create-group-btn:hover {
+  background-color: orangered;
+}
+
+.create-group-box .create-group-input-box .create-group-btn i {
+  margin-right: 10px;
+}
+/*# sourceMappingURL=CreateGroupBoxStyle.css.map */

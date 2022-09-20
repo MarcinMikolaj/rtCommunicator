@@ -1,12 +1,14 @@
 package project.rtc.authorization.basic_login.controllers.pojo;
 
-public class LogoutRequest {
+public class LogoutRequestPayload {
 	
-	private boolean logout;
+	private  boolean logout;
 	
-	public LogoutRequest() {}
+	public LogoutRequestPayload() {
+		super();
+	}
 
-	public LogoutRequest(boolean logout) {
+	public LogoutRequestPayload(boolean logout) {
 		super();
 		this.logout = logout;
 	}
@@ -14,7 +16,7 @@ public class LogoutRequest {
 	public boolean isLogout() {
 		return logout;
 	}
-
+	
 	public void setLogout(boolean logout) {
 		this.logout = logout;
 	}
@@ -23,5 +25,4 @@ public class LogoutRequest {
 	public String toString() {
 		return "LogoutRequest [logout=" + logout + "]";
 	}
-	
 }

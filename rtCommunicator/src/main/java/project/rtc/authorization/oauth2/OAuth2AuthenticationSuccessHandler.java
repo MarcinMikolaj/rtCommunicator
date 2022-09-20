@@ -13,8 +13,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import project.rtc.authorization.security.jwt.JwtTokenProvider;
 import project.rtc.utils.CookieUtils;
+import project.rtc.utils.jwt.JwtTokenProvider;
 
 @Component
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {

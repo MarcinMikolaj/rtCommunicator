@@ -3,7 +3,6 @@ package project.rtc.authorization.basic_login.credentials;
 import java.util.Collection;
 import java.util.Map;
 
-import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,12 +15,11 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-import project.rtc.authorization.oauth2.provider.AuthProvider;
-
 @Entity
 @NamedQueries({
     @NamedQuery(name = "Credentials.findByEmail", query = "SELECT c FROM Credentials c WHERE c.email = :email"),
-    @NamedQuery(name = "Credentials.updatePasswordByEmail", query = "UPDATE Credentials c SET c.password = :password WHERE c.email = :email")
+    @NamedQuery(name = "Credentials.updatePasswordByEmail", query = "UPDATE Credentials c SET c.password = :password WHERE c.email = :email"),
+    @NamedQuery(name = "Credentials.existByEmail", query ="SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM Credentials c where c.email = :email")
 })
 @Table(name = "credentials")
 public class Credentials implements UserDetails, OAuth2User {
@@ -35,6 +33,7 @@ public class Credentials implements UserDetails, OAuth2User {
 	private String email;
 	private String name;
 	private String provider;
+	private boolean isAccountNonLocked;
 	
 	public Credentials() {}
 	
@@ -44,19 +43,10 @@ public class Credentials implements UserDetails, OAuth2User {
 		this.email = email;
 		this.name = name;
 		this.provider = provider;
+		isAccountNonLocked = true;
+		
 	}
 	
-	
-	public Credentials(String password, String email, String name) {
-		super();
-		this.password = password;
-		this.email = email;
-		this.name = name;
-		this.provider = AuthProvider.local.toString();
-	}
-	
-	
-
 	public Long getId() {
 		return id;
 	}
@@ -117,7 +107,11 @@ public class Credentials implements UserDetails, OAuth2User {
 
 	@Override
 	public boolean isAccountNonLocked() {
-		return true;
+		return isAccountNonLocked;
+	}
+	
+	public void setIsAccountNonLocked(boolean isAccountNonLocked) {
+		this.isAccountNonLocked = isAccountNonLocked;
 	}
 
 	@Override

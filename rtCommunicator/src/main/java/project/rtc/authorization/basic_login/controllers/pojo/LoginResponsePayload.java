@@ -1,21 +1,21 @@
 package project.rtc.authorization.basic_login.controllers.pojo;
 
-public final class LoginPayloadResponse {
+public final class LoginResponsePayload {
 	
+	private final boolean isAuthenticated;
 	private final String jwtToken;
 	private final String tokenType;
 	
-	public LoginPayloadResponse(String jwtToken) {
+	public LoginResponsePayload(String jwtToken, boolean isAuthenticated) {
 		super();
 		this.jwtToken = jwtToken;
 		this.tokenType = "Bearer";
+		this.isAuthenticated = isAuthenticated;
 	}
 	
 	
-	public LoginPayloadResponse(String jwtToken, String tokenType) {
-		super();
-		this.jwtToken = jwtToken;
-		this.tokenType = tokenType;
+	public boolean isAuthenticated() {
+		return isAuthenticated;
 	}
 
 
@@ -30,7 +30,8 @@ public final class LoginPayloadResponse {
 
 	@Override
 	public String toString() {
-		return "LoginPayloadResponse [jwtToken=" + jwtToken + "]";
-	}
+		return "LoginResponsePayload [isAuthenticated=" + isAuthenticated + ", jwtToken=" + jwtToken + ", tokenType="
+				+ tokenType + "]";
+	}	
 	
 }

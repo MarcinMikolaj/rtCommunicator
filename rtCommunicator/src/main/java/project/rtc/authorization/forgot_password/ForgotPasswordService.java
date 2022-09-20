@@ -17,8 +17,10 @@ import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryIm
 import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepositoryImpl;
-import project.rtc.authorization.security.jwt.JwtTokenProvider;
 import project.rtc.utils.ConsoleColors;
+import project.rtc.utils.MailSenderService;
+import project.rtc.utils.MailSenderServiceImpl;
+import project.rtc.utils.jwt.JwtTokenProvider;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

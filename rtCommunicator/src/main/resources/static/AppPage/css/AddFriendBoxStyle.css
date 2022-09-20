@@ -1,0 +1,167 @@
+.add-friend-box {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+}
+
+.add-friend-box .add-friend-success-message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 85%;
+  margin-bottom: 20px;
+  padding: 20px 0;
+  border-radius: 5px;
+  background-color: #0fc10f;
+  color: white;
+}
+
+.add-friend-box .add-friend-success-message .add-friend-success-message-icone {
+  margin-left: 5px;
+}
+
+.add-friend-box .add-friend-failure-message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 85%;
+  margin-bottom: 20px;
+  padding: 20px 0;
+  border-radius: 5px;
+  background-color: #f3140c;
+  color: white;
+}
+
+.add-friend-box .add-friend-failure-message .add-friend-failure-message-icone {
+  margin-left: 5px;
+}
+
+.add-friend-box .show-menu-btn-for-friend-box {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  color: white;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 27px;
+  cursor: pointer;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+}
+
+.add-friend-box .show-menu-btn-for-friend-box:hover {
+  color: orangered;
+}
+
+.add-friend-box .add-friend-title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-bottom: 20px;
+  font-size: 22px;
+  font-weight: 500;
+}
+
+.add-friend-box .add-friend-title .add-friend-title-icone {
+  margin-left: 10px;
+}
+
+.add-friend-box .add-friend-description {
+  width: 85%;
+  margin-bottom: 15px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.add-friend-box .add-friend-input {
+  width: 85%;
+  padding: 20px 10px;
+  background-color: transparent;
+  border: 1px solid #646464;
+  border-radius: 5px;
+  font-size: 15px;
+  text-align: center;
+  color: white;
+}
+
+.add-friend-box .add-friend-input:focus {
+  outline: none;
+}
+
+.add-friend-box .add-new-friend-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 20px;
+  width: 85%;
+  padding: 20px 0px;
+  border: none;
+  border-radius: 5px;
+  font-size: 15px;
+  background-color: orangered;
+  color: white;
+  cursor: pointer;
+}
+
+.add-friend-box .add-new-friend-btn .add-new-friend-btn-icone {
+  margin-right: 10px;
+}
+
+.add-friend-box .add-new-friend-btn:hover {
+  background-color: #ff5314;
+}
+/*# sourceMappingURL=AddFriendBoxStyle.css.map */

@@ -87,7 +87,10 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	                        "/**/*.html",
 	                        "/**/*.css",
 	                        "/**/*.js")
-	                        .permitAll()       
+	                        .permitAll()
+	               .antMatchers("/").permitAll() //test
+	               .antMatchers("/app/registration/create").permitAll() //create account POST 
+	               .antMatchers("/app/registration/activate").permitAll() // activate account  POST
 	               .antMatchers("/auth/**", "/oauth2/**").permitAll()	              
 			       .antMatchers("/app/login").permitAll()
 			       .antMatchers("/app/logout").permitAll()

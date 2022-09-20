@@ -1,12 +1,12 @@
 package project.rtc.authorization.basic_login.controllers.pojo;
 
-public final class LoginPayloadRequest {
+public final class LoginRequestPayload {
 	
 	private final String email;
 	private final String password;
 	private final boolean remember_me;
 	
-	public LoginPayloadRequest(String email, String password, boolean remember_me) {
+	public LoginRequestPayload(String email, String password, boolean remember_me) {
 		super();
 		this.email = email;
 		this.password = password;

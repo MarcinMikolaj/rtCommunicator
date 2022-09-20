@@ -20,6 +20,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import project.rtc.authorization.security.CustomUserDetailsService;
 import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.CookieUtils;
+import project.rtc.utils.jwt.JwtTokenProvider;
 
 // This class is used to read JWT authentication token from the request,
 // verify it, and set Spring Security’s SecurityContext if the token is valid
@@ -116,7 +117,6 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 					+ e.getMessage() + ConsoleColors.RESET);	
 		}
 	}
-	
 	
 	
 	// Return JSON Web Token from header as string using HttpServletRequest
