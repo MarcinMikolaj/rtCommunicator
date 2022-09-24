@@ -21,17 +21,4 @@ public class MessageService {
 	public void setRoomRepository(RoomRepository roomRepository) {
 		this.roomRepository = roomRepository;
 	}
-	
-	public void addMessageToRoom(Message message, String roomId) {
-		
-		Room room;
-		
-		room = roomRepository.findByRoomId(roomId);
-		
-		room.getMessages().add(message);
-		
-		messageRepository.save(message);
-		roomRepository.save(room);
-	}
-
 }

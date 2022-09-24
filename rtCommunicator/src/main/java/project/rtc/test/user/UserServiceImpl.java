@@ -106,7 +106,21 @@ public class UserServiceImpl implements UserService {
 
 	@Override
 	public UserResponseBody updateUserNick(UserRequestBody userRequestBody, HttpServletRequest httpServletRequest) {
-		return null;
+		
+		User user;
+		UserResponseBody userResponseBody = new UserResponseBody();
+		userResponseBody.setSuccess(false);
+		
+		try {
+			user = getUser(httpServletRequest);
+			userResponseBody.setSuccess(true);
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+
+			e.printStackTrace();
+		}
+		
+		
+		return userResponseBody;
 	}
 
 

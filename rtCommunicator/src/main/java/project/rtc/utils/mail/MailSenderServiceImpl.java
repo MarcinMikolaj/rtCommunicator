@@ -1,4 +1,4 @@
-package project.rtc.utils;
+package project.rtc.utils.mail;
 
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;

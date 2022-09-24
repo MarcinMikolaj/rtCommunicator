@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Register</title>
+    <!-- Font Awesome script -->
+    <script src="https://kit.fontawesome.com/91d2f81fc7.js" crossorigin="anonymous"></script>
+    <!-- Fonts Google -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <!-- style -->
+    <link rel="stylesheet" th:href="@{../RegisterPage/css/Register.css}" type="text/css">
+    
+</head>
+
+<body>
+
+
+    <div class="success-message-box">
+        <img class="success-img" th:src="@{../RegisterPage/img/success.png}" alt="success image">
+        <h2 class="h2-success">success!</h2>
+        <p>Your account has been created successfully.Confirm the creation of your account by clicking on the special
+            link that was sent to your e-mail.</p>
+        <button class="redirect-login-page-btn redirect-btn-1">Continue</button>
+    </div>
+
+    <div class="wrapper">
+
+        <div class="left-side-of-the-wrapper">
+
+            <!-- Application logo -->
+            <div class="logo">
+                <i class="fa-solid fa-dragon"></i>
+                <p class="logo_text">rtCommunicator</p>
+            </div>
+
+            <div class="welcome_message">
+                <h1>Join us now !</h1>
+                <p>Register to get full access to the application without any restrictions,
+                    payments or advertising.</p>
+            </div>
+
+
+
+            <!-- email input box -->
+            <div class="credentials-box">
+                <p class="credentials-description">Email</p>
+                <ul class="error-message error-email"></ul>
+                <div class="input-box">
+                    <i class="fa-solid fa-envelope"></i>
+                    <input class="email-input" type="text" placeholder="Enter your email">
+                </div>
+            </div>
+
+            <!-- nick input box -->
+            <div class="credentials-box">
+                <p class="credentials-description">Nick</p>
+                <ul class="error-message error-nick"></ul>
+                <div class="input-box">
+                    <i class="fa-solid fa-user"></i>
+                    <input class="nick-input" type="text" placeholder="Enter your nick">
+                </div>
+            </div>
+
+            <!-- password input box -->
+            <div class="credentials-box">
+                <p class="credentials-description">Password</p>
+                <ul class="error-message error-password"></ul>
+                <div class="input-box">
+                    <i class="fa-solid fa-lock"></i>
+                    <input class="password-input" type="password" placeholder="Enter your password">
+                    <div class="change-password-type-btn-box">
+                        <i class="fa-solid fa-eye show-and-hide-password-icone show-passwor-btn"></i>
+                        <i class="fa-solid fa-eye-slash show-and-hide-password-icone hide-passwor-btn"></i>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- profile picture input -->
+            <div class="credentials-box">
+                <p class="credentials-description">Profile Picture</p>
+                <ul class="error-message error-picture"></ul>
+                <label class="custom-file-upload input-box">
+                    <input class="profile-picture-input" type="file" placeholder="your profile picture">
+                    <div class="picture-description">
+                        <p class="picture-description-text">Add picture</p>
+                        <i class="fa-solid fa-image-portrait"></i>
+                    </div>
+                    <p class="picture-name-p">....</p>
+
+                </label>
+            </div>
+
+
+            <!-- accept statemnet box -->
+            <div class="statement-box">
+                <ul class="error-message error-statement"></ul>
+                <div class="statemnet-box-content">
+                    <input class="statement-checkbox" type="checkbox" name="" id="">
+                    <p class="statement-description">I agree to all statements (Terms of Use)</p>
+                </div>
+            </div>
+
+            <!-- register btn -->
+            <button class="register-btn" type="default">
+                <p>register</p>
+                <i class="fa-solid fa-thumbs-up register-btn-icone"></i>
+            </button>
+
+            <!-- redirect loin page box -->
+            <div class="redirect-login-page-box">
+                <p class="redirect-login-page-description">Already a member ?</p>
+                <button class="redirect-login-page-btn redirect-btn-2">Sign In</button>
+            </div>
+
+
+        </div>
+        
+        
+
+        <div class="right-side-of-the-wrapper">
+            <img class="landscape-img" th:src="@{../RegisterPage/img/ben-blennerhassett-ZXfUUM_LR0k-unsplash.jpg}" alt="">
+            <div class="landscape-filter"></div>
+            <div class="landscape-description">
+                <i class="fa-solid fa-dragon landscape-description-icone"></i>
+                <p class="landscape-description-title">Start turning your ideas to reality</p>
+                <p>Create free account and get full access to all features. No credit card needed. No phone number
+                    needed. No ads interfering with the use of the application. Exchange messages with your friends
+                    without any restrictions.</p>
+                <div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- scripts -->
+    <script type="module" th:src="@{../RegisterPage/js/Register.js}"></script>
+
+</body>
+
+</html>

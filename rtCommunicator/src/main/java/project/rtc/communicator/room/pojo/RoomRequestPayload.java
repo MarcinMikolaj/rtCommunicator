@@ -2,18 +2,18 @@ package project.rtc.communicator.room.pojo;
 
 import project.rtc.communicator.room.RoomAction;
 
-public class RoomRequest {
+public class RoomRequestPayload {
 	
 	private RoomAction action;
 	private String roomId;
 	private String userNick;
 	private String roomName;
 	
-	public RoomRequest() {
+	public RoomRequestPayload() {
 	}
 
 	
-	public RoomRequest(String userNick) {
+	public RoomRequestPayload(String userNick) {
 		super();
 		this.userNick = userNick;
 	}

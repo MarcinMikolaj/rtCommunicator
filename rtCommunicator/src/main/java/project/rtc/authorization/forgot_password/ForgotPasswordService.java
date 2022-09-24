@@ -18,9 +18,9 @@ import project.rtc.authorization.forgot_password.reset_password_token.PasswordRe
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepositoryImpl;
 import project.rtc.utils.ConsoleColors;
-import project.rtc.utils.MailSenderService;
-import project.rtc.utils.MailSenderServiceImpl;
 import project.rtc.utils.jwt.JwtTokenProvider;
+import project.rtc.utils.mail.MailSenderService;
+import project.rtc.utils.mail.MailSenderServiceImpl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

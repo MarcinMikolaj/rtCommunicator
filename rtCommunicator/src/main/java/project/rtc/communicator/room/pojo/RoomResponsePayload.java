@@ -7,18 +7,18 @@ import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomAction;
 import project.rtc.communicator.room.Statement;
 
-public class RoomResponse {
+public class RoomResponsePayload {
 	
 	private boolean success;
 	private RoomAction action;
 	private List<Room> rooms = new ArrayList<Room>();
 	private List<Statement<RoomAction>> statements = new ArrayList<Statement<RoomAction>>();
 	
-	public RoomResponse() {
+	public RoomResponsePayload() {
 		super();
 	}
 
-	public RoomResponse(boolean success, RoomAction action) {
+	public RoomResponsePayload(boolean success, RoomAction action) {
 		super();
 		this.success = success;
 		this.action = action;

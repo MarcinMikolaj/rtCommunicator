@@ -1,0 +1,498 @@
+* {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100vh;
+  font-family: 'Roboto', sans-serif;
+  background-color: #292929;
+  color: white;
+}
+
+input[type='file'] {
+  display: none;
+}
+
+.wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+.wrapper .right-side-of-the-wrapper {
+  position: relative;
+  height: 100%;
+  width: 100%;
+  display: none;
+}
+
+.wrapper .right-side-of-the-wrapper .landscape-img {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 30px;
+  padding: 20px 20px;
+}
+
+.wrapper .right-side-of-the-wrapper .landscape-filter {
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 20px 20px;
+  border-radius: 20px;
+  background-color: rgba(41, 41, 41, 0.638);
+}
+
+.wrapper .right-side-of-the-wrapper .landscape-description {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  position: absolute;
+  height: 100%;
+  width: 100%;
+  padding: 20px 60px;
+}
+
+.wrapper .right-side-of-the-wrapper .landscape-description .landscape-description-icone {
+  position: absolute;
+  bottom: 40px;
+  right: 40px;
+  font-size: 25px;
+  margin-bottom: 5px;
+}
+
+.wrapper .right-side-of-the-wrapper .landscape-description .landscape-description-title {
+  margin-bottom: 20px;
+  font-size: 30px;
+}
+
+.wrapper .left-side-of-the-wrapper {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  height: 100%;
+  margin: 0 20px;
+  width: 100%;
+}
+
+.wrapper .left-side-of-the-wrapper .logo {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -ms-flex-item-align: start;
+      align-self: flex-start;
+  justify-self: flex-end;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  margin-bottom: 20px;
+  color: orangered;
+  font-size: 20px;
+  font-weight: 600;
+}
+
+.wrapper .left-side-of-the-wrapper .logo .logo_text {
+  margin-left: 5px;
+}
+
+.wrapper .left-side-of-the-wrapper .welcome_message {
+  margin-bottom: 40px;
+  width: 100%;
+}
+
+.wrapper .left-side-of-the-wrapper .welcome_message h1 {
+  margin-bottom: 5px;
+  font-size: 25px;
+  font-weight: 500;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  width: 100%;
+  margin: 10px 0;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .credentials-description {
+  margin-bottom: 5px;
+  font-size: 14px;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+  padding: 0 10px;
+  height: 50px;
+  border: 1px solid white;
+  border-radius: 5px;
+  color: white;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box input {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  height: 100%;
+  border: none;
+  background-color: transparent;
+  color: white;
+  font-size: 15px;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box input:focus {
+  outline: none;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box i {
+  padding-right: 10px;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box .change-password-type-btn-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box .change-password-type-btn-box .show-and-hide-password-icone {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  justify-self: flex-end;
+  padding: 0 5px;
+  cursor: pointer;
+}
+
+.wrapper .left-side-of-the-wrapper .credentials-box .input-box .change-password-type-btn-box .hide-passwor-btn {
+  display: none;
+}
+
+.wrapper .left-side-of-the-wrapper .custom-file-upload {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  background-color: #3b3b3b;
+  border: none !important;
+  cursor: pointer;
+}
+
+.wrapper .left-side-of-the-wrapper .custom-file-upload:hover {
+  background-color: #485fdf;
+}
+
+.wrapper .left-side-of-the-wrapper .custom-file-upload .picture-description {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+}
+
+.wrapper .left-side-of-the-wrapper .custom-file-upload .picture-description .picture-description-text {
+  margin-right: 5px;
+}
+
+.wrapper .left-side-of-the-wrapper .statement-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 10px;
+  width: 100%;
+}
+
+.wrapper .left-side-of-the-wrapper .statement-box .statemnet-box-content {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: start;
+      -ms-flex-pack: start;
+          justify-content: flex-start;
+}
+
+.wrapper .left-side-of-the-wrapper .statement-box .statemnet-box-content .statement-checkbox {
+  border: none;
+  width: 20px;
+  height: 20px;
+  cursor: pointer;
+}
+
+.wrapper .left-side-of-the-wrapper .statement-box .statemnet-box-content .statement-description {
+  margin-left: 5px;
+  font-size: 14px;
+}
+
+.wrapper .left-side-of-the-wrapper .register-btn {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  margin-top: 30px;
+  padding: 15px 0;
+  border: none;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  font-size: 15px;
+  cursor: pointer;
+  color: white;
+  background-color: orangered;
+}
+
+.wrapper .left-side-of-the-wrapper .register-btn .register-btn-icone {
+  margin-left: 5px;
+}
+
+.wrapper .left-side-of-the-wrapper .register-btn:hover {
+  background-color: #ea3e18;
+}
+
+.wrapper .left-side-of-the-wrapper .redirect-login-page-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  margin-top: 40px;
+}
+
+.wrapper .left-side-of-the-wrapper .redirect-login-page-box .redirect-login-page-description {
+  font-size: 14px;
+  color: #cdcdcd;
+}
+
+.wrapper .left-side-of-the-wrapper .redirect-login-page-box .redirect-btn-2 {
+  margin-left: 10px;
+  padding: 5px 15px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  background: transparent;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  background-color: #333333;
+  cursor: pointer;
+}
+
+.wrapper .left-side-of-the-wrapper .redirect-login-page-box .redirect-btn-2:hover {
+  background-color: #4c4c4c;
+}
+
+.error-message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  list-style-type: none;
+  margin-bottom: 3px;
+  color: #dd2c2c;
+  font-size: 13px;
+}
+
+.success-message-box {
+  display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  text-align: center;
+}
+
+.success-message-box .success-img {
+  width: 60px;
+  height: 60px;
+  padding: 10px 10px;
+  border-radius: 50%;
+  background-color: #1c9e1c;
+}
+
+.success-message-box .h2-success {
+  margin-top: 10px;
+  margin-bottom: 5px;
+  letter-spacing: 4px;
+  font-size: 30px;
+}
+
+.success-message-box .redirect-btn-1 {
+  margin-top: 30px;
+  padding: 15px 40px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  background-color: #1c9e1c;
+  color: white;
+}
+
+.success-message-box .redirect-btn-1:hover {
+  background-color: #14c714;
+}
+
+@media (min-width: 1000px) {
+  .wrapper {
+    -webkit-box-shadow: 0 0 10px #202020;
+            box-shadow: 0 0 10px #202020;
+    border-radius: 20px;
+    height: 80%;
+    width: 80%;
+  }
+  .left-side-of-the-wrapper {
+    min-width: 450px;
+    max-width: 800px;
+  }
+  .right-side-of-the-wrapper {
+    display: -webkit-box !important;
+    display: -ms-flexbox !important;
+    display: flex !important;
+  }
+}
+
+@media (min-width: 600px) {
+  .success-message {
+    width: 500px;
+    height: 500px;
+    border: 1px solid #0ac226;
+    border-radius: 50%;
+  }
+}
+/*# sourceMappingURL=Register.css.map */

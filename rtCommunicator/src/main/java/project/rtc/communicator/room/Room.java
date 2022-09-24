@@ -28,14 +28,18 @@ public class Room {
 	public Room() {}
 	
 	
-	public Room(String roomId) {
+	public Room(String roomId, String name) {
 		super();
 		this.roomId = roomId;
+		this.name = name;
 	}
-
-	public Room(String roomId, List<User> users, List<Message> messages) {
+	
+	
+	public Room(String mongoId, String roomId, String name, List<User> users, List<Message> messages) {
 		super();
+		this.mongoId = mongoId;
 		this.roomId = roomId;
+		this.name = name;
 		this.users = users;
 		this.messages = messages;
 	}
@@ -74,9 +78,14 @@ public class Room {
 	public List<User> getUsers() {
 		return users;
 	}
+	
+	
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
 
 
-	public void setUsers(List<User> user) {
+	public void updatedRoom(List<User> user) {
 		this.users = user;
 	}
 
@@ -95,5 +104,6 @@ public class Room {
 	public String toString() {
 		return "Room [mongoId=" + mongoId + ", roomId=" + roomId + ", name=" + name + ", users=" + users + "]";
 	}
+
 
 }

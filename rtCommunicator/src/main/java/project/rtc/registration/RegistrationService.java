@@ -21,9 +21,9 @@ import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
 import project.rtc.registration.activateAccountToken.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.ActivateAccountTokenService;
 import project.rtc.test.user.UserServiceImpl;
-import project.rtc.utils.MailSenderService;
-import project.rtc.utils.MailSenderServiceImpl;
 import project.rtc.utils.jwt.JwtTokenProvider;
+import project.rtc.utils.mail.MailSenderService;
+import project.rtc.utils.mail.MailSenderServiceImpl;
 
 import javax.validation.Path;
 import org.hibernate.validator.internal.engine.path.PathImpl;

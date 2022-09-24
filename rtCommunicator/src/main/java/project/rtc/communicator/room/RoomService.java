@@ -1,20 +1,34 @@
 package project.rtc.communicator.room;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.NoSuchElementException;
 
-import project.rtc.communicator.room.pojo.RoomRequest;
-import project.rtc.communicator.room.pojo.RoomResponse;
+import project.rtc.exceptions.UserNotFoundException;
+import project.rtc.test.user.User;
 
 public interface RoomService {
 	
-	public RoomResponse createRoomWithAuthoringUser(HttpServletRequest httpServletRequest, RoomRequest roomRequest) throws ServletException;
-	public RoomResponse createRoomWithFriend(HttpServletRequest httpServletRequest, RoomRequest roomRequest);
-	public RoomResponse getUserRooms(HttpServletRequest httpServletRequest, RoomRequest roomRequest) throws ServletException;
-	public RoomResponse remove(HttpServletRequest httpServletRequest, RoomRequest roomRequest) throws ServletException;
-	public RoomResponse renameRoom(HttpServletRequest httpServletRequest, RoomRequest roomRequest);
-	public RoomResponse addUserToRoom(HttpServletRequest httpServletRequest, RoomRequest roomRequest);
-	public RoomResponse removeUserFromRoom(HttpServletRequest httpServletRequest, RoomRequest roomRequest);
-	public RoomResponse leaveRoom(HttpServletRequest httpServletRequest, RoomRequest roomRequest) throws ServletException;
+	// This method allows you to create a new room to which the users will be assigned.
+	public Room createRoom(String roomName, List<User> users);
+
+	// This method allows you to delete a room and all user associations with it.
+	// Return transferred Room instance.
+	// Throws NullPointerException if the transferred room does not exist.
+	// Throws IllegalArgumentException if transferred room is not saved in the database.
+	public Room deleteRoom(Room room);
+	
+	public Room addUserToRoom(Room room, User user);
+	
+	// This method allows the user to be removed from the chat room, if assigned to him.
+	// Returns updated Room instance.
+	// Throws NullPointerException if the transferred room does not exist.
+	// Throws IllegalArgumentException if transferred room is not saved in the database.
+	public Room deleteUserFromRoom(Room roo, String nick);
+	
+	
+	// Enables you to retrieve a room from the database, otherwise it throws an NoSuchElementException.
+	public Room getRoom(String roomId);
+	
+	public List<Room> getUserRooms(User user) throws NullPointerException, UserNotFoundException;
 	
 }

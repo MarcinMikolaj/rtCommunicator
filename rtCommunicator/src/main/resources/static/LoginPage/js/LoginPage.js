@@ -59,11 +59,12 @@ const prepareDOMEvents = () => {
 	showPasswordEyeBtn.addEventListener('click', showPasswordEye);
 	hidePasswordEyeBtn.addEventListener('click', hidePasswordEye);
 	
-	//create account
-	createAccoutLinkBtn.addEventListener('click', redirectToAppPanel);
+	//redirect to create account
+	createAccoutLinkBtn.addEventListener('click', registerRedirect);
 	
 	//redirect to 'forgot password'
 	forgotPasswordBtn.addEventListener('click', forgotPasswordRedirect);
+	
 };
 
 const main = () => {
@@ -109,6 +110,13 @@ const forgotPasswordRedirect = () => {
 	window.location.href = "http://localhost:8080/app/forgot";
 }
 
+//Redirect to Forgot passsword site
+const registerRedirect = () => {
+	window.location.href = "http://localhost:8080/app/register";
+}
+
+
+
 const sendCredentialsToServer = (email, password, remember_me) => {
 	fetch('http://localhost:8080/app/login', {
 		method: 'POST',
@@ -136,7 +144,6 @@ const sendCredentialsToServer = (email, password, remember_me) => {
 
 const redirectToAppPanel = () => {
 	window.location.href = "http://localhost:8080/app/panel";
-	
 };
 
 
