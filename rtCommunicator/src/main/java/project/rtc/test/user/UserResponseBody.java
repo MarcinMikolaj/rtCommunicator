@@ -16,6 +16,7 @@ public class UserResponseBody {
 	
 	public UserResponseBody() {
 		super();
+		this.success = false;
 	}
 
 	

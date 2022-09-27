@@ -123,4 +123,57 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 		return result;
 	}
 
+	@Override
+	public Credentials deleteById(Long id) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		entityTransaction.begin();
+		Credentials credentials = entityManager.find(Credentials.class, id);
+		entityManager.remove(credentials);
+		entityTransaction.commit();
+		entityManager.close();
+		return credentials;
+	}
+
+	@Override
+	public int updateEmailById(String email, Long id) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.updateEmailById", Credentials.class);
+		typedQuery.setParameter("email", email);
+		typedQuery.setParameter("id", id);
+		entityTransaction.begin();
+		int result = typedQuery.executeUpdate();
+		entityTransaction.commit();
+		entityManager.close();
+		return result;
+	}
+
+	@Override
+	public Credentials findById(Long id) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();	
+		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.findById", Credentials.class);
+		typedQuery.setParameter("id", id);
+		entityTransaction.begin();
+		Credentials credentials = typedQuery.getSingleResult();
+		entityTransaction.commit();
+		entityManager.close();
+		return credentials;
+	}
+
+	@Override
+	public int updatePasswordById(String password, Long id) {
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.updatePasswordById", Credentials.class);
+		typedQuery.setParameter("password", password);
+		typedQuery.setParameter("id", id);
+		entityTransaction.begin();
+		int result = typedQuery.executeUpdate();
+		entityTransaction.commit();
+		entityManager.close();
+		return result;
+	}
+
 }

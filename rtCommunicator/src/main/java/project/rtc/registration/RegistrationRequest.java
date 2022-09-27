@@ -20,7 +20,7 @@ public final class RegistrationRequest {
 	
 	@NotBlank(message = "Nick cannot be empty")
 	@Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Nick can only contain letters and numbers")
-	@Size(max = 20, message = "Nickname can be up to 20 characters long")
+	@Size(max = 15, message = "Nickname can be up to 15 characters long")
 	@ExistsByNick(message = "An account with the given nickname exists")
 	private final String nick;
 	
@@ -32,6 +32,7 @@ public final class RegistrationRequest {
 	
 	@AssertTrue(message = "You must agree all statements")
 	private final boolean statements;
+	
 	
 	private final ProfilePicture picture;
 	

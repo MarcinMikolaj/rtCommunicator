@@ -17,6 +17,7 @@
     <link rel="stylesheet" th:href="@{../AppPage/css/ManagerRoomBoxStyle.css}" type="text/css">
     <link rel="stylesheet" th:href="@{../AppPage/css/CreateGroupBoxStyle.css}" type="text/css">
     <link rel="stylesheet" th:href="@{../AppPage/css/AddFriendBoxStyle.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{../AppPage/css/ManageAccountBoxStyle.css}" type="text/css">
     
 </head>
 
@@ -37,7 +38,7 @@
                 <i class="fa-solid fa-people-line menu-option-img"></i>
                 <p class="menu-option-description">Create room</p>
             </div>
-            <div class="menu-option">
+            <div class="menu-option open-manager-account-box-btn">
                 <i class="fa-solid fa-user-pen menu-option-img"></i>
                 <p class="menu-option-description">Manage account</p>
             </div>
@@ -78,6 +79,7 @@
             </button>
         </div>
 
+        <!-- add group box -->
         <div class="create-group-box">
             <button class="show-menu-btn-for-create-group-box show-menu-btn">
                 <i class="fa-solid fa-bars"></i>
@@ -96,8 +98,91 @@
             </div>
         </div>
 
+        
+        <!-- Manage account box-->
+        <div class="manage-account-box">
 
-        <!-- friends-box -->
+            <!-- show menu button -->
+            <button class="show-menu-btn-for-manage-account-box show-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+
+            <!-- Change nick option -->
+            <div class="manage-account-option">
+                <p class="manage-account-option-title">Nick</p>
+                <p class="manage-account-option-description">Enter your new nickname</p>
+                <ul class="manager-account-option-message-box m_a_change_user_nick"></ul>
+                <div class="manage-account-input-box">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <input class="change-nick-input" type="text" placeholder="enter nick">
+                    <button class="change-nick-btn">Change</button>
+                </div>
+            </div>
+
+            <!-- Chanege picture option -->
+            <div class="manage-account-option">
+                <p class="manage-account-option-title">Profile picture</p>
+                <p class="manage-account-option-description">Change your profile picture</p>
+                <ul class="manager-account-option-message-box m_a_update_profile_picture"></ul>
+                <div class="a">
+                    <div class="manage-account-input-box-picture">
+                        <label for="file-upload" class="custom-file-upload-manage-account">
+                            <img class="b" src="./img/man-3.jpg" alt="">
+                        </label>
+                        <input class="update-profile-picture-input" id="file-upload" type="file" />
+                    </div>
+                    <button class="update-profile-picture-btn">Save picture</button>
+                </div>
+            </div>
+
+            <!-- Change email option -->
+            <div class="manage-account-option">
+                <p class="manage-account-option-title">Email</p>
+                <p class="manage-account-option-description">Enter your new email adress</p>
+                <ul class="manager-account-option-message-box m_a_update_user_email"></ul>
+                <div class="manage-account-input-box">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <input class="update-user-email-input" type="text" placeholder="enter email">
+                    <button class="update-user-email-btn">Change</button>
+                </div>
+            </div>
+
+            <!-- Change password -->
+            <div class="manage-account-option">
+                <p class="manage-account-option-title">Password</p>
+                <p class="manage-account-option-description">Enter your login and new password to account for
+                    change.</p>
+                <ul class="manager-account-option-message-box m_a_update_user_password"></ul>
+                <div class="manage-account-input-box-password">
+                    <div class="manage-account-input-password sjd">
+                        <i class="fa-solid fa-user-pen"></i>
+                        <input class="update-user-password-confirm-by-login-input" type="text" placeholder="enter your login">
+                    </div>
+                    <div class="manage-account-input-password">
+                        <i class="fa-solid fa-user-pen"></i>
+                        <input class="update-user-password-input" type="text" placeholder="enter new password">
+                    </div>
+                    <button class="update-user-password-btn">Change</button>
+                </div>
+            </div>
+
+            <!-- Remove account -->
+            <div class="manage-account-option">
+                <p class="manage-account-option-title">Remove account</p>
+                <p class="manage-account-option-description">Enter your login to confirm</p>
+                <ul class="manager-account-option-message-box m_a_delete_account"></ul>
+                <div class="manage-account-input-box">
+                    <i class="fa-solid fa-user-pen"></i>
+                    <input class="remove-account-input" type="text" placeholder="enter login">
+                    <button class="remove-account-btn">Remove</button>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- Friends-box -->
+        <!-- It is used to present all the rooms to which the user has access -->
         <div class="friends-box">
 
             <div class="communicator-manager">
@@ -122,7 +207,8 @@
             </ul>
         </div>
 
-        
+
+        <!-- Communicator box -->
         <div class="communicator-box">
             <div class="communicator-top">
                 <div class="communicator-top-first-box">

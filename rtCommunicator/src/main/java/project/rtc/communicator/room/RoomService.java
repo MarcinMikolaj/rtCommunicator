@@ -19,11 +19,17 @@ public interface RoomService {
 	
 	public Room addUserToRoom(Room room, User user);
 	
+	
+	
 	// This method allows the user to be removed from the chat room, if assigned to him.
 	// Returns updated Room instance.
 	// Throws NullPointerException if the transferred room does not exist.
 	// Throws IllegalArgumentException if transferred room is not saved in the database.
-	public Room deleteUserFromRoom(Room roo, String nick);
+	public Room deleteUserFromRoom(Room room, String nick) throws NullPointerException, IllegalArgumentException;
+	
+	// It works just like deleteUserFromRoom(room, nick) but before that it gets the room instance via its id.
+	public Room deleteUserFromRoom(String roomId, String nick) throws NullPointerException, IllegalArgumentException, NoSuchElementException;
+	
 	
 	
 	// Enables you to retrieve a room from the database, otherwise it throws an NoSuchElementException.

@@ -1,0 +1,321 @@
+.manage-account-box {
+  position: relative;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 20px;
+}
+
+.manage-account-box .show-menu-btn-for-manage-account-box {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  background: transparent;
+  color: white;
+  padding: 10px 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 27px;
+  cursor: pointer;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+}
+
+.manage-account-box .show-menu-btn-for-manage-account-box:hover {
+  color: orangered;
+}
+
+.manage-account-box .manage-account-option {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  margin: 15px 0;
+}
+
+.manage-account-box .manage-account-option .manage-account-option-title {
+  font-size: 19px;
+}
+
+.manage-account-box .manage-account-option .manage-account-option-description {
+  margin-bottom: 3px;
+  font-size: 14px;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-message-box {
+  width: 100%;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-message-box .manager-account-option-message {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+  min-height: 30px;
+  margin: 5px 0;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-message-box i {
+  margin-right: 10px;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-success-message {
+  background-color: #7cdb48;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-success-message:hover {
+  background-color: #58e30c;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-fail-message {
+  background-color: #db4848;
+}
+
+.manage-account-box .manage-account-option .manager-account-option-fail-message:hover {
+  background-color: #dc2323;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  width: 100%;
+  height: 40px;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box i {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 0 10px;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box input {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box input:focus {
+  outline: none;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box button {
+  width: 100px;
+  background: transparent;
+  border: none;
+  border-top-right-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+  background-color: #555555;
+  cursor: pointer;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box button:hover {
+  background-color: orangered;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  border: 1px solid white;
+  border-radius: 5px;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password .manage-account-input-password {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password .manage-account-input-password i {
+  margin: 0 10px;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password .manage-account-input-password input {
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  height: 40px;
+  background: transparent;
+  border: none;
+  color: white;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password .manage-account-input-password input:focus {
+  outline: none;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password .sjd {
+  border-bottom: 1px solid white;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password button {
+  width: 100%;
+  height: 42px;
+  border: none;
+  border-bottom-left-radius: 5px;
+  border-bottom-right-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  background-color: #555555;
+  color: white;
+  cursor: pointer;
+}
+
+.manage-account-box .manage-account-option .manage-account-input-box-password button:hover {
+  background-color: orangered;
+}
+
+.manage-account-box .manage-account-option .a {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+}
+
+.manage-account-box .manage-account-option .a .manage-account-input-box-picture {
+  width: 100%;
+  background-color: #555555;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  text-align: center;
+}
+
+.manage-account-box .manage-account-option .a .manage-account-input-box-picture .custom-file-upload-manage-account {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  width: 100%;
+  border-radius: 5px;
+  display: inline-block;
+  padding: 6px 0px;
+  cursor: pointer;
+}
+
+.manage-account-box .manage-account-option .a .manage-account-input-box-picture .custom-file-upload-manage-account .b {
+  -o-object-fit: cover;
+     object-fit: cover;
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+}
+
+.manage-account-box .manage-account-option .a .manage-account-input-box-picture input[type='file'] {
+  display: none;
+}
+
+.manage-account-box .manage-account-option .a .manage-account-input-box-picture:hover {
+  background-color: #676767;
+}
+
+.manage-account-box .manage-account-option .a button {
+  width: 100%;
+  height: 40px;
+  margin-top: 5px;
+  border: none;
+  border-radius: 5px;
+  background-color: #007af4;
+  color: white;
+  cursor: pointer;
+}
+/*# sourceMappingURL=ManageAccountBoxStyle.css.map */

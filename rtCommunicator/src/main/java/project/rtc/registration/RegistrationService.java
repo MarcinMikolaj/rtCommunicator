@@ -39,7 +39,6 @@ public class RegistrationService {
 	private JwtTokenProvider jwtTokenProvider;
 	private UserServiceImpl userService;
 	
-
 	public RegistrationService(CredentialsServiceImpl credentialsServiceImpl,
 			UserServiceImpl userService, ActivateAccountTokenService activateAccountTokenService, Validator validator) {
 		this.credentialsService = credentialsServiceImpl;

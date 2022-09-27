@@ -16,11 +16,12 @@ public class RoomResponsePayload {
 	
 	public RoomResponsePayload() {
 		super();
+		this.success = false;
 	}
 
-	public RoomResponsePayload(boolean success, RoomAction action) {
+	public RoomResponsePayload(RoomAction action) {
 		super();
-		this.success = success;
+		this.success = false;
 		this.action = action;
 	}
 

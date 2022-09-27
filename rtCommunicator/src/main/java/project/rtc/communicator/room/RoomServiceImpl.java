@@ -93,7 +93,7 @@ public class RoomServiceImpl implements RoomService {
 	// Returns updated Room instance.
 	// Throws NullPointerException if the transferred room does not exist.
 	// Throws IllegalArgumentException if transferred room is not saved in the database.
-	public Room deleteUserFromRoom(Room room, String nick) {
+	public Room deleteUserFromRoom(Room room, String nick) throws NullPointerException, IllegalArgumentException {
 		
 		if(room == null)
 			throw new NullPointerException("RoomServiceImpl.deleteUserFromRoom: The Room passed to the function cannot be empty.");
@@ -117,6 +117,16 @@ public class RoomServiceImpl implements RoomService {
 		roomRepository.save(room);
 		
 		return room;
+	}
+	
+	
+	// It works just like deleteUserFromRoom(room, nick) but before that it gets the room instance via its id.
+	@Override
+	public Room deleteUserFromRoom(String roomId, String nick) throws NullPointerException, IllegalArgumentException, NoSuchElementException {
+		
+		Room room = roomRepository.findByRoomId(roomId).orElseThrow(() -> new NoSuchElementException());
+		
+		return deleteUserFromRoom(room, nick);
 	}
 	
 	// Enables you to retrieve a room from the database, otherwise it throws an NoSuchElementException.

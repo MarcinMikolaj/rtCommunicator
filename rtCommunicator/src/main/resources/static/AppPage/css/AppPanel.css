@@ -78,6 +78,7 @@ body {
   height: 50px;
   width: 50px;
   border-radius: 50%;
+  cursor:pointer;
 }
 
 .wrapper .friends-box .communicator-manager .show-menu-btn {
@@ -546,6 +547,9 @@ body {
   }
   .manage-room-box {
     max-width: 430px;
+  }
+  .manage-account-box {
+		max-width: 430px;
   }
   .communicator-box {
     display: -webkit-box !important;

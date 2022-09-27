@@ -63,5 +63,13 @@ public class CredentialsServiceImpl implements CredentialsService {
 		
 		return updatedCredentials;
 	}
+	
+	
+
+	@Override
+	public int updatePasswordByEmail(String userEmail, String password) {
+		
+		return credentialsRepository.updatePasswordByEmail(userEmail, passwordEncoder.encode(password));
+	}
 
 }

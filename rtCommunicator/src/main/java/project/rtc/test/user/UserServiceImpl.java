@@ -1,9 +1,23 @@
 package project.rtc.test.user;
 
 import java.util.Optional;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+
+import javax.validation.Validator;
+
 import org.springframework.stereotype.Service;
 
+import project.rtc.authorization.basic_login.credentials.Credentials;
+import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.CredentialsService;
+import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
+import project.rtc.communicator.room.RoomService;
+import project.rtc.communicator.room.RoomServiceImpl;
 import project.rtc.communicator.room.Statement;
 import project.rtc.communicator.room.StatementType;
 import project.rtc.exceptions.NoAuthorizationTokenException;
@@ -19,13 +33,22 @@ public class UserServiceImpl implements UserService {
 	
     private UserRepository userRepository;
     private JwtTokenProvider jwtTokenProvider;
+    private Validator validator;
+    private CredentialsRepository credentialsRepository;
+    private RoomService roomService;
+    private CredentialsService credentialsService;
     
     private String pathToProfilePictures = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\ProfilePictures\\";
     
     
-    public UserServiceImpl(UserRepository userRepository, JwtTokenProviderImpl jwtTokenProviderImpl) {
+    public UserServiceImpl(UserRepository userRepository, JwtTokenProviderImpl jwtTokenProviderImpl,
+    		Validator validator, CredentialsRepository credentialsRepository, RoomServiceImpl roomServiceImpl, CredentialsServiceImpl credentialsServiceImpl) {
     	this.userRepository = userRepository;
     	this.jwtTokenProvider = jwtTokenProviderImpl;
+    	this.validator = validator;
+    	this.credentialsRepository = credentialsRepository;
+    	this.roomService = roomServiceImpl;
+    	this.credentialsService = credentialsServiceImpl;
     }
 	
 	
@@ -57,7 +80,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 			
-		return null;
+		return user;
 	}
 	
 	
@@ -71,62 +94,240 @@ public class UserServiceImpl implements UserService {
 		Optional<User> userOptional = Optional.of(userRepository
 						.findByEmail(email)
 						.orElseThrow(() -> new UserNotFoundException("UserService.getUser: User not found")));
-    	
-		return userOptional.get();
 		
+		return userOptional.get();	
     }
     
-    
+	// Returns the user with a registered and saved account, otherwise he throws UserNotFoundException
+	// It also loads the photo to the returned user.
+	@Override
+	public User getUserAndLoadPicture(HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException {
+	    	
+		String email = jwtTokenProvider.getTokenSubject(jwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
+		    
+		Optional<User> userOptional = Optional.of(userRepository
+							.findByEmail(email)
+							.orElseThrow(() -> new UserNotFoundException("UserService.getUser: User not found")));
+		
+		User user = loadUserProfileImg(userOptional.get());
+	    	
+	    return user;		
+	 }
     
 
 
 	@Override
-	public UserResponseBody deleteUser(UserRequestBody userRequestBody, HttpServletRequest httpServletRequest) {
+	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest) {
 		
 		User user;
 		UserResponseBody userResponseBody = new UserResponseBody();
-		userResponseBody.setAction(UserAction.UPDATE_USER_NICK);
-		userResponseBody.setSuccess(false);
+		userResponseBody.setAction(UserAction.DELETE_USER);
 		
-		
+
 		try {
 			user = getUser(httpServletRequest);
-			userRepository.delete(user);
-			userResponseBody.setSuccess(true);
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, "Account deleted", StatementType.SUCCES_STATEMENT));
-			return userResponseBody;
-		} catch (UserNotFoundException | NoAuthorizationTokenException | IllegalArgumentException e) {
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, "The account could not be deleted", StatementType.ERROR_STATEMENT));
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+			e.printStackTrace();
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
+		
+		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
+		
+		// If password not equals
+		if(!credentials.getEmail().equals(email)) {
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Login is incorrect", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		}
+		
+		// removes the user from all his rooms
+		try {
+			
+			// remove the user from all his rooms
+			user.getRoomsId().stream()
+			  .filter(id -> id !=null)
+			  .peek(id -> roomService.deleteUserFromRoom(id, user.getNick()))
+			  .toList().size();
+			
+			// deletes the user's account
+			userRepository.delete(user);
+			credentialsRepository.deleteById(credentials.getId());
+			userResponseBody.setSuccess(true);
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account deleted", StatementType.SUCCES_STATEMENT));
+			return userResponseBody;
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Something went wrong", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		} 
 		
 	}
 
 
 
 	@Override
-	public UserResponseBody updateUserNick(UserRequestBody userRequestBody, HttpServletRequest httpServletRequest) {
+	public UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest) {
 		
 		User user;
 		UserResponseBody userResponseBody = new UserResponseBody();
-		userResponseBody.setSuccess(false);
+
 		
+		// try get user from db
 		try {
 			user = getUser(httpServletRequest);
-			userResponseBody.setSuccess(true);
+			user.setNick(nick);
 		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
-
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
 			e.printStackTrace();
+			return userResponseBody;
 		}
 		
+
+		Set<ConstraintViolation<User>> errors = validator.validateProperty(user, "nick");
+		
+		// validate 
+		if(!errors.isEmpty()) {
+			errors.forEach(error -> {
+				userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, error.getMessage(), StatementType.ERROR_STATEMENT));
+			});
+			return userResponseBody;
+		}
+		
+		
+        // save updated entity
+		userRepository.save(user);
+		userResponseBody.setSuccess(true);
+		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, "Updated !", StatementType.SUCCES_STATEMENT));
 		
 		return userResponseBody;
 	}
 
 
+	
+	
 	@Override
-	public UserResponseBody updateUserPicture(UserRequestBody userRequestBody, HttpServletRequest httpServletRequest) {
-		return null;
+	public UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest) {
+		
+		User user;
+		UserResponseBody userResponseBody = new UserResponseBody(); 
+		
+		
+		try {
+			user = getUser(httpServletRequest);
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+			e.printStackTrace();
+			return userResponseBody;
+		}
+		
+		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
+		
+		user.setEmail(email);
+        Set<ConstraintViolation<User>> errors = validator.validateProperty(user, "email");
+		
+		// validate 
+		if(!errors.isEmpty()) {
+			errors.forEach(error -> {
+				userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_EMAIL, error.getMessage(), StatementType.ERROR_STATEMENT));
+			});
+			return userResponseBody;
+		}
+		
+		
+		credentialsRepository.updateEmailById(email, credentials.getId());
+		userResponseBody.setSuccess(true);
+		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_EMAIL, "Updated !", StatementType.SUCCES_STATEMENT));
+		
+		return userResponseBody;
+	}
+
+
+
+	@Override
+	public UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest) {
+		
+		User user;
+		UserResponseBody userResponseBody = new UserResponseBody();
+		
+		try {
+			user = getUser(httpServletRequest);
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+			e.printStackTrace();
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		}
+		
+		// If login is incorrect
+		if(!user.getEmail().equals(email)) {
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "You entered an incorrect login.", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		}
+		
+		// If password is incorrect
+		if(!validPassword(password)) {
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "The specified password is incorrect.", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		}
+		
+		credentialsService.updatePasswordByEmail(user.getEmail(), password);
+		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "Updated !", StatementType.SUCCES_STATEMENT));
+		return userResponseBody;
+	}
+	
+    private boolean validPassword(String password) {
+		
+		  if(password == null)
+			  return false;
+		
+		Pattern pattern = Pattern.compile("^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*[!@#&()–[{}]:;',?/*~$^+=<>]).{8,20}$");
+		Matcher matcher = pattern.matcher(password);
+		
+		return matcher.matches();
+	}
+
+
+
+	@Override
+	public UserResponseBody updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest) {
+		
+		User user;
+		UserResponseBody userResponseBody = new UserResponseBody();
+		
+		try {
+			user = getUser(httpServletRequest);
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+			e.printStackTrace();
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PICTURE, "Fail.", StatementType.ERROR_STATEMENT));
+			return userResponseBody;
+		}
+		
+		
+		
+		// create path to profile picture
+		String pathToUserDirectory = FileUtils.createSingleFolder(pathToProfilePictures + user.getNick());
+				
+		String path = pathToUserDirectory + "//" + "picture.bin";
+		user.setPathToProfileImg(path);
+				
+		FileUtils.saveFileInDirectory(path, profilePicture.getFileInBase64());
+		
+		
+		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PICTURE, "Updated !", StatementType.SUCCES_STATEMENT));
+		return userResponseBody;
+	}
+	
+	
+	
+	private User loadUserProfileImg(User user) {
+		
+		String pathToImg = user.getPathToProfileImg();
+			
+		String pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
+		ProfilePicture profilePicture = new ProfilePicture("profile.jpg", "jpg", 0, pictureInBase64);
+
+		user.setProfilePicture(profilePicture);
+
+		return user;
 	}
 	
 }

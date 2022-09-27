@@ -10,16 +10,24 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 
-@Entity
-@NamedQueries({
+import project.rtc.registration.validators.ExistsByEmail;
+import project.rtc.registration.validators.Password;
+
+@Entity 
+@NamedQueries({  
+	@NamedQuery(name = "Credentials.findById", query = "SELECT c FROM Credentials c WHERE c.id = :id"),
     @NamedQuery(name = "Credentials.findByEmail", query = "SELECT c FROM Credentials c WHERE c.email = :email"),
     @NamedQuery(name = "Credentials.updatePasswordByEmail", query = "UPDATE Credentials c SET c.password = :password WHERE c.email = :email"),
-    @NamedQuery(name = "Credentials.existByEmail", query ="SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM Credentials c where c.email = :email")
+    @NamedQuery(name = "Credentials.existByEmail", query ="SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM Credentials c where c.email = :email"),
+    @NamedQuery(name = "Credentials.updateEmailById", query ="UPDATE Credentials c SET c.email = :email WHERE c.id = :id"),
+    @NamedQuery(name = "Credentials.updatePasswordById", query ="UPDATE Credentials c SET c.password = :password WHERE c.id = :id")
 })
 @Table(name = "credentials")
 public class Credentials implements UserDetails, OAuth2User {
