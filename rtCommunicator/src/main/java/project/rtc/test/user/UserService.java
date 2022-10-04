@@ -1,6 +1,7 @@
 package project.rtc.test.user;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
@@ -16,13 +17,11 @@ public interface UserService {
 	public User getUserAndLoadPicture(HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException;
 	
 	// The method allows you to delete a user account. Ensures that the user will be removed from any room they were previously assigned to.
-	public UserResponseBody deleteUser(String password ,HttpServletRequest httpServletRequest);
+	public UserResponseBody deleteUser(String password ,HttpServletRequest httpServletRequest, HttpServletResponse response);
 	
 	public UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest);
-	
-	
 
 }

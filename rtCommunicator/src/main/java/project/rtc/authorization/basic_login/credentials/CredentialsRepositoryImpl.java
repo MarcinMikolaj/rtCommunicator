@@ -65,7 +65,7 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 	
 	
 	@Override
-	public Credentials findByEmail(String email) {
+	public Credentials findByEmail(String email) throws NoResultException {
 		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
@@ -79,7 +79,6 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 			entityManager.close();
 			return credentials;
 		} catch (NoResultException noResultException) {
-			System.out.println(ConsoleColors.BLUE + "CredentialsRepositoryImpl.findByEmail: " +  noResultException.getMessage() + ConsoleColors.RESET);
 			entityManager.close();
 			return null;
 		}
@@ -139,11 +138,11 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 	public int updateEmailById(String email, Long id) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
-		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.updateEmailById", Credentials.class);
-		typedQuery.setParameter("email", email);
-		typedQuery.setParameter("id", id);
+		Query query = entityManager.createNamedQuery("Credentials.updateEmailById");
+		query.setParameter("email", email);
+		query.setParameter("id", id);
 		entityTransaction.begin();
-		int result = typedQuery.executeUpdate();
+		int result = query.executeUpdate();
 		entityTransaction.commit();
 		entityManager.close();
 		return result;

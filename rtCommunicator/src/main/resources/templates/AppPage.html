@@ -6,12 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>rtCommunicator</title>
+    
     <!-- Font Awesome script -->
     <script src="https://kit.fontawesome.com/91d2f81fc7.js" crossorigin="anonymous"></script>
+    
     <!-- Fonts Google -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    
     <!-- style -->
     <link rel="stylesheet" th:href="@{../AppPage/css/AppPanel.css}" type="text/css">
     <link rel="stylesheet" th:href="@{../AppPage/css/ManagerRoomBoxStyle.css}" type="text/css">
@@ -25,6 +28,7 @@
 
     <div class="wrapper">
 
+        <!-- menu box -->
         <div class="menu-box">
             <div class="menu-option open-friends-box-btn">
                 <i class="fa-solid fa-comment-dots menu-option-img"></i>
@@ -62,16 +66,9 @@
                 <p>Add your friend</p>
                 <i class="fa-regular fa-face-smile add-friend-title-icone"></i>
             </div>
-            <div class="add-friend-success-message">
-                <p>The invitation has been delivered</p>
-                <i class="fa-solid fa-thumbs-up add-friend-success-message-icone"></i>
-            </div>
-            <div class="add-friend-failure-message">
-                <p>User not found</p>
-                <i class="fa-solid fa-exclamation add-friend-failure-message-icone"></i>
-            </div>
             <p class="add-friend-description">You can add your friend via their nickname, remember to include upper and
                 lower case letters.</p>
+            <ul class="add-friend-message-box m_r_o_b_create_room_with_friend"></ul>
             <input class="add-friend-input" type="text" placeholder="enter the user's nickname">
             <button class="add-new-friend-btn" type="default">
                 <i class="fa-solid fa-user-plus add-new-friend-btn-icone"></i>
@@ -79,7 +76,8 @@
             </button>
         </div>
 
-        <!-- add group box -->
+
+        <!-- add room box -->
         <div class="create-group-box">
             <button class="show-menu-btn-for-create-group-box show-menu-btn">
                 <i class="fa-solid fa-bars"></i>
@@ -106,6 +104,10 @@
             <button class="show-menu-btn-for-manage-account-box show-menu-btn">
                 <i class="fa-solid fa-bars"></i>
             </button>
+            
+            <p class="manage-account-title">
+                Account Manager
+            </p>
 
             <!-- Change nick option -->
             <div class="manage-account-option">
@@ -127,7 +129,7 @@
                 <div class="a">
                     <div class="manage-account-input-box-picture">
                         <label for="file-upload" class="custom-file-upload-manage-account">
-                            <img class="b" src="./img/man-3.jpg" alt="">
+                            <img class="b" src="" alt="profile-img">
                         </label>
                         <input class="update-profile-picture-input" id="file-upload" type="file" />
                     </div>
@@ -186,7 +188,7 @@
         <div class="friends-box">
 
             <div class="communicator-manager">
-                <img class="my-profile-img" src="./img/my-profile-img.jpg" alt="fried img">
+                <img class="my-profile-img" src="" alt="profile-img">
                 <p>Chats</p>
                 <button class="show-menu-btn">
                     <i class="fa-solid fa-bars show-menu-btn"></i>

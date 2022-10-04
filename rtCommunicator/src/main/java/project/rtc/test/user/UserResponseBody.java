@@ -3,7 +3,6 @@ package project.rtc.test.user;
 import java.util.ArrayList;
 import java.util.List;
 
-import project.rtc.communicator.room.RoomAction;
 import project.rtc.communicator.room.Statement;
 
 public class UserResponseBody {

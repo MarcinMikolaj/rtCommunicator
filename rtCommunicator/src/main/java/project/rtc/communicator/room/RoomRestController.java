@@ -28,7 +28,7 @@ public class RoomRestController {
 		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
 	 }
 	
-	@RequestMapping(path = "/app/rtc/room/create/with/user", method = RequestMethod.POST)
+	@RequestMapping(path = "/app/rtc/room/create/with/friend", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> createRoomWithFriend(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
 		RoomResponsePayload roomResponse = roomService.createRoomWithFriend(httpServletRequest, roomRequest);
 		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);

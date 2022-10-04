@@ -6,12 +6,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 
 import javax.validation.Validator;
 
 import org.springframework.stereotype.Service;
 
+import project.rtc.authorization.basic_login.controllers.AuthenticationServiceImpl;
 import project.rtc.authorization.basic_login.credentials.Credentials;
 import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.CredentialsService;
@@ -31,28 +33,31 @@ import project.rtc.utils.jwt.JwtTokenProviderImpl;
 @Service
 public class UserServiceImpl implements UserService {
 	
-    private UserRepository userRepository;
-    private JwtTokenProvider jwtTokenProvider;
-    private Validator validator;
     private CredentialsRepository credentialsRepository;
+    private UserRepository userRepository;
+    
     private RoomService roomService;
     private CredentialsService credentialsService;
+    private JwtTokenProvider jwtTokenProvider;
+    
+    private Validator validator;
     
     private String pathToProfilePictures = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\ProfilePictures\\";
     
     
     public UserServiceImpl(UserRepository userRepository, JwtTokenProviderImpl jwtTokenProviderImpl,
-    		Validator validator, CredentialsRepository credentialsRepository, RoomServiceImpl roomServiceImpl, CredentialsServiceImpl credentialsServiceImpl) {
+    		Validator validator, CredentialsRepository credentialsRepository,
+    		RoomServiceImpl roomServiceImpl, CredentialsServiceImpl credentialsServiceImpl, AuthenticationServiceImpl authenticationServiceImpl) {
     	this.userRepository = userRepository;
     	this.jwtTokenProvider = jwtTokenProviderImpl;
     	this.validator = validator;
     	this.credentialsRepository = credentialsRepository;
     	this.roomService = roomServiceImpl;
     	this.credentialsService = credentialsServiceImpl;
+
     }
 	
-	
-	
+    
 	// Allows you to create a new User object for a given user via ReqisterRequest
 	public User createUserAndSaveInDataBase(RegistrationRequest registrationRequest) {
 		
@@ -117,7 +122,7 @@ public class UserServiceImpl implements UserService {
 
 
 	@Override
-	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest) {
+	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		
 		User user;
 		UserResponseBody userResponseBody = new UserResponseBody();
@@ -149,10 +154,18 @@ public class UserServiceImpl implements UserService {
 			  .peek(id -> roomService.deleteUserFromRoom(id, user.getNick()))
 			  .toList().size();
 			
+			
+			User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
+			userResponseBody.setUser(userForClient);
+					
 			// deletes the user's account
 			userRepository.delete(user);
 			credentialsRepository.deleteById(credentials.getId());
 			userResponseBody.setSuccess(true);
+			
+			
+			
+			
 			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account deleted", StatementType.SUCCES_STATEMENT));
 			return userResponseBody;
 			
@@ -198,6 +211,10 @@ public class UserServiceImpl implements UserService {
         // save updated entity
 		userRepository.save(user);
 		userResponseBody.setSuccess(true);
+		
+		User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
+		userResponseBody.setUser(userForClient);
+		
 		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_NICK, "Updated !", StatementType.SUCCES_STATEMENT));
 		
 		return userResponseBody;
@@ -212,16 +229,18 @@ public class UserServiceImpl implements UserService {
 		User user;
 		UserResponseBody userResponseBody = new UserResponseBody(); 
 		
-		
 		try {
 			user = getUser(httpServletRequest);
 		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
 			e.printStackTrace();
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_EMAIL, "User not found", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
 		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
 		
+		
+
 		user.setEmail(email);
         Set<ConstraintViolation<User>> errors = validator.validateProperty(user, "email");
 		
@@ -233,9 +252,14 @@ public class UserServiceImpl implements UserService {
 			return userResponseBody;
 		}
 		
-		
+		userRepository.save(user);
 		credentialsRepository.updateEmailById(email, credentials.getId());
 		userResponseBody.setSuccess(true);
+		
+		
+		User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
+		userResponseBody.setUser(userForClient);
+		
 		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_EMAIL, "Updated !", StatementType.SUCCES_STATEMENT));
 		
 		return userResponseBody;
@@ -265,12 +289,18 @@ public class UserServiceImpl implements UserService {
 		
 		// If password is incorrect
 		if(!validPassword(password)) {
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "The specified password is incorrect.", StatementType.ERROR_STATEMENT));
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "Password must meet the rules.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
+		
 		credentialsService.updatePasswordByEmail(user.getEmail(), password);
 		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PASSWORD, "Updated !", StatementType.SUCCES_STATEMENT));
+		userResponseBody.setSuccess(true);
+		
+		User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
+		userResponseBody.setUser(userForClient);
+		
 		return userResponseBody;
 	}
 	
@@ -301,8 +331,6 @@ public class UserServiceImpl implements UserService {
 			return userResponseBody;
 		}
 		
-		
-		
 		// create path to profile picture
 		String pathToUserDirectory = FileUtils.createSingleFolder(pathToProfilePictures + user.getNick());
 				
@@ -313,6 +341,11 @@ public class UserServiceImpl implements UserService {
 		
 		
 		userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.UPDATE_USER_PICTURE, "Updated !", StatementType.SUCCES_STATEMENT));
+		userResponseBody.setSuccess(true);
+		
+		User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
+		userResponseBody.setUser(userForClient);
+		
 		return userResponseBody;
 	}
 	

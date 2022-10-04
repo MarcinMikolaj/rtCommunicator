@@ -1,8 +1,10 @@
 package project.rtc.test.user;
 
+import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -23,8 +25,10 @@ public class UserRestController {
 	
 	private UserService userService;
 	
+	
 	public UserRestController(UserServiceImpl userServiceImpl) {
 		this.userService = userServiceImpl;
+		
 	}
 	
 	@RequestMapping(path = "/app/account/get", method = RequestMethod.GET)
@@ -104,12 +108,13 @@ public class UserRestController {
 	
 	// Handles the request to delete user
 	@RequestMapping(path = "/app/account/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<UserResponseBody> deleteUser(@RequestBody Map<String, ?> email, HttpServletRequest httpServletRequest) {
+	public ResponseEntity<UserResponseBody> deleteUser(@RequestBody Map<String, ?> email,
+			HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		
 		JSONObject jsonObject = new JSONObject(email);
 		String userEmail = jsonObject.getAsString("email");
 		
-		UserResponseBody userResponseBody = userService.deleteUser(userEmail, httpServletRequest);
+		UserResponseBody userResponseBody = userService.deleteUser(userEmail, httpServletRequest, httpServletResponse);
 		
 		return new ResponseEntity<UserResponseBody>(userResponseBody, HttpStatus.OK);
 	}

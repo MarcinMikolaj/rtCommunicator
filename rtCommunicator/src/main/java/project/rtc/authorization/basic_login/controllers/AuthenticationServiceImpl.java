@@ -112,4 +112,44 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		
 
 	}
+	
+	@Override
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		
+		CookieUtils.deleteCookie(request, response, "jwt");
+		
+		try {
+			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+			
+			if(authentication != null) {
+				if(!authentication.isAuthenticated()) 
+					return;
+			
+				SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
+				SecurityContextHolder.clearContext();
+				
+			} else
+				return;
+			
+		} catch (Exception e) {
+			System.out.println(ConsoleColors.RED
+					+ "LoginServiceImpl.logout: User failed to logout, exception message:"
+					+ e.getMessage() + ConsoleColors.RESET);	
+		}
+		
+		HttpSession session= request.getSession(false);
+	
+		session = request.getSession(false);
+		
+		
+        if(session != null) {
+            session.invalidate();
+        }
+        
+        for(Cookie cookie : request.getCookies()) {
+            cookie.setMaxAge(0);
+        }
+
+        response.sendRedirect("/app/login");
+	}
 }

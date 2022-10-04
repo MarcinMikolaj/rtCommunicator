@@ -193,7 +193,7 @@ const prepareDOMEvents = () => {
 
 	// manage room actions
 	createRoomBtn.addEventListener('click', createRoomRequest);
-	addNewFriendBtn.addEventListener('click', addFiendRequest);
+	addNewFriendBtn.addEventListener('click', createRoomWithFriendRequest);
 	addNewUserToRoomBtn.addEventListener('click', addUserToRoomRequest);
 	removeUserFromRoomBtn.addEventListener('click', removeUserFromRoomRequest); 
     removeRoomBtn.addEventListener('click', removeRoomRequest);
@@ -280,29 +280,12 @@ const logoutRequest = () => {
 		.catch((error) => console.log(error));
 };
 
-// ***********************************************************
-// --------------------- Get Logged User  --------------------
-// ***********************************************************
 
-const getLoggedUser = () => {
-	fetch('http://localhost:8080/app/account/get', {
-		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
-	})
-		.then((response) => response.json())
-		.then((data) => {
-			console.log(data);
-			myProfileImg.src = data.profilePicture.fileInBase64;
-			document.querySelector('.b').src = data.profilePicture.fileInBase64;
-		})
-		.catch((error) => console.log('err: ', error));
-};
 
 // ***********************************************************
 // ---------------- Room Manager Requests --------------------
 // ***********************************************************
+
 
 // This method is responsible for sending add friend request
 const createRoomRequest = () => {
@@ -361,8 +344,8 @@ const getRooms = () => {
 };
 
 // This method is responsible for sending add friend request
-const addFiendRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/create/with/user', {
+const createRoomWithFriendRequest = () => {
+	fetch('http://localhost:8080/app/rtc/room/create/with/friend', {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
@@ -548,6 +531,23 @@ const leaveRoomRequest = () => {
 // ---------------- Account Manager Requests -----------------
 // ***********************************************************
 
+
+const getLoggedUser = () => {
+	fetch('http://localhost:8080/app/account/get', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	})
+		.then((response) => response.json())
+		.then((data) => {
+			console.log(data);
+			setLoggedUserInPanel(data);
+		})
+		.catch((error) => console.log('err: ', error));
+};
+
+
 const changeNickRequest = () => {
 	
 	fetch('http://localhost:8080/app/account/update/nick', {
@@ -565,7 +565,7 @@ const changeNickRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
-				//loadDeliveredRooms(data.rooms);
+				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
@@ -591,7 +591,7 @@ const changeEmailRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
-				//loadDeliveredRooms(data.rooms);
+				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
@@ -620,7 +620,7 @@ const changePasswordRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
-				//loadDeliveredRooms(data.rooms);
+				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
@@ -641,15 +641,20 @@ const deleteAccountRequest = () => {
 		body: JSON.stringify({email: removeAccountInput.value}),
 	})
 		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				//loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
+			//window.location.replace(response.redirected);
+			logoutRequest();
+			})
+		//	return response.json();
+		//})
+		//.then((data) => {
+		//	console.log(data);
+		//	if(data.success === true){
+		//		window.location.replace("localhost:8080/app/login");
+		//	} else {
+		//		addStatementMessageToRoomManagerInUI(data.statements);
+		//	}
+			
+		//})
 		.catch((error) => console.log(error));
 		
 		resteAccountManagerInputs();
@@ -712,6 +717,14 @@ const s = (fileInBase64) => {
 		resteAccountManagerInputs();
 };
 
+
+// Method allows you to set information such as nickname or profile picture in the user interface.
+const setLoggedUserInPanel =(user) => {
+	
+	myProfileImg.src = user.profilePicture.fileInBase64;
+	document.querySelector('.b').src = user.profilePicture.fileInBase64;
+	
+}
 
 // ***********************************************************
 // ---------------- Box Manager and additional features -----------------
@@ -910,12 +923,17 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 	
 	removeAllQueryResultMessageForRoomManager();
 	removeAllQueryResultMessageForAccountManager();
+	removeAllQueryResultMessageForAddFriend();
 	
 	statements.forEach((statements) => {
 		switch (statements.roomAction) {
 			
 			case 'CREATE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_create_room');
+				break;
+				
+			case 'CREATE_ROOM_WITH_FRIEND':
+				loadResultMessageForAddFriendQuery(statements, 'm_r_o_b_create_room_with_friend');
 				break;
 				
 			case 'REMOVE_ROOM':
@@ -1019,6 +1037,32 @@ const loadResultMessageForAccountManagerQuery = (statements, className) => {
 	
 };
 
+// This method adds and displays a message and the execution status of the query operation for the server for add friend feature.
+const loadResultMessageForAddFriendQuery = (statements, className) => {
+	
+	let li = document.createElement('li');
+	li.classList.add('add-friend-message');
+	li.addEventListener('click', () => li.remove());
+	
+	
+	switch (statements.type) {
+     case 'SUCCES_STATEMENT':    
+          li.classList.add('add-friend-success-message');
+	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
+          break;
+     case 'ERROR_STATEMENT':
+     
+         li.classList.add('add-friend-fail-message');
+	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
+         break;        
+     default:
+         console.log(`No message handling of this type. message:${statements.message}`);
+    }
+	
+	document.querySelector('.' + className).appendChild(li);
+	
+};
+
 
 // Allows you to delete all created messages related to the query result for room management.
 const removeAllQueryResultMessageForRoomManager = () => {
@@ -1035,6 +1079,15 @@ const removeAllQueryResultMessageForAccountManager = () => {
 	for (var i = 0, len = liElementsArray.length; i < len; i++) {
     liElementsArray[i].innerHTML = '';
      liElementsArray[i].remove();
+   }
+}
+
+// Allows you to delete all created messages related to the query result for account management.
+const removeAllQueryResultMessageForAddFriend = () => {
+	let liElementsArray = document.querySelectorAll('.add-friend-message');
+	for (var i = 0, len = liElementsArray.length; i < len; i++) {
+    liElementsArray[i].innerHTML = '';
+    liElementsArray[i].remove();
    }
 }
 

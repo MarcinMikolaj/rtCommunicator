@@ -21,4 +21,7 @@ public interface AuthenticationService {
 	// Set current Authentication to false.
 	public void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException;
 
+
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException;
+
 }

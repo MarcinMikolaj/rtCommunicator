@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 public interface UserRepository extends MongoRepository<User, String> {
 
-	public User findByNick(String nick);
+	public Optional<User> findByNick(String nick);
 	public Optional<User> findByEmail(String email);
 	public boolean existsByNick(String nick);
 	

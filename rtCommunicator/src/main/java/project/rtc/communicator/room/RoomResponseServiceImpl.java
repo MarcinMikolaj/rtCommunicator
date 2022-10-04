@@ -87,26 +87,36 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	public RoomResponsePayload createRoomWithFriend(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) {
 		
 		User user;
-		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.CREATE_ROOM);
+		User friend;
+		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.CREATE_ROOM_WITH_FRIEND);
+		
 		List<User> users = new ArrayList<User>();
 		
 		
 		try {
 			user = userService.getUser(httpServletRequest);
-		} catch (UserNotFoundException e) {
-			e.printStackTrace();
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM, "Create room action failed", StatementType.ERROR_STATEMENT));
-			return roomResponse;
-		} catch (NoAuthorizationTokenException e) {
-			e.printStackTrace();
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM, "No permission", StatementType.ERROR_STATEMENT));
-			return roomResponse;
-		} 
-		
 			users.add(user);
-			users.add(userRepository.findByNick(roomRequest.getUserNick()));  
+		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+			e.printStackTrace();
+			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Create room action failed", StatementType.ERROR_STATEMENT));
+			return roomResponse;
+		}
+		
+		try {
+			friend = userRepository.findByNick(roomRequest.getUserNick()).get();
+			users.add(friend);
+		} catch (NoSuchElementException e) {
+			System.out.println("RoomResponseServiceimpl.createRoomWithFriend: User nof found");
+			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "User not found", StatementType.ERROR_STATEMENT));
+			return roomResponse;
+		}
+		
+			
 			roomService.createRoom(roomRequest.getUserNick(), users);
+			
+			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Room has been successfully created", StatementType.SUCCES_STATEMENT));
 			roomResponse.setSuccess(true);
+			
 			return roomResponse;
 
 	}
@@ -262,8 +272,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		
 		
 		try {
-			Optional<Room> roomOptional = roomRepository.findByRoomId(roomRequest.getRoomId());
-			room = roomOptional.get();
+			room = roomRepository.findByRoomId(roomRequest.getRoomId()).get();
 		} catch (NoSuchElementException e) {
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.ADD_USER_TO_ROOM, "User not found", StatementType.ERROR_STATEMENT));
 			e.printStackTrace();
@@ -271,8 +280,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		}
 		
 		try {
-			Optional<User> userOptional = Optional.ofNullable(userRepository.findByNick(roomRequest.getUserNick()));
-			user = userOptional.get();
+			user = userRepository.findByNick(roomRequest.getUserNick()).get();
 		} catch (NoSuchElementException e) {
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.ADD_USER_TO_ROOM, "User not found", StatementType.ERROR_STATEMENT));
 			e.printStackTrace();
@@ -336,8 +344,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		
 		// try to get the room
 		try {
-			Optional<Room> roomOptional = roomRepository.findByRoomId(roomRequest.getRoomId());
-			room = roomOptional.get();
+			room = roomRepository.findByRoomId(roomRequest.getRoomId()).get();
 		} catch (NoSuchElementException e) {
 			e.printStackTrace();
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.RENAME_ROOM, "Your room was not found", StatementType.ERROR_STATEMENT));
@@ -347,9 +354,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		
 		// try to get the user
 		try {
-			Optional<User> userOptional = Optional.ofNullable(userService.getUser(httpServletRequest));
-			user = userOptional.get();
-			
+			user = userService.getUser(httpServletRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.RENAME_ROOM, "User not found", StatementType.ERROR_STATEMENT));
@@ -399,8 +404,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		}
 		
 		try {
-			Optional<User> userOptional = Optional.ofNullable(userService.getUser(httpServletRequest));
-			user = userOptional.get();
+			user = userService.getUser(httpServletRequest);
 		} catch (Exception e) {
 			e.printStackTrace();
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.LEAVE_ROOM, "User not found", StatementType.ERROR_STATEMENT));
