@@ -385,10 +385,11 @@ body {
 }
 
 .wrapper .communicator-box .communicator-content .left-message-box .left-message {
-  max-width: 70%;
+  max-width: 45%;
   margin-left: 5px;
   padding: 10px 15px;
   background-color: orangered;
+  background-color: rebeccapurple;
   border-radius: 20px;
 }
 
@@ -407,7 +408,7 @@ body {
 }
 
 .wrapper .communicator-box .communicator-content .right-message-box .right-message {
-  max-width: 70%;
+  max-width: 45%;
   margin-left: 5px;
   padding: 10px 15px;
   background-color: #454545;
@@ -562,11 +563,16 @@ body {
   .communicator-box .show-only-friends-box-btn {
     display: none;
   }
-  .left-message {
-    width: 50%;
-  }
-  .right-message {
-    width: 50%;
-  }
 }
+
+
+@media (max-width: 769px) {
+	.communicator-content .left-message {
+			max-width: 70% !important;
+		}
+	.communicator-content .right-message {
+			max-width: 70% !important;
+		}
+}
+
 /*# sourceMappingURL=CommunicatorPanel.css.map */

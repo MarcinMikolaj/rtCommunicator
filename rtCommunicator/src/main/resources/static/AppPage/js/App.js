@@ -1,5 +1,10 @@
 // Variables
-let currentluSelectedRoomId;
+let currentRoomList; // The list includes all rooms assigned to the logged in user
+let currentSelectedRoom; // The conversation room selected by the user
+let currentluSelectedRoomId; // Is the identifier of the currently selected room
+let currentlyLoggedUser; // Contain email, nick, profilePicture, roomsId (list)
+
+let client; // WebSocket Client
 
 let friendList; // Presents list of friends, ul element
 let searchFriendInput; // Field to enter a friend nick to find him
@@ -42,6 +47,12 @@ let closeManagerRoomBoxBtn;
 let myProfileImg;
 
 
+//----- Information about the currently selected room  -----
+//provides information to the user about the selected room picture and name
+let selectedRoomPicture; // <img> element
+let selectedRoomName; // <p> element
+
+
 //----- Manager Room -----
 
 // manage room inputs
@@ -60,6 +71,7 @@ let removeUserFromRoomBtn;
 let removeRoomBtn;
 let renameRoomBtn;
 let leaveRoomBtn;
+
 
 
 //----- Manager Account -----
@@ -120,6 +132,11 @@ const prepareDOMElements = () => {
 	// actual logged user information
 	myProfileImg = document.querySelector('.my-profile-img');
 	
+	//----- Information about the currently selected room  -----
+    selectedRoomPicture = document.querySelector('.chosen-friend-img');
+	selectedRoomName = document.querySelector('.chosen-friend-nick');
+
+	
 	// manage account inputs
 	changeNickInput = document.querySelector('.change-nick-input');
 	removeAccountInput = document.querySelector('.remove-account-input');
@@ -162,12 +179,14 @@ const prepareDOMEvents = () => {
 	searchFriendInput.addEventListener('keyup', searchFriend);
 
     friendList.addEventListener('click', showCommunicatorBoxForMobile);
-
+    friendList.addEventListener('click', setRoom);
+    
+   
 	enterMessageInput.addEventListener(
 		'keypress',
 		addRightMessageToUIByEnterKeyPress
 	);
-	sendMessageBtn.addEventListener('click', addRightMessageToUI);
+	sendMessageBtn.addEventListener('click', sendMessageByWebSocketOverSTOMP);
 
 	// Menu open box buttons
 	openRoomsBoxBtn.addEventListener('click', openFriendsBox);
@@ -217,6 +236,9 @@ const main = () => {
 	
 	// get user rooms
 	getRooms();
+	
+	// get connect webSocket
+	//connectWebSocket();
 };
 
 const reset = () => {
@@ -228,7 +250,7 @@ const reset = () => {
 	createGroupBox.style.display = 'none';
 	manageAccountBox.style.display = 'none'; 
 
-	// communicatorContent.innerHTML = ''; // clear message list
+	communicatorContent.innerHTML = ''; // clear message list
 	
 	resteManageRoomInputs();
 	resteAccountManagerInputs();
@@ -253,6 +275,78 @@ const resteAccountManagerInputs = () => {
     updateUserPasswordInput.value = ''; 
     updateUserPasswordConfirmByLoginInput.value = ''; 
 }
+
+
+// ***********************************************************
+// -------------------- Message manager WebSocket STOMP ---------------------
+// ***********************************************************
+
+const connectWebSocket = (data) => {
+	client = Stomp.client('ws://localhost:8080/messenger'); //ws - information abut protocol, localhost.. - chat endpoint
+	
+	console.log("currentlyLoggedUser.email: " + currentlyLoggedUser.email);
+	
+	client.connect({ username: currentlyLoggedUser.email}, function (frame) {
+		client.subscribe('/users/queue/messages', function (data) {
+			if(data.body){
+				let message = JSON.parse(data.body);
+				console.log('received message:')
+				console.log(message);
+				
+				if(message.roomId === currentluSelectedRoomId){
+					let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
+				    addLeftMessageToUI(message.content, picture);
+				}
+						
+			} else {
+				console.log("websocket: got empy message")
+			}
+			
+		});
+	});
+}
+
+// Allows you to add a message from you that will be visible in UI by enter keypress
+const addRightMessageToUIByEnterKeyPress = (event) => {
+	
+	if (event.key !== 'Enter') {
+		return;
+	}
+	
+	if(enterMessageInput.value.length < 1){
+		console.log("The message cannot be empty");
+		return;
+	}
+	
+	sendMessageByWebSocketOverSTOMP();
+};
+
+const sendMessageByWebSocketOverSTOMP = () => {
+	
+	let messageContent = enterMessageInput.value
+	
+	if(enterMessageInput.value.length < 1){
+		console.log("The message cannot be empty");
+		return;
+	}
+	
+	// if user don't select room.
+	if(currentluSelectedRoomId == null){
+		console.log("you must select a room to be able to send a message");
+		return;
+	}
+	
+    addRightMessageToUI(messageContent);
+	
+	let quote = { 
+		roomId: currentluSelectedRoomId,
+		content: messageContent,
+		owner: currentlyLoggedUser.nick
+		};
+		
+	client.send('/app/messenger', {}, JSON.stringify(quote));
+
+};
 
 // ***********************************************************
 // ---------------- Logout Requests -----------------
@@ -306,6 +400,7 @@ const createRoomRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -316,6 +411,7 @@ const createRoomRequest = () => {
 		
 };
 
+//
 const getRooms = () => {
 	fetch('http://localhost:8080/app/rtc/room/get', {
 		method: 'POST',
@@ -334,6 +430,7 @@ const getRooms = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -363,6 +460,7 @@ const createRoomWithFriendRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -394,6 +492,7 @@ const addUserToRoomRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -424,6 +523,7 @@ const removeUserFromRoomRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -455,6 +555,7 @@ const renameRoomRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -486,6 +587,7 @@ const removeRoomRequest = () => {
 			console.log(data);
 			
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -513,11 +615,12 @@ const leaveRoomRequest = () => {
 			return response.json();
 		})
 		.then((data) => {
-			console.log(data);
-			
+
 			if(data.success === true){
+				currentRoomList = data.rooms;
 				loadDeliveredRooms(data.rooms);
 			}
+			
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
@@ -542,8 +645,10 @@ const getLoggedUser = () => {
 		.then((response) => response.json())
 		.then((data) => {
 			console.log(data);
+			currentlyLoggedUser = data;
 			setLoggedUserInPanel(data);
 		})
+		.then((data) => connectWebSocket(data))
 		.catch((error) => console.log('err: ', error));
 };
 
@@ -565,6 +670,7 @@ const changeNickRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentlyLoggedUser = data.user;
 				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -591,6 +697,7 @@ const changeEmailRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentlyLoggedUser = data.user;
 				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -620,6 +727,7 @@ const changePasswordRequest = () => {
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
+				currentlyLoggedUser = data.user;
 				setLoggedUserInPanel(data.user)
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -641,20 +749,8 @@ const deleteAccountRequest = () => {
 		body: JSON.stringify({email: removeAccountInput.value}),
 	})
 		.then((response) => {
-			//window.location.replace(response.redirected);
 			logoutRequest();
-			})
-		//	return response.json();
-		//})
-		//.then((data) => {
-		//	console.log(data);
-		//	if(data.success === true){
-		//		window.location.replace("localhost:8080/app/login");
-		//	} else {
-		//		addStatementMessageToRoomManagerInUI(data.statements);
-		//	}
-			
-		//})
+		})
 		.catch((error) => console.log(error));
 		
 		resteAccountManagerInputs();
@@ -727,7 +823,7 @@ const setLoggedUserInPanel =(user) => {
 }
 
 // ***********************************************************
-// ---------------- Box Manager and additional features -----------------
+// ----------- Box Manager and additional features -----------
 // ***********************************************************
 
 
@@ -750,15 +846,7 @@ const searchFriend = (event) => {
 
 
 
-
-const showCommunicatorBoxForMobile = (e) => {
-	
-	let currentRoom = e.target.closest('.friend');
-	
-	console.log(e.target.closest('.friend'))
-	console.log(e.target.closest('.friend').getAttribute('roomId'));
-	
-	currentluSelectedRoomId = currentRoom.getAttribute('roomId')
+const showCommunicatorBoxForMobile = () => {
 	
 	if (window.innerWidth > 769) {
 		return;
@@ -768,6 +856,8 @@ const showCommunicatorBoxForMobile = (e) => {
 	communicatorBox.style.display = 'flex';
 	communicatorContent.scrollTop = communicatorContent.scrollHeight;
 };
+
+
 
 const openManageAccountBox = () => {
 	roomBox.style.display = 'none';
@@ -832,35 +922,155 @@ const openAddFriendBox = () => {
 	addFriendBox.style.display = 'flex';
 };
 
-// Allows you to add a message from you that will be visible in UI by enter keypress
-const addRightMessageToUIByEnterKeyPress = (event) => {
-	if (event.key !== 'Enter') {
+
+// *************************************************************
+// ----------------------- Message Manager ---------------------
+// *************************************************************
+
+const setRoom = (e) => {
+	
+	fetch('http://localhost:8080/app/rtc/room/get', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+		body: JSON.stringify({
+			userNick: 'none',
+		}),
+	})
+		.then((response) => {
+			return response.json();
+		})
+		.then((data) => {
+			if(data.success === true){
+				currentRoomList = data.rooms;
+				loadDeliveredRooms(data.rooms);
+				
+				
+	let currentRoom = e.target.closest('.friend');
+	console.log("selected roomId: " + e.target.closest('.friend').getAttribute('roomId'));
+	currentluSelectedRoomId = currentRoom.getAttribute('roomId')
+	
+	currentRoomList.forEach(room => {
+		if(currentluSelectedRoomId === room.roomId){
+			currentSelectedRoom = room;
+		}
+	})
+	
+	setInformationAboutSelectedRoom();
+	loadMessageContent();
+				
+				
+		}
+			addStatementMessageToRoomManagerInUI(data.statements);
+		})
+		.catch((error) => console.log(error));
+		
+		resteManageRoomInputs();
+}
+
+// Allows you to set information about the currently selected room
+const setInformationAboutSelectedRoom = () => {
+	
+	let picture;
+	
+	// If no room is selected
+	if(currentluSelectedRoomId === null){
+		console.log("room id cannot be empty to set this room in the interface");
+	}
+	
+    // clear before load new content
+    selectedRoomPicture.src = ''; 
+    selectedRoomName.innerHTML = ''; 
+    
+    
+    // set room picture
+    currentSelectedRoom.users.forEach((user) => {
+	  picture = user.profilePicture.fileInBase64;
+    })
+    
+    selectedRoomPicture.src = picture;
+    
+    // set room name
+    selectedRoomName.innerHTML = `${currentSelectedRoom.name}`;
+   
+}
+
+
+// Allows you to load all messages from the currently selected room and display them in UI
+async function loadMessageContent()  {
+	
+	// clear message list before load messages
+	communicatorContent.innerHTML = ''; 
+	
+	currentSelectedRoom.messages.forEach((message) => {
+		
+		if(message.owner === currentlyLoggedUser.nick){
+			
+			addRightMessageToUI(message.content);
+			
+		} else {
+			let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
+			addLeftMessageToUI(message.content, picture);
+			
+		}
+	})
+	
+}
+
+// The method allows you to find the user in the room and download and return his profile picture
+function getUserPictureFromRoom(room, nick) {
+	
+	let picture;
+	
+	for (let i = 0; i < room.users.length; i++) {
+		
+			if(room.users[i].nick === nick){
+			   picture = room.users[i].profilePicture.fileInBase64;
+			   break;
+		}
+     } 
+	return picture;
+}
+
+
+// Allows you to add a message from you that will be visible in UI
+const addRightMessageToUI = (content) => {
+	
+	if(content.length < 1){
+		console.log("addRightMessageToUI: The message cannot be empty");
 		return;
 	}
-	addRightMessageToUI();
+	
+	let element = document.createElement('div');
+	element.classList.add('right-message-box');
+	element.innerHTML = `<li class="right-message">${content}</li>`;
+	communicatorContent.appendChild(element);
+	enterMessageInput.value = '';
+	communicatorContent.scrollTop = communicatorContent.scrollHeight;
+	
+	
 };
 
 // Allows you to add a message from you that will be visible in UI
-const addRightMessageToUI = () => {
-	let messageContent = enterMessageInput.value;
-
-	if (messageContent.length >= 1) {
-		let message = document.createElement('div');
-		message.classList.add('right-message-box');
-		message.innerHTML = `<li class="right-message">${messageContent}</li>`;
-		communicatorContent.appendChild(message);
-		enterMessageInput.value = '';
-		communicatorContent.scrollTop = communicatorContent.scrollHeight;
-	}
-};
-
-// Allows you to add a message from you that will be visible in UI
-const addLeftMessageToUI = (content) => {
+const addLeftMessageToUI = (content, picture) => {
 	let message = document.createElement('div');
 	message.classList.add('left-message-box');
 	message.innerHTML = `<li class="left-message">${content}</li>`;
 	communicatorContent.appendChild(message);
 	communicatorContent.scrollTop = communicatorContent.scrollHeight;
+	
+	
+	message.innerHTML = `<li class="left-message">${content}</li>`;
+	
+	message.innerHTML = `<li class="left-message-box">
+                    <img class="current-friend-img" src="${picture}" alt="img">
+                    <p class="left-message">${content}</p>
+                </li>`
+	
+	
 };
 
 // ******************************************************************************
@@ -869,17 +1079,26 @@ const addLeftMessageToUI = (content) => {
 
 const loadDeliveredRooms = (rooms) => { 
 	friendList.innerHTML = '';
-	rooms.forEach((room) => addFriendToUserInterfaceInUserFriendList(room, 'none', 'none', 'none'));
+	rooms.forEach((room) => addFriendToUserInterfaceInUserFriendList(room,'none'));
 }
 
 // This function allow add new friend in UI to FrienList,
 // attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
 const addFriendToUserInterfaceInUserFriendList = (
 	room,
-	lastMessageCreator,
-	lastmessageContent,
 	lastMessagetime
 ) => {
+	
+	let lastmessageContent = "";
+	let lastMessageCreator = "";
+	
+	if(room.messages.length > 0){
+		room.messages.forEach((message) => {
+		  lastmessageContent = message.content;
+		  lastMessageCreator = message.owner;
+	    })
+	}
+	
 	if (lastmessageContent.length > 15) {
 		lastmessageContent = lastmessageContent.substring(0, 13);
 		lastmessageContent += '..';
@@ -903,7 +1122,7 @@ const addFriendToUserInterfaceInUserFriendList = (
 	</div>
 	<div class="friend-describe">
 	    <p class="friend-name">${room.name}</p>
-	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent}${lastMessagetime}</p>
+	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent} ${lastMessagetime}</p>
 	</div>
 	<div class="new-message-notification">
 	    <i class="fa-solid fa-comment new-message-notification-img"></i>
@@ -931,6 +1150,10 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 			case 'CREATE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_create_room');
 				break;
+				
+			case 'GET_ROOMS':
+				console.log('GET_ROOMS');
+				break;	
 				
 			case 'CREATE_ROOM_WITH_FRIEND':
 				loadResultMessageForAddFriendQuery(statements, 'm_r_o_b_create_room_with_friend');

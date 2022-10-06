@@ -10,10 +10,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import project.rtc.communicator.user.User;
+import project.rtc.communicator.user.UserRepository;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
-import project.rtc.test.user.User;
-import project.rtc.test.user.UserRepository;
 import project.rtc.utils.FileUtils;
 
 @Service
@@ -164,6 +164,8 @@ public class RoomServiceImpl implements RoomService {
 		return rooms;
 		
 	}
+	
+	
 	
 	// This method allows you to return a unique identifier that can be used when creating a new room
 	private String createRoomId() {

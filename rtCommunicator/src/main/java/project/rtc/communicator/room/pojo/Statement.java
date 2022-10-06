@@ -1,4 +1,4 @@
-package project.rtc.communicator.room;
+package project.rtc.communicator.room.pojo;
 
 public final class Statement<A> {
 	

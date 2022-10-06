@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import project.rtc.communicator.room.ResponseService.RoomResponseService;
+import project.rtc.communicator.room.ResponseService.RoomResponseServiceImpl;
 import project.rtc.communicator.room.pojo.RoomRequestPayload;
 import project.rtc.communicator.room.pojo.RoomResponsePayload;
 
@@ -33,7 +35,6 @@ public class RoomRestController {
 		RoomResponsePayload roomResponse = roomService.createRoomWithFriend(httpServletRequest, roomRequest);
 		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
 	 }
-	
 	
 	@RequestMapping(path = "/app/rtc/room/get", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> getRooms(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{

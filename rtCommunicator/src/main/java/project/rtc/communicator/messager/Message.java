@@ -1,4 +1,4 @@
-package project.rtc.communicator.message;
+package project.rtc.communicator.messager;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -8,6 +8,8 @@ public class Message {
 	
 	@Id
 	private String mongoId;
+	
+	//The passed identifier(roomId) cannot be empty
 	private String roomId;
 	private String owner;
 	private String content;

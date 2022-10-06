@@ -1,4 +1,4 @@
-package project.rtc.communicator.room;
+package project.rtc.communicator.room.ResponseService;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -15,14 +15,21 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import project.rtc.communicator.room.Room;
+import project.rtc.communicator.room.RoomAction;
+import project.rtc.communicator.room.RoomRepository;
+import project.rtc.communicator.room.RoomService;
+import project.rtc.communicator.room.RoomServiceImpl;
 import project.rtc.communicator.room.pojo.RoomRequestPayload;
 import project.rtc.communicator.room.pojo.RoomResponsePayload;
+import project.rtc.communicator.room.pojo.Statement;
+import project.rtc.communicator.room.pojo.StatementType;
+import project.rtc.communicator.user.User;
+import project.rtc.communicator.user.UserRepository;
+import project.rtc.communicator.user.UserServiceImpl;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
-import project.rtc.test.user.User;
-import project.rtc.test.user.UserRepository;
-import project.rtc.test.user.UserServiceImpl;
 import project.rtc.utils.FileUtils;
 
 @Service
@@ -124,10 +131,17 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	@Override
     public RoomResponsePayload getUserRooms(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) throws ServletException{
 		
+		User user;
+		List<Room> rooms;
+		
 		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.GET_ROOMS);
 		
 		try {
-			roomResponse.setRooms(roomService.getUserRooms(userService.getUser(httpServletRequest)));
+			user = userService.getUser(httpServletRequest);
+			rooms = roomService.getUserRooms(user);
+			roomResponse.setRooms(rooms);
+			
+			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.GET_ROOMS, "Get rooms action success !", StatementType.SUCCES_STATEMENT));
 			roomResponse.setSuccess(true);
 			return roomResponse;
 		} catch (Exception e) {
@@ -434,5 +448,4 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		    	 .filter(u -> u != null)
 		    	 .anyMatch(u -> u.getNick().equals(nick));
 	 }
-	
 }

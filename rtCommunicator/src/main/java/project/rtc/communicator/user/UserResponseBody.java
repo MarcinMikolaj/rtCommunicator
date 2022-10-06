@@ -1,9 +1,9 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import project.rtc.communicator.room.Statement;
+import project.rtc.communicator.room.pojo.Statement;
 
 public class UserResponseBody {
 	

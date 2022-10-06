@@ -1,4 +1,4 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import java.util.ArrayList;
 import java.util.List;

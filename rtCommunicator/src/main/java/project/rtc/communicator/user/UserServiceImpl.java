@@ -1,4 +1,4 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import java.util.Optional;
 import java.util.Set;
@@ -20,8 +20,8 @@ import project.rtc.authorization.basic_login.credentials.CredentialsService;
 import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
 import project.rtc.communicator.room.RoomService;
 import project.rtc.communicator.room.RoomServiceImpl;
-import project.rtc.communicator.room.Statement;
-import project.rtc.communicator.room.StatementType;
+import project.rtc.communicator.room.pojo.Statement;
+import project.rtc.communicator.room.pojo.StatementType;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;

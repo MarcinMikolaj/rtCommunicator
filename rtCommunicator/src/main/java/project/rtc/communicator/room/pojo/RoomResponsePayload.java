@@ -5,7 +5,6 @@ import java.util.List;
 
 import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomAction;
-import project.rtc.communicator.room.Statement;
 
 public class RoomResponsePayload {
 	

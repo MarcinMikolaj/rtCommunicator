@@ -18,9 +18,9 @@ import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.credentials.CredentialsService;
 import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
+import project.rtc.communicator.user.UserServiceImpl;
 import project.rtc.registration.activateAccountToken.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.ActivateAccountTokenService;
-import project.rtc.test.user.UserServiceImpl;
 import project.rtc.utils.jwt.JwtTokenProvider;
 import project.rtc.utils.mail.MailSenderService;
 import project.rtc.utils.mail.MailSenderServiceImpl;

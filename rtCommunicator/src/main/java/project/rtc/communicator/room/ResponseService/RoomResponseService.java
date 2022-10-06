@@ -1,4 +1,4 @@
-package project.rtc.communicator.room;
+package project.rtc.communicator.room.ResponseService;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
