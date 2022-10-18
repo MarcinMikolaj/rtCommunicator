@@ -165,7 +165,17 @@ public class RoomServiceImpl implements RoomService {
 		
 	}
 	
-	
+	@Override
+	public Room addUserToRoom(Room room, User user) {
+		
+		user.getRoomsId().add(room.getRoomId());
+		userRepository.save(user);
+		
+		room.getUsers().add(user);
+		roomRepository.save(room);
+		
+		return room;
+	}
 	
 	// This method allows you to return a unique identifier that can be used when creating a new room
 	private String createRoomId() {
@@ -194,18 +204,6 @@ public class RoomServiceImpl implements RoomService {
 		user.setProfilePicture(profilePicture);
 
 		return user;
-	}
-
-	@Override
-	public Room addUserToRoom(Room room, User user) {
-		
-		user.getRoomsId().add(room.getRoomId());
-		userRepository.save(user);
-		
-		room.getUsers().add(user);
-		roomRepository.save(room);
-		
-		return room;
 	}
 
 }

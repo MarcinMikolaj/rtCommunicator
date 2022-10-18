@@ -52,7 +52,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		if(!credentialsService.exist(loginRequestPayload))
 			return new LoginResponsePayload(null, false);
 		
-		
 		usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(), loginRequestPayload.getPassword());
 		Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 			

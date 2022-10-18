@@ -13,16 +13,18 @@ public class Message {
 	private String roomId;
 	private String owner;
 	private String content;
+	private String dateMilisecondsUTC;
 	
 	public Message() {
 		super();
 	}
-
-	public Message(String roomId, String owner, String content) {
+	
+	public Message(String roomId, String owner, String content, String dateMilisecondsUTC) {
 		super();
 		this.roomId = roomId;
 		this.owner = owner;
 		this.content = content;
+		this.dateMilisecondsUTC = dateMilisecondsUTC;
 	}
 	
 	
@@ -56,6 +58,16 @@ public class Message {
 	
 	public void setContent(String content) {
 		this.content = content;
+	}
+	
+
+	public String getDateMilisecondsUTC() {
+		return dateMilisecondsUTC;
+	}
+	
+
+	public void setDateMilisecondsUTC(String dateMilisecondsUTC) {
+		this.dateMilisecondsUTC = dateMilisecondsUTC;
 	}
 
 	@Override

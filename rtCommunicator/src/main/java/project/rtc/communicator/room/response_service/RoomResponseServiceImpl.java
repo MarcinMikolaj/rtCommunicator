@@ -1,4 +1,4 @@
-package project.rtc.communicator.room.ResponseService;
+package project.rtc.communicator.room.response_service;
 
 import java.util.ArrayList;
 import java.util.Collections;

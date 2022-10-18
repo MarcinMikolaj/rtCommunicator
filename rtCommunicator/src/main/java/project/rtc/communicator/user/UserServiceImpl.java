@@ -1,5 +1,6 @@
 package project.rtc.communicator.user;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,6 +19,7 @@ import project.rtc.authorization.basic_login.credentials.Credentials;
 import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.CredentialsService;
 import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
+import project.rtc.communicator.invitations.Invitation;
 import project.rtc.communicator.room.RoomService;
 import project.rtc.communicator.room.RoomServiceImpl;
 import project.rtc.communicator.room.pojo.Statement;
@@ -26,6 +28,7 @@ import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
 import project.rtc.registration.RegistrationRequest;
+import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.FileUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;
 import project.rtc.utils.jwt.JwtTokenProviderImpl;
@@ -350,16 +353,67 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	
-	
-	private User loadUserProfileImg(User user) {
+	// Allows you to load a photo into the user class instance if this instance has a path to the photo.
+	// Returns the user with the photo loaded.
+	public User loadUserProfileImg(User user) {
 		
-		String pathToImg = user.getPathToProfileImg();
-			
-		String pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
-		ProfilePicture profilePicture = new ProfilePicture("profile.jpg", "jpg", 0, pictureInBase64);
+		String pictureInBase64;
+		String pathToImg;
+		ProfilePicture profilePicture;
+		
+		pathToImg = user.getPathToProfileImg();
+		
+		if(pathToImg == null || pathToImg.equals(""))
+			throw new IllegalArgumentException("UserServiceImpl.loadUserProfileImg: the user does not have a profile picture path set");
+		
+		
+		pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
+		profilePicture = new ProfilePicture("profile.jpg", "jpg", 0, pictureInBase64);
 
 		user.setProfilePicture(profilePicture);
 
+		return user;
+	}
+	
+
+    // The method enables adding a new friend request to the list of invitations of a given user.
+	// Returns the user whose invitation list has changed.
+	@Override
+	public User addInvitations(String nick, Invitation invitation) {
+		
+		User user;
+		
+		user = userRepository.findByNick(nick).orElseThrow(() 
+				-> new NoSuchElementException(ConsoleColors.YELLOW + "UserServiceImpl.addInvitations: User not found" + ConsoleColors.RESET));
+		
+		user.getInvitations().add(invitation.getIdentificator());
+		
+		userRepository.save(user);
+		
+		return user;
+	}
+
+
+	// Lets you remove an invitation assigned to a given user.
+	// It accepts the invitation to be deleted as a parameter.
+	// Returns the user for whom the actions were performed.
+	@Override
+	public User removeInvitation(Invitation invitation) {
+		
+		User user;
+		String nick;
+		String identificator;
+		
+		
+		nick = invitation.getInvited();
+		identificator = invitation.getIdentificator();
+		
+		user = userRepository.findByNick(nick).orElseThrow(() -> new NoSuchElementException("UserServiceImpl.removeInvitation: User not found"));
+		
+		user.getInvitations().removeIf(i -> i.equals(identificator));
+		
+		userRepository.save(user);
+		
 		return user;
 	}
 	

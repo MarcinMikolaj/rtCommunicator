@@ -3,6 +3,7 @@ package project.rtc.communicator.user;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import project.rtc.communicator.invitations.Invitation;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
@@ -23,5 +24,19 @@ public interface UserService {
 	public UserResponseBody updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest);
+	
+	// The method enables adding a new friend request to the list of invitations of a given user.
+	// Returns the user whose invitation list has changed.
+	public User addInvitations(String nick, Invitation invitation);
+	
+	// Allows you to load a photo into the user class instance if this instance has a path to the photo.
+	// Returns the user with the photo loaded.
+	public User loadUserProfileImg(User user);
+	
+	// Lets you remove an invitation assigned to a given user.
+	// It accepts the invitation to be deleted as a parameter.
+	// Returns the user for whom the actions were performed.
+	public User removeInvitation(Invitation invitation);
+	
 
 }

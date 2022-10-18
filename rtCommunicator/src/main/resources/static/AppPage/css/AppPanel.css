@@ -552,6 +552,9 @@ body {
   .manage-account-box {
 		max-width: 430px;
   }
+  .invitations-box {
+		max-width: 430px;
+  }
   .communicator-box {
     display: -webkit-box !important;
     display: -ms-flexbox !important;

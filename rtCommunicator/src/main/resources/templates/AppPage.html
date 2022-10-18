@@ -21,6 +21,7 @@
     <link rel="stylesheet" th:href="@{../AppPage/css/CreateGroupBoxStyle.css}" type="text/css">
     <link rel="stylesheet" th:href="@{../AppPage/css/AddFriendBoxStyle.css}" type="text/css">
     <link rel="stylesheet" th:href="@{../AppPage/css/ManageAccountBoxStyle.css}" type="text/css">
+    <link rel="stylesheet" th:href="@{../AppPage/css/InvitationBoxStyle.css}" type="text/css">
     
 </head>
 
@@ -30,30 +31,50 @@
 
         <!-- menu box -->
         <div class="menu-box">
+        
+            <!-- Chats -->
             <div class="menu-option open-friends-box-btn">
                 <i class="fa-solid fa-comment-dots menu-option-img"></i>
                 <p class="menu-option-description">Chats</p>
             </div>
+            
+            <!-- Add new friend -->
             <div class="menu-option open-add-friend-box-btn">
                 <i class="fa-solid fa-user-group menu-option-img"></i>
                 <p class="menu-option-description">Add new friends</p>
             </div>
+            
+            <!-- Create Room -->
             <div class="menu-option open-create-group-box-btn">
                 <i class="fa-solid fa-people-line menu-option-img"></i>
                 <p class="menu-option-description">Create room</p>
             </div>
+            
+            <!-- Invitations -->
+            <div class="menu-option open-invitations-box-btn">
+                <i class="fa-solid fa-user-plus menu-option-img"></i>
+                <p class="menu-option-description">Invitations</p>
+                <div class="invitation-counter-box"></div>
+            </div>
+            
+            <!-- Manage account -->
             <div class="menu-option open-manager-account-box-btn">
                 <i class="fa-solid fa-user-pen menu-option-img"></i>
                 <p class="menu-option-description">Manage account</p>
             </div>
+            
+            <!-- Report problem -->
             <div class="menu-option">
                 <i class="fa-solid fa-triangle-exclamation menu-option-img"></i>
                 <p class="menu-option-description">Report problem</p>
             </div>
+            
+            <!-- Log out -->
             <div class="menu-option logout-btn">
                 <i class="fa-solid fa-arrow-right-from-bracket menu-option-img"></i>
                 <p class="menu-option-description">log out</p>
             </div>
+            
         </div>
 
 
@@ -96,6 +117,17 @@
             </div>
         </div>
 
+        <!-- Invitations box-->
+        <div class="invitations-box">
+
+            <!-- show menu button -->
+            <button class="show-menu-btn">
+                <i class="fa-solid fa-bars"></i>
+            </button>
+            
+            <ul class="invitation-list"></ul>
+
+        </div>
         
         <!-- Manage account box-->
         <div class="manage-account-box">

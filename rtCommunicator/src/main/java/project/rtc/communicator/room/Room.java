@@ -98,12 +98,11 @@ public class Room {
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
-
+	
 
 	@Override
 	public String toString() {
 		return "Room [mongoId=" + mongoId + ", roomId=" + roomId + ", name=" + name + ", users=" + users + "]";
 	}
-
 
 }

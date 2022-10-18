@@ -8,6 +8,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import project.rtc.authorization.oauth2.provider.AuthProvider;
+import project.rtc.communicator.invitations.InvitationRequestPayload;
+import project.rtc.communicator.invitations.InvitationService;
+import project.rtc.communicator.invitations.InvitationServiceImpl;
 import project.rtc.communicator.messager.Message;
 import project.rtc.communicator.messager.MessageRepository;
 import project.rtc.communicator.messager.MessageService;
@@ -17,6 +20,8 @@ import project.rtc.communicator.room.RoomRepository;
 import project.rtc.communicator.room.RoomService;
 import project.rtc.communicator.user.User;
 import project.rtc.communicator.user.UserRepository;
+import project.rtc.communicator.user.UserService;
+import project.rtc.communicator.user.UserServiceImpl;
 import project.rtc.registration.ProfilePicture;
 import project.rtc.registration.RegistrationRequest;
 import project.rtc.registration.RegistrationService;
@@ -31,16 +36,18 @@ public class MyTest {
 	private UserRepository userRepository;
 	private RoomRepository roomRepository;
 	private RoomService roomService;
+	private InvitationService invitationService;
 	
 	
-	public MyTest(UserRepository userRepository, RoomRepository roomRepository,
-			RegistrationService registrationService, RoomService roomService, MessageRepository messageRepository, MessageServiceImpl messageServiceImpl) {
+	public MyTest(UserRepository userRepository, RoomRepository roomRepository,RegistrationService registrationService,
+			RoomService roomService, MessageRepository messageRepository, MessageServiceImpl messageServiceImpl, InvitationServiceImpl invitationServiceImpl) {
 		this.userRepository = userRepository;
 		this.roomRepository = roomRepository;
 		this.registrationService = registrationService;
 		this.roomService = roomService;
 		this.messageRepository = messageRepository;
 		this.messageService = messageServiceImpl;
+		this.invitationService = invitationServiceImpl;
 	}
 	
 	@RequestMapping(path = "/", method = RequestMethod.GET)
@@ -51,6 +58,7 @@ public class MyTest {
 		messageRepository.deleteAll();
 		createTestAccounts();
 		createTestRooms();
+		createTestInvitations();
 	}
 	
 	
@@ -100,24 +108,52 @@ public class MyTest {
 		users1.add(userRepository.findByEmail("ewelina@gmail.com").get());
 		Room room = roomService.createRoom("Przyjaciele", users1);
 		
-		Message message1 = new Message(room.getRoomId(), "anastazja2", "Hej co u cb słychać ?");
-		Message message3 = new Message(room.getRoomId(), "ewelina32", "Byłam zajęta kursem na prawo jazdy");
-		Message message2 = new Message(room.getRoomId(), "anastazja2", "Dawno się domnie nie odzywałaś.");
-		Message message4 = new Message(room.getRoomId(), "ewelina32", "Wiem, przepraszam cie !");
-		Message message5 = new Message(room.getRoomId(), "mateusz86", "Ma ktoś ochotę jutro wyjść ?");
+		//Wed Oct 06 2021 05:12:30 GMT+0200 (Central European Summer Time)
+		Message message01 = new Message(room.getRoomId(), "mateusz86", "Moje pierwsza wiadomość na chacie", "1633489950000");
+		
+		//Fri Oct 07 2022 05:12:30 GMT+0200 (Central European Summer Time)
+		Message message0 = new Message(room.getRoomId(), "anastazja2", "Moje druga wiadomość na chacie", "1665112350000");
+		Message message1 = new Message(room.getRoomId(), "anastazja2", "Hej co u cb słychać ?", "1665112350000");
+		
+		//Sun Oct 09 2022 23:23:42 GMT+0200 (Central European Summer Time)
+		Message message3 = new Message(room.getRoomId(), "ewelina32", "Byłam zajęta kursem na prawo jazdy", "1665350589580");
+		
+		//Sun Oct 09 2022 23:28:47 GMT+0200 (Central European Summer Time)
+		Message message2 = new Message(room.getRoomId(), "anastazja2", "Dawno się domnie nie odzywałaś.", "1665350927257");
+		
+		//Sun Oct 09 2022 23:35:11 GMT+0200 (Central European Summer Time)
+		Message message4 = new Message(room.getRoomId(), "ewelina32", "Wiem, przepraszam cie !", "1665351311701");
+		
+		//Sun Oct 09 2022 23:41:21 GMT+0200 (Central European Summer Time)
+		Message message5 = new Message(room.getRoomId(), "mateusz86", "Ma ktoś ochotę jutro wyjść ?", "1665351681759");
+		
+		messageService.save(message01);
+		messageService.save(message0);
 		messageService.save(message1);
 		messageService.save(message2);
 		messageService.save(message3);
 		messageService.save(message4);
 		messageService.save(message5);
 		
-		
-		
 		List<User> users2 = new ArrayList<User>();
 		users2.add(userRepository.findByEmail("marcin.mikolajczyk22@gmail.com").get());
 		users2.add(userRepository.findByEmail("mateusz87@gmail.com").get());
 		roomService.createRoom("mateusz86", users2);
 		
+	}
+	
+	private void createTestInvitations() {
+		
+		// String inviting, String invited
+		
+		InvitationRequestPayload invitationRequestPayload01 = new InvitationRequestPayload("mionszu2", "anastazja2");
+		invitationService.create(invitationRequestPayload01);
+		
+		InvitationRequestPayload invitationRequestPayload02 = new InvitationRequestPayload("mateusz86", "anastazja2");
+		invitationService.create(invitationRequestPayload02);
+		
+		InvitationRequestPayload invitationRequestPayload03 = new InvitationRequestPayload("mateusz86", "anastazja2");
+		invitationService.create(invitationRequestPayload03);
 	}
 	
 }

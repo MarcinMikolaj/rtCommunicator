@@ -9,6 +9,7 @@ public class UserResponseBody {
 	
 	private boolean success;
 	private UserAction action;
+	
 	private User user;
 	private List<Statement<UserAction>> statements = new ArrayList<Statement<UserAction>>();
 	

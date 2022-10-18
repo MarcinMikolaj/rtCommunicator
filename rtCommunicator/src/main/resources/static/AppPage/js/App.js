@@ -20,10 +20,11 @@ let communicatorBox;
 let createGroupBox;
 
 // Menu boxes
+let menuBox;
 let addFriendBox;
 let managerRoomBox;
 let manageAccountBox;
-let menuBox;
+let invitationsBox;
 
 // Open buttons
 let openVideoCallBtn;
@@ -36,6 +37,7 @@ let openAddFriendBoxBtn;
 let openCreateGroupBoxBtn;
 let openManageAccountBoxBtn;
 let logoutBtn;
+let openInvitationBoxBtn;
 
 // other buttons
 let showOnlyFriendsBoxBtn; // Show friend-box button, ony for devices 769 breakpoint
@@ -51,6 +53,11 @@ let myProfileImg;
 //provides information to the user about the selected room picture and name
 let selectedRoomPicture; // <img> element
 let selectedRoomName; // <p> element
+
+
+//----- Manager Invitations -----
+let acceptInvitationBtnCollection;
+let declineInvitationBtnCollection;
 
 
 //----- Manager Room -----
@@ -110,6 +117,7 @@ const prepareDOMElements = () => {
 	addFriendBox = document.querySelector('.add-friend-box');
 	createGroupBox = document.querySelector('.create-group-box');
 	manageAccountBox = document.querySelector('.manage-account-box');
+	invitationsBox = document.querySelector('.invitations-box');
 
 	// open buttons
 	openVideoCallBtn = document.querySelector('.open-video-call-btn');
@@ -122,6 +130,7 @@ const prepareDOMElements = () => {
 	openCreateGroupBoxBtn = document.querySelector('.open-create-group-box-btn');
 	openManageAccountBoxBtn = document.querySelector('.open-manager-account-box-btn');
 	logoutBtn = document.querySelector('.logout-btn');
+	openInvitationBoxBtn = document.querySelector('.open-invitations-box-btn');
 	
 
 	// other buttons
@@ -135,8 +144,12 @@ const prepareDOMElements = () => {
 	//----- Information about the currently selected room  -----
     selectedRoomPicture = document.querySelector('.chosen-friend-img');
 	selectedRoomName = document.querySelector('.chosen-friend-nick');
-
 	
+	// manage invitations btn 
+    acceptInvitationBtnCollection = document.getElementsByClassName('invitation-accept-button') ;
+    declineInvitationBtnCollection = document.getElementsByClassName('invitation-reject-button');
+    
+   
 	// manage account inputs
 	changeNickInput = document.querySelector('.change-nick-input');
 	removeAccountInput = document.querySelector('.remove-account-input');
@@ -193,7 +206,8 @@ const prepareDOMEvents = () => {
 	openAddFriendBoxBtn.addEventListener('click', openAddFriendBox);
 	openCreateGroupBoxBtn.addEventListener('click', openCreateGroupBox);
 	openManageAccountBoxBtn.addEventListener('click', openManageAccountBox);
-	myProfileImg.addEventListener('click', openManageAccountBox);
+	myProfileImg.addEventListener('click', openManageAccountBox); 
+	openInvitationBoxBtn.addEventListener('click', openInvitationBox);
 	
 
 	showOnlyFriendsBoxBtn.addEventListener('click', showFriendsBoxForMobile);
@@ -209,10 +223,11 @@ const prepareDOMEvents = () => {
 	updateUserPasswordBtn.addEventListener('click', changePasswordRequest);
 	updateProfilePictureBtn.addEventListener('click', updateProfilePictureRequest);
 	
+	// invitation actions
+	addNewFriendBtn.addEventListener('click', sendInvitationRequest);
 
 	// manage room actions
 	createRoomBtn.addEventListener('click', createRoomRequest);
-	addNewFriendBtn.addEventListener('click', createRoomWithFriendRequest);
 	addNewUserToRoomBtn.addEventListener('click', addUserToRoomRequest);
 	removeUserFromRoomBtn.addEventListener('click', removeUserFromRoomRequest); 
     removeRoomBtn.addEventListener('click', removeRoomRequest);
@@ -223,6 +238,7 @@ const prepareDOMEvents = () => {
 	logoutBtn.addEventListener('click', logoutRequest);
     
 };
+
 
 const main = () => {
 	prepareDOMElements();
@@ -239,6 +255,8 @@ const main = () => {
 	
 	// get connect webSocket
 	//connectWebSocket();
+	
+	updateInvitationList();
 };
 
 const reset = () => {
@@ -277,25 +295,20 @@ const resteAccountManagerInputs = () => {
 }
 
 
-// ***********************************************************
+// **************************************************************************
 // -------------------- Message manager WebSocket STOMP ---------------------
-// ***********************************************************
+// **************************************************************************
 
 const connectWebSocket = (data) => {
 	client = Stomp.client('ws://localhost:8080/messenger'); //ws - information abut protocol, localhost.. - chat endpoint
-	
-	console.log("currentlyLoggedUser.email: " + currentlyLoggedUser.email);
 	
 	client.connect({ username: currentlyLoggedUser.email}, function (frame) {
 		client.subscribe('/users/queue/messages', function (data) {
 			if(data.body){
 				let message = JSON.parse(data.body);
-				console.log('received message:')
-				console.log(message);
 				
 				if(message.roomId === currentluSelectedRoomId){
-					let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
-				    addLeftMessageToUI(message.content, picture);
+				    addLeftMessageToUI(message);
 				}
 						
 			} else {
@@ -337,16 +350,22 @@ const sendMessageByWebSocketOverSTOMP = () => {
 	}
 	
     addRightMessageToUI(messageContent);
-	
+    
+    
 	let quote = { 
 		roomId: currentluSelectedRoomId,
 		content: messageContent,
-		owner: currentlyLoggedUser.nick
+		owner: currentlyLoggedUser.nick,
+		// number of milliseconds, UTC
+		dateMilisecondsUTC: new Date().getTime() 
 		};
 		
 	client.send('/app/messenger', {}, JSON.stringify(quote));
 
 };
+
+
+
 
 // ***********************************************************
 // ---------------- Logout Requests -----------------
@@ -440,36 +459,7 @@ const getRooms = () => {
 		resteManageRoomInputs();
 };
 
-// This method is responsible for sending add friend request
-const createRoomWithFriendRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/create/with/friend', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			userNick: addFriendInput.value,
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
+
 
 
 // This method is responsible for sending 'add user to actual choosen room' request
@@ -902,11 +892,16 @@ const showFriendsBoxForMobile = () => {
 };
 
 const openMenuBox = () => {
-	managerRoomBox.style.display = 'none';
+	
+	if (window.innerWidth < 769) {
+		managerRoomBox.style.display = 'none';
+	}
+	
 	addFriendBox.style.display = 'none';
 	roomBox.style.display = 'none';
 	createGroupBox.style.display = 'none';
 	manageAccountBox.style.display = 'none';
+	invitationsBox.style.display = 'none';
 	menuBox.style.display = 'flex';
 };
 
@@ -920,6 +915,11 @@ const openAddFriendBox = () => {
 	menuBox.style.display = 'none';
 	roomBox.style.display = 'none';
 	addFriendBox.style.display = 'flex';
+};
+
+const openInvitationBox = () => {
+	menuBox.style.display = 'none';
+	invitationsBox.style.display = 'flex';
 };
 
 
@@ -1005,16 +1005,42 @@ async function loadMessageContent()  {
 	// clear message list before load messages
 	communicatorContent.innerHTML = ''; 
 	
-	currentSelectedRoom.messages.forEach((message) => {
+	// get message list from room
+	let messages = currentSelectedRoom.messages;
+	
+	if(messages.length <= 0){
+		console.log("there are no messages to display");
+		return;
+	}
+	
+	// add all message to UI
+	messages.forEach((message, index) => {
 		
 		if(message.owner === currentlyLoggedUser.nick){
+			
+			if(index === 0){
+				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
+			}
+			
+			
+			if(index >= 1 && messages.length > index){
+				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
+			}
 			
 			addRightMessageToUI(message.content);
 			
 		} else {
-			let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
-			addLeftMessageToUI(message.content, picture);
 			
+			if(index === 0){
+				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
+			}
+			
+			
+			if(index >= 1 && messages.length > index){
+				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
+			}
+			
+			addLeftMessageToUI(message); 
 		}
 	})
 	
@@ -1055,23 +1081,87 @@ const addRightMessageToUI = (content) => {
 };
 
 // Allows you to add a message from you that will be visible in UI
-const addLeftMessageToUI = (content, picture) => {
-	let message = document.createElement('div');
-	message.classList.add('left-message-box');
-	message.innerHTML = `<li class="left-message">${content}</li>`;
-	communicatorContent.appendChild(message);
+const addLeftMessageToUI = (message) => {
+	
+	let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
+			
+	let element = document.createElement('div');
+	element.classList.add('left-message-box');
+	
+	element.innerHTML = `<li class="left-message-box">
+                    <img class="current-friend-img" src="${picture}" alt="img">
+                    <p class="left-message">${message.content}</p>
+                </li>`;
+	
+	communicatorContent.appendChild(element);
 	communicatorContent.scrollTop = communicatorContent.scrollHeight;
 	
-	
-	message.innerHTML = `<li class="left-message">${content}</li>`;
-	
-	message.innerHTML = `<li class="left-message-box">
-                    <img class="current-friend-img" src="${picture}" alt="img">
-                    <p class="left-message">${content}</p>
-                </li>`
-	
-	
 };
+
+const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeLast) => {
+	
+	let current_date = new Date();
+	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
+	let result_to_print = '';
+	
+	let a = new Date (parseInt(dateMilisecondsUTCLast));
+	let b = new Date (parseInt(dateMilisecondsUTCOneBeforeLast));
+
+	let diffBetweenLastTwoMessage = diff_minutes(a, b);
+	//console.log("diffBetweenLastTwoMessage: " + diffBetweenLastTwoMessage);
+	
+	if(diffBetweenLastTwoMessage <= 3){
+		return;
+	}
+	
+	//choose a format
+	let diff = diff_days(current_date, delivered_date);
+	//console.log("diff: " + diff)
+	
+	if(diff < 1){
+		result_to_print = delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} else if(diff >= 1 && diff < 7) {
+		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		result_to_print = days[delivered_date.getDay()] + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} else {
+		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} 
+	
+	
+	// Create element and add to user interface (message list)
+	let element = document.createElement('p');
+	element.classList.add('message-date');
+	element.innerHTML = `${result_to_print}`;
+	
+	communicatorContent.appendChild(element);
+	
+}
+
+const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
+	
+	let current_date = new Date();
+	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
+	let result_to_print = '';
+	
+	//choose a format
+	let diff = diff_days(current_date, delivered_date);
+	
+	if(diff < 1){
+		result_to_print = delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} else if(diff >= 1 && diff < 7) {
+		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+		result_to_print = days[delivered_date.getDay()] + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} else {
+		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
+	} 
+	
+	// Create element and add to user interface (message list)
+	let element = document.createElement('p');
+	element.classList.add('message-date');
+	element.innerHTML = `${result_to_print}`;
+	
+	communicatorContent.appendChild(element);
+}
 
 // ******************************************************************************
 // ---------------- Room manager: display rooms in UI -------------------
@@ -1079,23 +1169,25 @@ const addLeftMessageToUI = (content, picture) => {
 
 const loadDeliveredRooms = (rooms) => { 
 	friendList.innerHTML = '';
-	rooms.forEach((room) => addFriendToUserInterfaceInUserFriendList(room,'none'));
+	rooms.forEach((room) => loadRooms(room));
 }
 
 // This function allow add new friend in UI to FrienList,
 // attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
-const addFriendToUserInterfaceInUserFriendList = (
-	room,
-	lastMessagetime
-) => {
+const loadRooms = (room) => {
+	
 	
 	let lastmessageContent = "";
 	let lastMessageCreator = "";
+	let lastMessagetime = "";
+	
 	
 	if(room.messages.length > 0){
 		room.messages.forEach((message) => {
 		  lastmessageContent = message.content;
 		  lastMessageCreator = message.owner;
+		  
+		  lastMessagetime = getDateDiffirence(parseInt(message.dateMilisecondsUTC));
 	    })
 	}
 	
@@ -1108,16 +1200,17 @@ const addFriendToUserInterfaceInUserFriendList = (
 	friend.classList.add('friend');
 	friend.setAttribute('roomId', room.roomId);
 	
-	let users = room.users;
-	let picture
+	let lastUserPicture;
+	
 	
 	//load picture
-	users.forEach((user) => {
-		picture = user.profilePicture.fileInBase64
+	room.users.forEach((user) => {
+		lastUserPicture = user.profilePicture.fileInBase64
 	});
 	
+	
 	friend.innerHTML = `<div class="friend-img">
-	    <img class="profile-img" src="${picture}" alt="img">
+	    <img class="profile-img" src="${lastUserPicture}" alt="img">
 	    <div class="activity-light activity-light-red"></div>
 	</div>
 	<div class="friend-describe">
@@ -1131,6 +1224,8 @@ const addFriendToUserInterfaceInUserFriendList = (
 
 	friendList.append(friend);
 };
+
+
 
 
 // **************************************************************************************************************
@@ -1314,6 +1409,280 @@ const removeAllQueryResultMessageForAddFriend = () => {
    }
 }
 
+// ***********************************************************
+// -------------------- Invitation Requests ------------------
+// ***********************************************************
+
+// The method enables querying the server for a list of invitations held by the user
+const updateInvitationList = () => {
+	
+	// Load invitations after page load
+	getInvitationsRequest();
+	
+	// Update invitations periodically
+	setInterval(getInvitationsRequest, 30000); //30s
+};
+
+function getInvitationsRequest() {
+	
+	fetch('http://localhost:8080/app/rtc/invitation/get/all', {
+		method: 'GET',
+		headers: {
+			'Content-Type': 'application/json',
+		},
+	})
+		.then((response) => response.json())
+		.then((data) => {
+            console.log("Updated invitations");
+            console.log(data);
+            addInvitation(data);
+		})
+		.catch((error) => console.log('err: ', error));
+	
+}
+
+
+function acceptOrDeclineInvitationRequest(identyficator, accepted) {
+	fetch('http://localhost:8080/app/rtc/invitation/decision', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+		body: JSON.stringify({
+			accepted: accepted,
+			identyficator: identyficator
+		}),
+	})
+		.then((response) => {
+			console.log(response);
+			getInvitationsRequest();
+		})
+		.catch((error) => console.log(error));
+};
+
+// The method allows you to send a query regarding the invitation of a new user
+const sendInvitationRequest = () => {
+	
+	fetch('http://localhost:8080/app/rtc/room/invitation/send', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+		body: JSON.stringify({
+			invited: addFriendInput.value,
+			inviting: currentlyLoggedUser.nick
+		}),
+	})
+		.then((response) => {
+			return response.json();
+		})
+		.then((data) => {
+			console.log(data);
+		})
+		.catch((error) => console.log(error));
+		
+		resteManageRoomInputs();
+};
+
+// ***********************************************************
+// ------------------- Invitation Manager --------------------
+// ***********************************************************
+
+// This section is responsible for the ability to add and display invitations for a given user in the user interface.
+
+// The method allows you to add a new friend request to the invitations list;
+function addInvitation(invitations) {
+	
+	let invitationElement;
+	let invitationList = document.querySelector('.invitation-list');
+	invitationList.innerHTML = '';
+	
+	invitations.forEach((invitation) => {
+		invitationElement = createInvitation(invitation);
+		invitationList.appendChild(invitationElement);
+	})
+}
+
+// Allows you to create invitation items
+function createInvitation(invitation) {
+	let element = document.createElement('li');
+	
+	element.classList.add('invitation-box');
+	element.setAttribute('identificator', invitation.identificator);
+	element.innerHTML = `<img class="invitation-img" src="${invitation.user.profilePicture.fileInBase64}" alt="img">
+	<div class="invitation-description-box">
+
+		<div class="invitation-name-date-box">
+			<p class="invitation-name-field">${invitation.inviting}</p>
+			<p class="invitation-date-field">${invitation.creation_date}</p>
+		</div>
+
+		<div class="mutual-friends-box">
+			<i class="fa-solid fa-user-group"></i>
+			<p class="invitation-mutual-friends-field">0 wspólnych znajomych</p>
+		</div>
+
+		<div class="invitation-buttons-box">
+			<button class="invitation-button invitation-accept-button" identificator=${invitation.identificator}>Accept</button>
+			<button class="invitation-button invitation-reject-button" identificator=${invitation.identificator}>Reject</button>
+		</div>
+	</div>`;
+	
+	element.querySelector('.invitation-accept-button').addEventListener('click', CallAcceptInvitationRequest);
+	element.querySelector('.invitation-reject-button').addEventListener('click', CallAcceptInvitationRequest);
+
+	return element;
+}
+
+
+const CallAcceptInvitationRequest = (event) => {
+	
+	let identyficator = event.target.getAttribute('identificator')
+	console.log('accet invitation, identificator: ' + identyficator);
+	
+	if(identyficator !== null)
+	  acceptOrDeclineInvitationRequest(identyficator, true);
+	
+}
+
+const declineInvitation = (event) => {
+	
+	let identyficator = event.target.getAttribute('identificator');
+	console.log('decline invitation, identificator: ' + identyficator);
+	
+	if(identyficator !== null)
+	  acceptOrDeclineInvitationRequest(identyficator, false);
+	
+}
+
+//// manage invitations btn 
+   // acceptInvitationBtnCollection = document.getElementsByClassName('invitation-accept-button') ;
+  ///  declineInvitationBtnCollection = document.getElementsByClassName('invitation-reject-button');
+
+// ***********************************************************
+// ------------------------ Time Utils -----------------------
+// ***********************************************************
+
+// It is used to tell the user when the last message was delivered.
+// Function returns the time difference between the current date and the delivered date
+// The result returns the year if is greater than one, otherwise returns the number of weeks.
+// If the difference is less than a week, it returns the number of days.
+// If the difference is less than the day, the time in hours is returned.
+// If the difference is less than the hour, the time in minuts is returned.
+// If the difference is less than the one minute, a message is returned "now".
+function getDateDiffirence(delivered_date_in_miliseconds_utc) {
+	
+	let result;
+	let current_date = new Date();
+	let delivered_date = new Date(delivered_date_in_miliseconds_utc);
+	
+	//console.log(current_date);
+	//console.log("delivered_date_in_miliseconds_utc" + delivered_date_in_miliseconds_utc);
+	//console.log(delivered_date);
+
+	if (current_date < delivered_date) {
+		console.log('delivered_date is less then current_date');
+		return undefined;
+	}
+
+	// Years
+	result = diff_years(current_date, delivered_date);
+
+	if (result >= 1) {
+		return Math.trunc(result) + ' year';
+	}
+
+	// Weeks
+	result = diff_weeks(current_date, delivered_date);
+
+	if (result >= 1) {
+		return Math.trunc(result) + ' week';
+	}
+
+	// Days
+	result = diff_days(current_date, delivered_date);
+
+	if (result >= 1 && result <= 6) {
+		return Math.trunc(result) + ' days';
+	}
+
+	// Hours
+	result = diff_hours(current_date, delivered_date);
+
+	if (result >= 1 && result <= 23) {
+		return Math.trunc(result) + ' hour';
+	}
+
+	// minuts
+	result = diff_minutes(current_date, delivered_date);
+
+	if (result >= 1 && result <= 59) {
+		return Math.trunc(result) + ' min';
+	}
+
+	return 'now';
+}
+
+// Allows you to calculate the difference between the dates in minutes
+function diff_minutes(dt2, dt1) {
+	// One day in seconds
+	const oneMintute = 60;
+
+	// Calculating the time diffirence between two dates
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
+
+	// Calculating the number of minuts between two dates
+	return diffInTime / oneMintute;
+}
+
+// Allows you to calculate the difference between the dates in hours
+function diff_hours(dt2, dt1) {
+	// One day in seconds
+	const oneHour = 60 * 60;
+
+	// Calculating the time diffirence between two dates
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
+
+	// Calculating the number of hours between two dates
+	return diffInTime / oneHour;
+}
+
+// Allows you to calculate the difference between the dates in days
+function diff_days(dt2, dt1) {
+	// One day in seconds
+	const oneDay = 60 * 60 * 24;
+
+	// Calculating the time diffirence between two dates
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
+
+	// Calculating the number of days between two dates
+	return diffInTime / oneDay;
+}
+
+// Allows you to calculate the difference between the dates in weeks
+function diff_weeks(dt2, dt1) {
+	// One week in seconds
+	let oneWeek = 60 * 60 * 24 * 7;
+
+	// Calculating the time diffirence between two dates
+	let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+
+	// Calculating the number of weeks between two dates
+	return Math.abs(diff / oneWeek);
+}
+
+// Allows you to calculate the difference between the dates in years
+function diff_years(dt2, dt1) {
+	// Calculating the time diffirence between two dates
+	let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+	diff /= 60 * 60 * 24;
+
+	return Math.abs(diff / 365.25);
+}
 
 // ***********************************************************
 // ---------------- DOM Content Load -----------------
