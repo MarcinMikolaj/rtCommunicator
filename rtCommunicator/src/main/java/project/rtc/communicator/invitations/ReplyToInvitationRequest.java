@@ -3,11 +3,13 @@ package project.rtc.communicator.invitations;
 // Template for the decision about the invitation received from the user.
 public class ReplyToInvitationRequest {
 	
-	// Indicates whether the message was accepted.
+	// Indicates whether the friend request has been accepted.
 	private boolean accepted;
 	
 	// Indicates to invitation identificator.
 	private String identyficator;
+	
+	private String roomId;
 	
 	
 	public ReplyToInvitationRequest() {

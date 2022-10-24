@@ -105,6 +105,7 @@ public class UserServiceImpl implements UserService {
 		
 		return userOptional.get();	
     }
+	
     
 	// Returns the user with a registered and saved account, otherwise he throws UserNotFoundException
 	// It also loads the photo to the returned user.

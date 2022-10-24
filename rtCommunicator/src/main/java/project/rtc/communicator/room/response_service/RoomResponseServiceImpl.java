@@ -1,11 +1,11 @@
 package project.rtc.communicator.room.response_service;
 
-import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import javax.servlet.ServletException;
@@ -15,6 +15,9 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import project.rtc.communicator.messager.Message;
+import project.rtc.communicator.messager.MessageService;
+import project.rtc.communicator.messager.MessageServiceImpl;
 import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomAction;
 import project.rtc.communicator.room.RoomRepository;
@@ -29,8 +32,6 @@ import project.rtc.communicator.user.UserRepository;
 import project.rtc.communicator.user.UserServiceImpl;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
-import project.rtc.registration.ProfilePicture;
-import project.rtc.utils.FileUtils;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
@@ -39,15 +40,18 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	private RoomRepository roomRepository;
 	private UserRepository userRepository;
 	private UserServiceImpl userService;
+	private MessageService messageService;
 	
 	private RoomService roomService;
 
 	
-	public RoomResponseServiceImpl(RoomRepository roomRepository, UserRepository userRepository, UserServiceImpl userServiceImpl, RoomServiceImpl roomServiceImpl) {
+	public RoomResponseServiceImpl(RoomRepository roomRepository, UserRepository userRepository,
+			UserServiceImpl userServiceImpl, RoomServiceImpl roomServiceImpl, MessageServiceImpl messageServiceImpl) {
 		this.roomRepository = roomRepository;
 		this.userRepository = userRepository;
 		this.userService = userServiceImpl;
 		this.roomService = roomServiceImpl;
+		this.messageService = messageServiceImpl;
 	}
 	
 	@Override
@@ -90,43 +94,43 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	
 	
 	
-	@Override
-	public RoomResponsePayload createRoomWithFriend(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) {
-		
-		User user;
-		User friend;
-		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.CREATE_ROOM_WITH_FRIEND);
-		
-		List<User> users = new ArrayList<User>();
-		
-		
-		try {
-			user = userService.getUser(httpServletRequest);
-			users.add(user);
-		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
-			e.printStackTrace();
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Create room action failed", StatementType.ERROR_STATEMENT));
-			return roomResponse;
-		}
-		
-		try {
-			friend = userRepository.findByNick(roomRequest.getUserNick()).get();
-			users.add(friend);
-		} catch (NoSuchElementException e) {
-			System.out.println("RoomResponseServiceimpl.createRoomWithFriend: User nof found");
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "User not found", StatementType.ERROR_STATEMENT));
-			return roomResponse;
-		}
-		
-			
-			roomService.createRoom(roomRequest.getUserNick(), users);
-			
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Room has been successfully created", StatementType.SUCCES_STATEMENT));
-			roomResponse.setSuccess(true);
-			
-			return roomResponse;
-
-	}
+//	@Override
+//	public RoomResponsePayload createRoomWithFriend(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) {
+//		
+//		User user;
+//		User friend;
+//		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.CREATE_ROOM_WITH_FRIEND);
+//		
+//		List<User> users = new ArrayList<User>();
+//		
+//		
+//		try {
+//			user = userService.getUser(httpServletRequest);
+//			users.add(user);
+//		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
+//			e.printStackTrace();
+//			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Create room action failed", StatementType.ERROR_STATEMENT));
+//			return roomResponse;
+//		}
+//		
+//		try {
+//			friend = userRepository.findByNick(roomRequest.getUserNick()).get();
+//			users.add(friend);
+//		} catch (NoSuchElementException e) {
+//			System.out.println("RoomResponseServiceimpl.createRoomWithFriend: User nof found");
+//			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "User not found", StatementType.ERROR_STATEMENT));
+//			return roomResponse;
+//		}
+//		
+//			
+//			roomService.createRoom(roomRequest.getUserNick(), users);
+//			
+//			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.CREATE_ROOM_WITH_FRIEND, "Room has been successfully created", StatementType.SUCCES_STATEMENT));
+//			roomResponse.setSuccess(true);
+//			
+//			return roomResponse;
+//
+//	}
 	
 	@Override
     public RoomResponsePayload getUserRooms(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) throws ServletException{
@@ -137,9 +141,25 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		RoomResponsePayload roomResponse = new RoomResponsePayload(RoomAction.GET_ROOMS);
 		
 		try {
-			user = userService.getUser(httpServletRequest);
+			user = userService.getUser(httpServletRequest);		
 			rooms = roomService.getUserRooms(user);
+			
+			System.out.println("FFFFFFFFFFFFFF: " + roomRequest.getRoomId());
+			if(roomRequest.getRoomId() != null ) {
+				messageService.addReadBy(roomRequest.getRoomId(), roomRequest.getUserNick());
+				rooms = roomService.getUserRooms(user);
+			}
+			
+			
+			Map<String, Integer> ss = countUnreadMessages(rooms, user.getNick());
+			
+			for (Map.Entry<String, Integer> entry : ss.entrySet()) {
+		        System.out.println(entry.getKey() + ":" + entry.getValue());
+		    }
+			
+			roomResponse.setUnreadMessages(ss);
 			roomResponse.setRooms(rooms);
+			
 			
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.GET_ROOMS, "Get rooms action success !", StatementType.SUCCES_STATEMENT));
 			roomResponse.setSuccess(true);
@@ -150,6 +170,29 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 			e.printStackTrace();
 			return roomResponse;
 		}
+	}
+	
+	private Map<String, Integer> countUnreadMessages(List<Room> roomList, String userNick) {
+		
+		Map<String, Integer> unreadMessages = new HashMap<String, Integer>();
+		
+		roomList.stream()
+		   .filter(r -> r != null)
+		   .filter(r -> r.getRoomId() != null)
+		   .peek(r -> unreadMessages.put(r.getRoomId(), count(r, userNick)))
+		   .collect(Collectors.toList()).size();
+		  
+		return unreadMessages;
+	}
+	
+	
+	private int count(Room room, String userNick) {
+		
+		return room.getMessages().stream()
+		   .filter(m -> m != null)
+		   .filter(m -> m.getMissedBy().contains(userNick))
+		   .collect(Collectors.toList())
+		   .size();
 	}
 	
 	

@@ -13,7 +13,7 @@ public final class Statement<A> {
 		this.type = type;
 	}
 
-	public A getRoomAction() {
+	public A action() {
 		return action;
 	}
 
@@ -27,7 +27,7 @@ public final class Statement<A> {
 
 	@Override
 	public String toString() {
-		return "Statement [roomAction=" + action + ", type=" + type + ", message=" + message + "]";
+		return "Statement [action=" + action + ", type=" + type + ", message=" + message + "]";
 	}
 
 }

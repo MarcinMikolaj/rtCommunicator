@@ -1,6 +1,5 @@
 package project.rtc.communicator.messager;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -59,10 +58,29 @@ public class MessageServiceImpl implements MessageService {
 		room = roomRepository.findByRoomId(message.getRoomId()).orElseThrow(() -> new NoSuchElementException("MessageServiceImpl.save: no room found"));
 		room.getMessages().add(message);
 		
+		message = loadMissedByList(message, room);
+		
 		messageRepository.save(message);
 		roomRepository.save(room);
 		
 		return message;
+	}
+	
+	// Allows you to populate the list indicating users (all belonging to the room) who have not read the message.
+	private Message loadMissedByList(Message message, Room room) {
+		
+		room.getUsers().stream()
+		   .filter(u -> u != null)
+		   .filter(u -> u.getNick() != null)
+           .filter(u -> !u.getNick().equals(message.getOwner()))
+		   .peek(u -> message.getMissedBy().add(u.getNick()))
+		   .collect(Collectors.toList())
+		   .size();
+		
+		message.getReceivedBy().add(message.getOwner());
+		
+		return message;
+		
 	}
 
 	// This method allows you to send messages to all users in the room through the use of websocket
@@ -89,6 +107,24 @@ public class MessageServiceImpl implements MessageService {
        
 		return recipients;
 	}
+
 	
-	
+	// It allows you to set all messages in a given room (roomId) to be read by the user (userNick).
+	// The method returns a list of messages for which the change was made.
+	@Override
+	public List<Message> addReadBy(String roomId, String userNick) {
+		
+		Room room = roomRepository.findByRoomId(roomId).orElseThrow(() -> new NoSuchElementException());
+		
+		for(Message m: room.getMessages()) {
+			if(m.getMissedBy().contains(userNick) && !m.getReceivedBy().contains(userNick)) {
+				m.getMissedBy().removeIf(nick -> nick.equals(userNick));
+				m.getReceivedBy().add(userNick);
+			}
+		}	
+		roomRepository.save(room);
+		
+		return room.getMessages();
+	}
+
 }

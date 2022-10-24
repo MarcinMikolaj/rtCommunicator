@@ -34,6 +34,7 @@ public class InvitationRestController {
 	}
 	
 	
+	// Responsible for creating an invitation for a given user.
 	@RequestMapping(path = "/app/rtc/room/invitation/send", method = RequestMethod.POST)
 	public ResponseEntity<String> sendInvitation(@RequestBody InvitationRequestPayload invitingRequestPayload, HttpServletRequest httpServletRequest) {
 		
@@ -45,6 +46,7 @@ public class InvitationRestController {
 	}
 	
 	
+	// Responsible for handling the decision on the given invitation.
 	@RequestMapping(path = "/app/rtc/invitation/decision", method = RequestMethod.POST)
 	public ResponseEntity<String> accept(@RequestBody ReplyToInvitationRequest replyToInvitationRequest){
 		
@@ -55,5 +57,4 @@ public class InvitationRestController {
 		return new ResponseEntity<String>("decision", HttpStatus.OK);
 	}
 	
-
 }

@@ -20,7 +20,6 @@ public interface RoomService {
 	public Room addUserToRoom(Room room, User user);
 	
 	
-	
 	// This method allows the user to be removed from the chat room, if assigned to him.
 	// Returns updated Room instance.
 	// Throws NullPointerException if the transferred room does not exist.

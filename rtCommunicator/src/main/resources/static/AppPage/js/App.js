@@ -2,7 +2,9 @@
 let currentRoomList; // The list includes all rooms assigned to the logged in user
 let currentSelectedRoom; // The conversation room selected by the user
 let currentluSelectedRoomId; // Is the identifier of the currently selected room
+
 let currentlyLoggedUser; // Contain email, nick, profilePicture, roomsId (list)
+let unreadMessages; // Represents the number of unread messages for each room on a key-value basis (room id: number)
 
 let client; // WebSocket Client
 
@@ -97,6 +99,8 @@ let removeAccountBtn;
 let updateUserEmailBtn;
 let updateUserPasswordBtn;
 let updateProfilePictureBtn;
+
+
 
 
 // Prepare DOM Elements
@@ -200,6 +204,9 @@ const prepareDOMEvents = () => {
 		addRightMessageToUIByEnterKeyPress
 	);
 	sendMessageBtn.addEventListener('click', sendMessageByWebSocketOverSTOMP);
+	
+	
+	document.querySelector('.communicator-box').addEventListener('click', clearNofification);
 
 	// Menu open box buttons
 	openRoomsBoxBtn.addEventListener('click', openFriendsBox);
@@ -310,6 +317,9 @@ const connectWebSocket = (data) => {
 				if(message.roomId === currentluSelectedRoomId){
 				    addLeftMessageToUI(message);
 				}
+				
+				// Allows you to add an unread notification counter item to the room item.
+				addMessageCounterElementToRoom(message, unreadMessages);
 						
 			} else {
 				console.log("websocket: got empy message")
@@ -396,22 +406,19 @@ const logoutRequest = () => {
 
 
 // ***********************************************************
-// ---------------- Room Manager Requests --------------------
+// ----------------------- Room Requests ---------------------
 // ***********************************************************
 
-
-// This method is responsible for sending add friend request
-const createRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/create', {
+function sendHttpRequestRoom(url, payload){
+	
+	fetch(url, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify({
-			roomName: createRoomInput.value
-		}),
+		body: JSON.stringify(payload),
 	})
 		.then((response) => {
 			return response.json();
@@ -420,210 +427,43 @@ const createRoomRequest = () => {
 			console.log(data);
 			if(data.success === true){
 				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
+				unreadMessages = data.unreadMessages;
+				loadDeliveredRooms(data.rooms, data.unreadMessages);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
 		
 		resteManageRoomInputs();
-		
-};
+}
 
-//
-const getRooms = () => {
-	fetch('http://localhost:8080/app/rtc/room/get', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			userNick: 'none',
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-};
+// Get rooms request.
+const getRooms = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/get', {}) };
+
+// Create room request.
+const createRoomRequest = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/create', {roomName: createRoomInput.value}) };
+
+// Add user to room request.
+const addUserToRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/add', {userNick: addNewUserToRoomInput.value, roomId: currentluSelectedRoomId}) };
+
+// Remove user from room request.
+const removeUserFromRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/remove', {userNick: removeUserFromRoomInput.value, roomId: currentluSelectedRoomId}) };
+
+// Update room name request.
+const renameRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/name/update', {roomId: currentluSelectedRoomId, roomName: renameRoomInput.value}) };
+
+// Remove room request.
+const removeRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/remove', { roomName: removeRoomInput.value, roomId: currentluSelectedRoomId}) };
+
+// Leave room request.
+const leaveRoomRequest = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/leave', {roomId: currentluSelectedRoomId}) };
 
 
-
-
-// This method is responsible for sending 'add user to actual choosen room' request
-const addUserToRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/user/add', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			userNick: addNewUserToRoomInput.value,
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
-
-// This method is responsible for sending 'add user to actual choosen room' request
-const removeUserFromRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/user/remove', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			userNick: removeUserFromRoomInput.value,
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
-
-
-// This method is responsible for sending 'rename room' request
-const renameRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/name/update', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			roomId: currentluSelectedRoomId,
-			roomName: renameRoomInput.value
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
-
-// This method is responsible for sending remove room request
-const removeRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/remove', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			roomName: removeRoomInput.value,
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
-
-// This method is responsible for sending 'leave room' request
-const leaveRoomRequest = () => {
-	fetch('http://localhost:8080/app/rtc/room/user/leave', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
-			}
-			
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
-		
-};
 
 
 // ***********************************************************
-// ---------------- Account Manager Requests -----------------
+// ---------------------- Account Requests -------------------
 // ***********************************************************
-
 
 const getLoggedUser = () => {
 	fetch('http://localhost:8080/app/account/get', {
@@ -643,16 +483,16 @@ const getLoggedUser = () => {
 };
 
 
-const changeNickRequest = () => {
+function sendHttpRequestAccount(url, payload) {
 	
-	fetch('http://localhost:8080/app/account/update/nick', {
+	fetch(url, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify({nick: changeNickInput.value}),
+		body: JSON.stringify(payload),
 	})
 		.then((response) => {
 			return response.json();
@@ -666,66 +506,8 @@ const changeNickRequest = () => {
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
-		
-		resteAccountManagerInputs();
-};
-
-const changeEmailRequest = () => {
-	
-	fetch('http://localhost:8080/app/account/update/email', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({email: updateUserEmailInput.value}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentlyLoggedUser = data.user;
-				setLoggedUserInPanel(data.user)
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteAccountManagerInputs();
-};
-
-const changePasswordRequest = () => {
-	
-	fetch('http://localhost:8080/app/account/update/password', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			email: updateUserPasswordConfirmByLoginInput.value,
-			password: updateUserPasswordInput.value
-		}),
-	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-			if(data.success === true){
-				currentlyLoggedUser = data.user;
-				setLoggedUserInPanel(data.user)
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
-		})
-		.catch((error) => console.log(error));
-		
-		resteAccountManagerInputs();
-};
+	resteAccountManagerInputs();
+}
 
 const deleteAccountRequest = () => {
 	
@@ -745,6 +527,15 @@ const deleteAccountRequest = () => {
 		
 		resteAccountManagerInputs();
 };
+
+// Change Nick Request
+const changeNickRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/nick', {nick: changeNickInput.value}) };
+
+// Change email request.
+const changeEmailRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/email', {email: updateUserEmailInput.value}) };
+
+// Change password request.
+const changePasswordRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/password', {email: updateUserPasswordConfirmByLoginInput.value, password: updateUserPasswordInput.value}) };
 
 
 const updateProfilePictureRequest = () => {
@@ -929,6 +720,10 @@ const openInvitationBox = () => {
 
 const setRoom = (e) => {
 	
+	let currentRoom = e.target.closest('.friend');
+	console.log("selected roomId: " + e.target.closest('.friend').getAttribute('roomId'));
+	currentluSelectedRoomId = currentRoom.getAttribute('roomId')
+	
 	fetch('http://localhost:8080/app/rtc/room/get', {
 		method: 'POST',
 		headers: {
@@ -937,7 +732,8 @@ const setRoom = (e) => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({
-			userNick: 'none',
+			roomId: currentluSelectedRoomId,
+			userNick: currentlyLoggedUser.nick,
 		}),
 	})
 		.then((response) => {
@@ -946,13 +742,12 @@ const setRoom = (e) => {
 		.then((data) => {
 			if(data.success === true){
 				currentRoomList = data.rooms;
-				loadDeliveredRooms(data.rooms);
+				unreadMessages = data.unreadMessages;
+				console.log(data.unreadMessages);
+				loadDeliveredRooms(data.rooms, data.unreadMessages);
 				
 				
-	let currentRoom = e.target.closest('.friend');
-	console.log("selected roomId: " + e.target.closest('.friend').getAttribute('roomId'));
-	currentluSelectedRoomId = currentRoom.getAttribute('roomId')
-	
+				
 	currentRoomList.forEach(room => {
 		if(currentluSelectedRoomId === room.roomId){
 			currentSelectedRoom = room;
@@ -1167,19 +962,19 @@ const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
 // ---------------- Room manager: display rooms in UI -------------------
 // ******************************************************************************
 
-const loadDeliveredRooms = (rooms) => { 
+const loadDeliveredRooms = (rooms, unreadMessages) => { 
 	friendList.innerHTML = '';
-	rooms.forEach((room) => loadRooms(room));
+	rooms.forEach((room) => loadRooms(room, unreadMessages));
 }
 
 // This function allow add new friend in UI to FrienList,
 // attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
-const loadRooms = (room) => {
-	
+const loadRooms = (room, unreadMessages) => {
 	
 	let lastmessageContent = "";
 	let lastMessageCreator = "";
 	let lastMessagetime = "";
+	let numberOfUnreadMessages = unreadMessages[room.roomId];
 	
 	
 	if(room.messages.length > 0){
@@ -1209,7 +1004,9 @@ const loadRooms = (room) => {
 	});
 	
 	
-	friend.innerHTML = `<div class="friend-img">
+	if(unreadMessages !== null && numberOfUnreadMessages >= 1){
+		
+		friend.innerHTML = `<div class="friend-img">
 	    <img class="profile-img" src="${lastUserPicture}" alt="img">
 	    <div class="activity-light activity-light-red"></div>
 	</div>
@@ -1217,16 +1014,94 @@ const loadRooms = (room) => {
 	    <p class="friend-name">${room.name}</p>
 	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent} ${lastMessagetime}</p>
 	</div>
-	<div class="new-message-notification">
-	    <i class="fa-solid fa-comment new-message-notification-img"></i>
-	    <p class="new-message-notification-text">New Message</p>
-	</div>`;
-
+	<div class="new-message-notification"><i class="fa-solid fa-comment new-message-notification-img"></i>
+                        <p class="new-message-notification-text">new message</p>
+                        <p class="new-message-notification-counter">${numberOfUnreadMessages}</p></div>`;
+	} else {
+		
+		friend.innerHTML = `<div class="friend-img">
+	    <img class="profile-img" src="${lastUserPicture}" alt="img">
+	    <div class="activity-light activity-light-red"></div>
+	</div>
+	<div class="friend-describe">
+	    <p class="friend-name">${room.name}</p>
+	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent} ${lastMessagetime}</p>
+	</div>
+	<div class="new-message-notification"></div>`;
+	}
+	
+	
 	friendList.append(friend);
 };
 
 
+// Allows you to add an unread notification counter item to the room item
+function addMessageCounterElementToRoom(message) {
+	
+	let roomListDOM;
+	let roomId;
+	let notificationElement;
+	
+	roomListDOM = document.querySelectorAll('.room-list .friend');
+	
+	roomListDOM.forEach(room => {
+		
+		roomId = room.getAttribute('roomId');
+		unreadMessages[roomId] = unreadMessages[roomId] + 1;
+		
+		if(message.roomId === roomId) {
+		
+			notificationElement = room.querySelector('.new-message-notification');
+			notificationElement.innerHTML = `<i class="fa-solid fa-comment new-message-notification-img"></i>
+                        <p class="new-message-notification-text">new message</p>
+                        <p class="new-message-notification-counter">${unreadMessages[roomId]}</p>`
+		}
+		
+	})
+}
 
+// clear notifications after clicking on communicator because
+const clearNofification = () => {
+	
+	let roomListDOM;
+	let notificationElement;
+	let roomId;
+	
+	if(currentluSelectedRoomId === null || typeof currentluSelectedRoomId === "undefined"){
+		return;
+	}
+	
+	roomListDOM = document.querySelectorAll('.room-list .friend');
+	roomListDOM.forEach(room => {
+		
+		roomId = room.getAttribute('roomId');
+		
+		if(currentluSelectedRoomId === roomId) {
+			notificationElement = room.querySelector('.new-message-notification');
+			notificationElement.innerHTML = ``;
+		}
+		
+	})
+	
+	if(unreadMessages[currentluSelectedRoomId] > 0)
+	     sendUpdateReadMessagesRequest({roomId: currentluSelectedRoomId})
+	
+	
+	unreadMessages[currentluSelectedRoomId] = 0;
+}
+
+const sendUpdateReadMessagesRequest = (payload) => {
+	fetch('http://localhost:8080/app/message/update/readby', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+		body: JSON.stringify(payload),
+	})
+		.catch((error) => console.log(error));
+}
 
 // **************************************************************************************************************
 // ---------------- Display query result messages in UI for Room Manager and Account Manager --------------------
@@ -1462,6 +1337,26 @@ function acceptOrDeclineInvitationRequest(identyficator, accepted) {
 		.catch((error) => console.log(error));
 };
 
+function acceptOrDeclineInvitationRequest1(identyficator, accepted) {
+	fetch('http://localhost:8080/app/rtc/invitation/decision', {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+		body: JSON.stringify({
+			accepted: accepted,
+			identyficator: identyficator
+		}),
+	})
+		.then((response) => {
+			console.log(response);
+			getInvitationsRequest();
+		})
+		.catch((error) => console.log(error));
+};
+
 // The method allows you to send a query regarding the invitation of a new user
 const sendInvitationRequest = () => {
 	
@@ -1558,10 +1453,6 @@ const declineInvitation = (event) => {
 	  acceptOrDeclineInvitationRequest(identyficator, false);
 	
 }
-
-//// manage invitations btn 
-   // acceptInvitationBtnCollection = document.getElementsByClassName('invitation-accept-button') ;
-  ///  declineInvitationBtnCollection = document.getElementsByClassName('invitation-reject-button');
 
 // ***********************************************************
 // ------------------------ Time Utils -----------------------
@@ -1683,6 +1574,7 @@ function diff_years(dt2, dt1) {
 
 	return Math.abs(diff / 365.25);
 }
+
 
 // ***********************************************************
 // ---------------- DOM Content Load -----------------

@@ -16,5 +16,10 @@ public interface MessageService {
 	// The method accepts a message to be sent to users, the message must have an assigned room identifier, otherwise it will be thrown IllegalArgumentException
 	// If no room is found by roomId throw NoSuchElementException
 	public List<String> send(String destination, Message message) throws NoSuchElementException;
+	
+
+	// It allows you to set all messages in a given room to be read by the user.
+	// The method returns a list of messages for which the change was made.
+	public List<Message> addReadBy(String roomId, String userNick);
 
 }
