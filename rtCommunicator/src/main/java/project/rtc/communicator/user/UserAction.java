@@ -1,8 +1,9 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 public enum UserAction {
 	
-	DELETE_USER,
+	TEST_USER,
+	DELETE_ACCOUNT,
 	UPDATE_USER_NICK,
 	UPDATE_USER_EMAIL,
 	UPDATE_USER_PASSWORD,

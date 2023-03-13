@@ -247,6 +247,7 @@ body {
 }
 
 .wrapper .friends-box .room-list .friend .new-message-notification {
+  position: relative;
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
@@ -265,11 +266,25 @@ body {
 
 .wrapper .friends-box .room-list .friend .new-message-notification .new-message-notification-img {
   font-size: 28px;
+  color: white;
 }
 
 .wrapper .friends-box .room-list .friend .new-message-notification .new-message-notification-text {
   margin-top: 5px;
+  font-size: 11px;
+  color: white;
+}
+
+.wrapper .friends-box .room-list .friend .new-message-notification .new-message-notification-counter {
+  position: absolute;
+  left: 50%;
+  top: 10%;
+  padding: 0 10px;
+  border-radius: 10px;
+  color: white;
   font-size: 12px;
+  color: white;
+  background-color: orangered;
 }
 
 .wrapper .communicator-box {
@@ -385,10 +400,11 @@ body {
 }
 
 .wrapper .communicator-box .communicator-content .left-message-box .left-message {
-  max-width: 70%;
+  max-width: 45%;
   margin-left: 5px;
   padding: 10px 15px;
   background-color: orangered;
+  background-color: rebeccapurple;
   border-radius: 20px;
 }
 
@@ -407,7 +423,7 @@ body {
 }
 
 .wrapper .communicator-box .communicator-content .right-message-box .right-message {
-  max-width: 70%;
+  max-width: 45%;
   margin-left: 5px;
   padding: 10px 15px;
   background-color: #454545;
@@ -551,6 +567,9 @@ body {
   .manage-account-box {
 		max-width: 430px;
   }
+  .invitations-box {
+		max-width: 430px;
+  }
   .communicator-box {
     display: -webkit-box !important;
     display: -ms-flexbox !important;
@@ -562,11 +581,16 @@ body {
   .communicator-box .show-only-friends-box-btn {
     display: none;
   }
-  .left-message {
-    width: 50%;
-  }
-  .right-message {
-    width: 50%;
-  }
 }
+
+
+@media (max-width: 769px) {
+	.communicator-content .left-message {
+			max-width: 70% !important;
+		}
+	.communicator-content .right-message {
+			max-width: 70% !important;
+		}
+}
+
 /*# sourceMappingURL=CommunicatorPanel.css.map */

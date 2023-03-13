@@ -1,6 +1,5 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
-import java.io.IOException;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,12 +24,11 @@ public class UserRestController {
 	
 	private UserService userService;
 	
-	
 	public UserRestController(UserServiceImpl userServiceImpl) {
-		this.userService = userServiceImpl;
-		
+		this.userService = userServiceImpl;	
 	}
 	
+	// Responsible for sending information about the currently logged in user
 	@RequestMapping(path = "/app/account/get", method = RequestMethod.GET)
 	public ResponseEntity<User> getActualLoggedUser(HttpServletRequest httpServletRequest){
 		

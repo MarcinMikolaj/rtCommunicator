@@ -175,4 +175,18 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 		return result;
 	}
 
+	@Override
+	public int deleteByEmail(String email) {
+		
+		EntityManager entityManager = entityManagerFactory.createEntityManager();
+		EntityTransaction entityTransaction = entityManager.getTransaction();
+		Query query = entityManager.createNamedQuery("Credentials.deleteByEmail");
+		query.setParameter("email", email);
+		entityTransaction.begin();
+		int result = query.executeUpdate();
+		entityTransaction.commit();
+		entityManager.close();
+		return result;
+	}
+
 }

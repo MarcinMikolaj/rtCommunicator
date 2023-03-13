@@ -1,4 +1,4 @@
-package project.rtc.communicator.message;
+package project.rtc.communicator.messager;
 
 import org.springframework.data.mongodb.repository.MongoRepository;
 

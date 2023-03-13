@@ -8,8 +8,8 @@ import javax.persistence.ElementCollection;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import project.rtc.communicator.message.Message;
-import project.rtc.test.user.User;
+import project.rtc.communicator.messager.Message;
+import project.rtc.communicator.user.User;
 
 @Document
 public class Room {
@@ -23,7 +23,7 @@ public class Room {
 	private List<User> users = new ArrayList<User>();
 	
 	@ElementCollection
-	private List<Message> messages;
+	private List<Message> messages = new ArrayList<Message>();
 	
 	public Room() {}
 	
@@ -98,12 +98,11 @@ public class Room {
 	public void setMessages(List<Message> messages) {
 		this.messages = messages;
 	}
-
+	
 
 	@Override
 	public String toString() {
 		return "Room [mongoId=" + mongoId + ", roomId=" + roomId + ", name=" + name + ", users=" + users + "]";
 	}
-
 
 }

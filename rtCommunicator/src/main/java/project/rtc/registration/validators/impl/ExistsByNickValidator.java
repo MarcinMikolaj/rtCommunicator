@@ -6,8 +6,8 @@ import javax.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
+import project.rtc.communicator.user.UserRepository;
 import project.rtc.registration.validators.ExistsByNick;
-import project.rtc.test.user.UserRepository;
 
 
 public class ExistsByNickValidator implements ConstraintValidator<ExistsByNick, String> {

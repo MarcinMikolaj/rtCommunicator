@@ -3,8 +3,8 @@ package project.rtc.communicator.room;
 import java.util.List;
 import java.util.NoSuchElementException;
 
+import project.rtc.communicator.user.User;
 import project.rtc.exceptions.UserNotFoundException;
-import project.rtc.test.user.User;
 
 public interface RoomService {
 	
@@ -18,7 +18,6 @@ public interface RoomService {
 	public Room deleteRoom(Room room);
 	
 	public Room addUserToRoom(Room room, User user);
-	
 	
 	
 	// This method allows the user to be removed from the chat room, if assigned to him.

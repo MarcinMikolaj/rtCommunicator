@@ -1,5 +1,8 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -18,14 +21,17 @@ import project.rtc.authorization.basic_login.credentials.Credentials;
 import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.CredentialsService;
 import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
+import project.rtc.communicator.invitations.Invitation;
+import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomService;
 import project.rtc.communicator.room.RoomServiceImpl;
-import project.rtc.communicator.room.Statement;
-import project.rtc.communicator.room.StatementType;
+import project.rtc.communicator.room.pojo.Statement;
+import project.rtc.communicator.room.pojo.StatementType;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
 import project.rtc.registration.RegistrationRequest;
+import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.FileUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;
 import project.rtc.utils.jwt.JwtTokenProviderImpl;
@@ -102,6 +108,7 @@ public class UserServiceImpl implements UserService {
 		
 		return userOptional.get();	
     }
+	
     
 	// Returns the user with a registered and saved account, otherwise he throws UserNotFoundException
 	// It also loads the photo to the returned user.
@@ -125,60 +132,54 @@ public class UserServiceImpl implements UserService {
 	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		
 		User user;
-		UserResponseBody userResponseBody = new UserResponseBody();
-		userResponseBody.setAction(UserAction.DELETE_USER);
-		
-
+		UserResponseBody userResponseBody = new UserResponseBody(false, UserAction.DELETE_ACCOUNT);
+			
 		try {
 			user = getUser(httpServletRequest);
 		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
 			e.printStackTrace();
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
-		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
-		
-		// If password not equals
-		if(!credentials.getEmail().equals(email)) {
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Login is incorrect", StatementType.ERROR_STATEMENT));
+		// If emails not equals
+		if(!user.getEmail().equals(email)) {
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Login is incorrect.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
-		// removes the user from all his rooms
-		try {
-			
-			// remove the user from all his rooms
-			user.getRoomsId().stream()
-			  .filter(id -> id !=null)
-			  .peek(id -> roomService.deleteUserFromRoom(id, user.getNick()))
-			  .toList().size();
-			
-			
-			User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
-			userResponseBody.setUser(userForClient);
-					
-			// deletes the user's account
-			userRepository.delete(user);
-			credentialsRepository.deleteById(credentials.getId());
-			userResponseBody.setSuccess(true);
-			
-			
-			
-			
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account deleted", StatementType.SUCCES_STATEMENT));
+		
+		try {		
+			deleteUser(user);	
+			userResponseBody.setSuccess(true);			
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Account deleted.", StatementType.SUCCES_STATEMENT));
 			return userResponseBody;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Something went wrong", StatementType.ERROR_STATEMENT));
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Something went wrong.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		} 
 		
 	}
 
-
-
+	// Allows you to completely remove a user from the site, including their account information, credentials, and references to them in other rooms.
+	// Return deleted user.
+	public User deleteUser(User u) {
+		
+		// remove credentials
+		credentialsRepository.deleteByEmail(u.getEmail());
+		
+		// remove user references to other rooms.
+		u.getRoomsId().stream().filter(id -> id != null).forEach(id -> roomService.deleteUserFromRoom(id, u.getNick()));
+		
+		// remove user account information
+		userRepository.deleteById(u.getMongoId());
+		
+		return u;
+	}
+	
+	
 	@Override
 	public UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest) {
 		
@@ -350,16 +351,67 @@ public class UserServiceImpl implements UserService {
 	}
 	
 	
-	
-	private User loadUserProfileImg(User user) {
+	// Allows you to load a photo into the user class instance if this instance has a path to the photo.
+	// Returns the user with the photo loaded.
+	public User loadUserProfileImg(User user) {
 		
-		String pathToImg = user.getPathToProfileImg();
-			
-		String pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
-		ProfilePicture profilePicture = new ProfilePicture("profile.jpg", "jpg", 0, pictureInBase64);
+		String pictureInBase64;
+		String pathToImg;
+		ProfilePicture profilePicture;
+		
+		pathToImg = user.getPathToProfileImg();
+		
+		if(pathToImg == null || pathToImg.equals(""))
+			throw new IllegalArgumentException("UserServiceImpl.loadUserProfileImg: the user does not have a profile picture path set");
+		
+		
+		pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
+		profilePicture = new ProfilePicture("profile.jpg", "jpg", 0, pictureInBase64);
 
 		user.setProfilePicture(profilePicture);
 
+		return user;
+	}
+	
+
+    // The method enables adding a new friend request to the list of invitations of a given user.
+	// Returns the user whose invitation list has changed.
+	@Override
+	public User addInvitations(String nick, Invitation invitation) {
+		
+		User user;
+		
+		user = userRepository.findByNick(nick).orElseThrow(() 
+				-> new NoSuchElementException(ConsoleColors.YELLOW + "UserServiceImpl.addInvitations: User not found" + ConsoleColors.RESET));
+		
+		user.getInvitations().add(invitation.getIdentificator());
+		
+		userRepository.save(user);
+		
+		return user;
+	}
+
+
+	// Lets you remove an invitation assigned to a given user.
+	// It accepts the invitation to be deleted as a parameter.
+	// Returns the user for whom the actions were performed.
+	@Override
+	public User removeInvitation(Invitation invitation) {
+		
+		User user;
+		String nick;
+		String identificator;
+		
+		
+		nick = invitation.getInvited();
+		identificator = invitation.getIdentificator();
+		
+		user = userRepository.findByNick(nick).orElseThrow(() -> new NoSuchElementException("UserServiceImpl.removeInvitation: User not found"));
+		
+		user.getInvitations().removeIf(i -> i.equals(identificator));
+		
+		userRepository.save(user);
+		
 		return user;
 	}
 	

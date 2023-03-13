@@ -1,4 +1,4 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -38,6 +38,9 @@ public class User {
 	
 	@ElementCollection
 	private List<String> roomsId = new ArrayList<String>();
+	
+	@ElementCollection
+	private List<String> invitations = new ArrayList<String>();
 	
 	public User() {}
 	
@@ -109,6 +112,15 @@ public class User {
 		this.roomsId = roomsId;
 	}
 
+	
+	public List<String> getInvitations() {
+		return invitations;
+	}
+
+	public void setInvitations(List<String> invitations) {
+		this.invitations = invitations;
+	}
+	
 	
 	@Override
 	public String toString() {

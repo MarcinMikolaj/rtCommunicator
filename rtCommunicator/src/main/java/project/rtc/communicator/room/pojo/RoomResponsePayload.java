@@ -1,17 +1,19 @@
 package project.rtc.communicator.room.pojo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomAction;
-import project.rtc.communicator.room.Statement;
 
 public class RoomResponsePayload {
 	
 	private boolean success;
 	private RoomAction action;
 	private List<Room> rooms = new ArrayList<Room>();
+	private Map<String, Integer> unreadMessages = new HashMap<String, Integer>();
 	private List<Statement<RoomAction>> statements = new ArrayList<Statement<RoomAction>>();
 	
 	public RoomResponsePayload() {
@@ -56,6 +58,14 @@ public class RoomResponsePayload {
 
 	public void setStatements(List<Statement<RoomAction>> statements) {
 		this.statements = statements;
+	}
+	
+	public Map<String, Integer> getUnreadMessages() {
+		return unreadMessages;
+	}
+
+	public void setUnreadMessages(Map<String, Integer> unreadMessages) {
+		this.unreadMessages = unreadMessages;
 	}
 
 	@Override

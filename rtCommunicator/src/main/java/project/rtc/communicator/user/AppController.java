@@ -1,4 +1,4 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;

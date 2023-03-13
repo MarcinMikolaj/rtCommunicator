@@ -1,0 +1,182 @@
+.invitations-box {
+  position: relative;
+  display: none;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  height: 100%;
+  width: 100%;
+  padding: 0 5px;
+}
+
+.invitations-box .show-menu-btn {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border: none;
+  padding: 10px 10px;
+  -webkit-transition: color 0.3s;
+  transition: color 0.3s;
+  font-size: 30px;
+  color: white;
+  background: transparent;
+  cursor: pointer;
+}
+
+.invitations-box .show-menu-btn:hover {
+  color: orangered;
+}
+
+.invitations-box .invitation-list {
+  margin: 70px 0;
+  width: 100%;
+  list-style-type: none;
+  overflow-y: auto;
+}
+
+.invitations-box .invitation-list .invitation-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  margin: 20px 0;
+  padding: 15px 5px;
+  border-radius: 10px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  cursor: pointer;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: start;
+      -ms-flex-align: start;
+          align-items: flex-start;
+  -webkit-box-flex: 1;
+      -ms-flex-positive: 1;
+          flex-grow: 1;
+  margin-left: 8px;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-name-date-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  width: 100%;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-name-date-box .invitation-name-field {
+  font-weight: 500;
+  font-size: 16px;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-name-date-box .invitation-date-field {
+  font-size: 13px;
+  color: #535353;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .mutual-friends-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  font-size: 12px;
+  margin-top: 5px;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .mutual-friends-box .invitation-mutual-friends-field {
+  margin-left: 5px;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: row;
+          flex-direction: row;
+  -webkit-box-pack: justify;
+      -ms-flex-pack: justify;
+          justify-content: space-between;
+  width: 100%;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box .invitation-button {
+  margin-top: 10px;
+  width: 49%;
+  padding: 10px 10px;
+  cursor: pointer;
+  border: none;
+  border-radius: 5px;
+  -webkit-transition: background-color 0.3s;
+  transition: background-color 0.3s;
+  color: white;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box .invitation-accept-button {
+  background-color: #00a81c;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box .invitation-accept-button:hover {
+  background-color: #01c521;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box .invitation-reject-button {
+  background-color: #787878;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .invitation-buttons-box .invitation-reject-button:hover {
+  background-color: #c33131;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-img {
+  width: 80px;
+  height: 80px;
+  -o-object-fit: cover;
+     object-fit: cover;
+  border-radius: 50%;
+}
+
+.invitations-box .invitation-list .invitation-box:hover {
+  background-color: #353535;
+}
+/*# sourceMappingURL=InvitationBoxStyle.css.map */

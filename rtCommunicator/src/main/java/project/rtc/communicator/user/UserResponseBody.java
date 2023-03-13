@@ -1,9 +1,9 @@
-package project.rtc.test.user;
+package project.rtc.communicator.user;
 
 import java.util.ArrayList;
 import java.util.List;
 
-import project.rtc.communicator.room.Statement;
+import project.rtc.communicator.room.pojo.Statement;
 
 public class UserResponseBody {
 	
@@ -12,12 +12,17 @@ public class UserResponseBody {
 	private User user;
 	private List<Statement<UserAction>> statements = new ArrayList<Statement<UserAction>>();
 	
-	
+
 	public UserResponseBody() {
 		super();
 		this.success = false;
 	}
 
+	public UserResponseBody(boolean success, UserAction action) {
+		super();
+		this.success = success;
+		this.action = action;
+	}
 	
 	public UserResponseBody(boolean success, UserAction action, User user, List<Statement<UserAction>> statements) {
 		super();

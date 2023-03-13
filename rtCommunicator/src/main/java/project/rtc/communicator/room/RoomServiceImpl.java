@@ -1,5 +1,8 @@
 package project.rtc.communicator.room;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -10,10 +13,10 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import project.rtc.communicator.user.User;
+import project.rtc.communicator.user.UserRepository;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.ProfilePicture;
-import project.rtc.test.user.User;
-import project.rtc.test.user.UserRepository;
 import project.rtc.utils.FileUtils;
 
 @Service
@@ -39,20 +42,45 @@ public class RoomServiceImpl implements RoomService {
 		Room room = new Room(createRoomId(), roomName);
 
 		users.stream()
-				 .filter(user -> user != null)
-				 .filter(user -> user.getMongoId() != null)
-				 .filter(user -> userRepository.existsById(user.getMongoId()))
-				 .filter(user -> user.getRoomsId().add(room.getRoomId()))
-				 .peek(user -> room.getUsers().add(user))
-				 .peek(user -> userRepository.save(user))
-				 .count();
-					
+				 .filter(u -> u != null)
+				 .filter(u -> u.getMongoId() != null)
+				 .filter(u -> userRepository.existsById(u.getMongoId()))
+				 .filter(u -> u.getRoomsId().add(room.getRoomId()))
+				 .peek(u -> room.getUsers().add(u))
+				 .peek(u -> userRepository.save(u))
+				 .forEach(u -> upd(u, room.getRoomId()));
+		
+		
 		roomRepository.save(room);
 					
 		return room;
 					
 	}
 	
+	private String upd(User user, String roomId) {
+				
+		Room room;
+						
+		for(String s: user.getRoomsId()) {
+				
+			if(!s.equals(roomId)) {
+					
+			room = roomRepository.findByRoomId(s).orElseThrow(() -> new NoSuchElementException("RoomServiceImpl: Room not found"));
+					
+			room.getUsers()
+				   .stream()
+				   .filter(u -> u.getMongoId().equals(user.getMongoId()))
+				.forEach(u -> u.getRoomsId().add(roomId));
+					   
+					  roomRepository.save(room);
+			 }
+		}
+				
+		return roomId;
+	}
+	
+	
+
 	// This method allows you to delete a room and all user associations with it.
 	// Return transferred Room instance.
 	// Throws NullPointerException if the transferred room does not exist.
@@ -75,13 +103,13 @@ public class RoomServiceImpl implements RoomService {
 			 .filter(u -> u != null)
 			 .filter(u -> u.getMongoId() != null)
 			 .filter(u -> userRepository.existsById(u.getMongoId()))
-			 .peek(u -> u.getRoomsId().removeIf(id -> id.equals(room.getRoomId())))
-			 .peek(u -> userRepository.save(u))
-			 .toList()
-			 .size();
+			 .peek(u -> u.getRoomsId().removeIf(id -> id.equals(room.getRoomId())))	 
+			 .peek(u -> updateRoomInfoAboutUsers(u))
+			 .forEach(u -> userRepository.save(u));
+			
 		
 		// removes the room
-		roomRepository.delete(room);
+		roomRepository.deleteById(room.getMongoId());
 			
 		return room;
 		
@@ -102,7 +130,7 @@ public class RoomServiceImpl implements RoomService {
 			throw new IllegalArgumentException("RoomServiceImpl.deleteRoom: The uploaded object must be assigned an identifier, the mongoId key");
 		
 		
-		// removes references to room for all users assigned to transferred (as argument) room
+		// removes references to room for all users assigned to transferred (as argument) room.
 		room.getUsers().stream()
 		  .filter(u -> u != null)
 		  .filter(u -> u.getNick().equals(nick))
@@ -110,9 +138,9 @@ public class RoomServiceImpl implements RoomService {
 		  .filter(u -> userRepository.existsById(u.getMongoId()))
 		  .peek(u -> u.getRoomsId().removeIf(roomId -> roomId.equals(room.getRoomId())))
 		  .peek(u -> userRepository.save(u))
-		  .collect(Collectors.toList()).size();
+		  .forEach(u -> updateRoomInfoAboutUsers(u));
 		
-		// removes the user's reference to this room
+		// removes the user's reference to this room.
 		room.getUsers().removeIf(u -> u.getNick().equals(nick));
 		roomRepository.save(room);
 		
@@ -120,6 +148,27 @@ public class RoomServiceImpl implements RoomService {
 	}
 	
 	
+	// The method allows you to update information about the user in the rooms
+	// to which the user passed as an argument has a reference in the list of addresses of his rooms.
+	private void updateRoomInfoAboutUsers(User user) {
+		
+		List<Room> rooms = new ArrayList<Room>();
+		
+		for(String id: user.getRoomsId()) {
+			rooms.add(roomRepository.findByRoomId(id).orElseThrow());
+		}
+		
+		for(Room r: rooms) {
+			for(User u: r.getUsers()) {
+				if(u.getMongoId().equals(user.getMongoId())) {
+					u.setRoomsId(user.getRoomsId());
+					roomRepository.save(r);
+				}
+			}
+		}
+	}
+	
+
 	// It works just like deleteUserFromRoom(room, nick) but before that it gets the room instance via its id.
 	@Override
 	public Room deleteUserFromRoom(String roomId, String nick) throws NullPointerException, IllegalArgumentException, NoSuchElementException {
@@ -142,17 +191,26 @@ public class RoomServiceImpl implements RoomService {
 	@Override
 	public List<Room> getUserRooms(User user) throws NullPointerException, UserNotFoundException {
 		
+		List<Room> rooms = new ArrayList<Room>();
+		
 		if(user == null)
 			throw new NullPointerException();	
 		
 		if(!userRepository.existsById(user.getMongoId()))
 			throw new UserNotFoundException();	
 		
+		for(String s: user.getRoomsId()) {
+			System.out.println("@@@@@@@@@@@@: " + s);
+			rooms.add(roomRepository.findByRoomId(s).orElseThrow());
+		}
 		
-		List<Room> rooms = user.getRoomsId().stream()
-				.filter(id -> id != null)
-				.map(id -> roomRepository.findByRoomId(id).get())
-				.collect(Collectors.toList());
+//		rooms = user.getRoomsId()
+//				.stream()
+//				.filter(id -> id != null)
+//				.map(id -> roomRepository.findByRoomId(id).orElseThrow())
+//				.filter(r -> r.getMongoId() != null)
+//				.collect(Collectors.toList());
+		
 		
 		// load pictures
 		for(Room r: rooms) {
@@ -163,6 +221,21 @@ public class RoomServiceImpl implements RoomService {
 		
 		return rooms;
 		
+	}
+	
+	// Allows you to add a new user to the room.
+	@Override
+	public Room addUserToRoom(Room room, User user) {
+		
+		user.getRoomsId().add(room.getRoomId());
+		userRepository.save(user);
+		
+		room.getUsers().add(user);
+		roomRepository.save(room);
+		
+		updateRoomInfoAboutUsers(user);
+		
+		return room;
 	}
 	
 	// This method allows you to return a unique identifier that can be used when creating a new room
@@ -192,18 +265,6 @@ public class RoomServiceImpl implements RoomService {
 		user.setProfilePicture(profilePicture);
 
 		return user;
-	}
-
-	@Override
-	public Room addUserToRoom(Room room, User user) {
-		
-		user.getRoomsId().add(room.getRoomId());
-		userRepository.save(user);
-		
-		room.getUsers().add(user);
-		roomRepository.save(room);
-		
-		return room;
 	}
 
 }
