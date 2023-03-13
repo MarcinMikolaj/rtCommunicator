@@ -28,127 +28,127 @@ import javax.servlet.http.Cookie;
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 public class AuthenticationServiceImpl implements AuthenticationService {
-	
+
 	private AuthenticationManager authenticationManager;
 	private CredentialsService credentialsService;
 	private JwtTokenProvider jwtTokenProvider;
-	
-	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, CredentialsService credentialsService, JwtTokenProviderImpl jwtTokenProviderImpl) {
+
+	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, CredentialsService credentialsService,
+			JwtTokenProviderImpl jwtTokenProviderImpl) {
 		this.authenticationManager = authenticationManager;
 		this.credentialsService = credentialsService;
 		this.jwtTokenProvider = jwtTokenProviderImpl;
 	}
-	
-	
+
 	// This method authenticates the user trying to access the application.
-	// If the user has an account, he will be assigned an authorization token under which he will be able to access specific resources.
+	// If the user has an account, he will be assigned an authorization token under
+	// which he will be able to access specific resources.
 	@Override
 	public LoginResponsePayload authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) {
-		
+
 		String authorizationToken;
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
-		
 
-		if(!credentialsService.exist(loginRequestPayload))
+		if (!credentialsService.exist(loginRequestPayload))
 			return new LoginResponsePayload(null, false);
-		
-		usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(), loginRequestPayload.getPassword());
+
+		usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(),
+				loginRequestPayload.getPassword());
 		Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
-			
-		authorizationToken = jwtTokenProvider.createJwtToken(authentication, loginRequestPayload.getEmail(), null, null);
-		
+
+		authorizationToken = jwtTokenProvider.createJwtToken(authentication, loginRequestPayload.getEmail(), null,
+				null);
+
 		response.addHeader("Authorization", "Bearer " + authorizationToken);
-		CookieUtils.addCookie(response, "jwt", authorizationToken, 600000);
-			
+		// TODO: 6000000 to parametrize in app.props
+		// add app.security.jwt.expiry_time=6000000
+		// then add @Value("${app.security.jwt.expiry_time}") private Integer
+		// expiryTime;
+		CookieUtils.addCookie(response, "jwt", authorizationToken, 6000000);
+
 		return new LoginResponsePayload(null, true);
-		
+
 	}
-	
- 
-	
-	// This method allows the currently logged in user to log out. Clear current SecurityContext.
+
+	// This method allows the currently logged in user to log out. Clear current
+	// SecurityContext.
 	// The assigned authorization token is revoked.
 	// Set current Authentication to false.
 	@Override
-	public void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException {
-		
+	public void logout(HttpServletRequest request, HttpServletResponse response,
+			LogoutRequestPayload logoutRequestPayload) throws IOException {
+
 		CookieUtils.deleteCookie(request, response, "jwt");
-		
+
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			
-			if(authentication != null) {
-				if(!authentication.isAuthenticated()) 
+
+			if (authentication != null) {
+				if (!authentication.isAuthenticated())
 					return;
-			
+
 				SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
 				SecurityContextHolder.clearContext();
-				
+
 			} else
 				return;
-			
-		} catch (Exception e) {
-			System.out.println(ConsoleColors.RED
-					+ "LoginServiceImpl.logout: User failed to logout, exception message:"
-					+ e.getMessage() + ConsoleColors.RESET);	
-		}
-		
-		HttpSession session= request.getSession(false);
-	
-		session = request.getSession(false);
-		
-		
-        if(session != null) {
-            session.invalidate();
-        }
-        
-        for(Cookie cookie : request.getCookies()) {
-            cookie.setMaxAge(0);
-        }
 
-        
-        response.sendRedirect("/app/login");
-		
+		} catch (Exception e) {
+			System.out.println(ConsoleColors.RED + "LoginServiceImpl.logout: User failed to logout, exception message:"
+					+ e.getMessage() + ConsoleColors.RESET);
+		}
+
+		HttpSession session = request.getSession(false);
+
+		session = request.getSession(false);
+
+		if (session != null) {
+			session.invalidate();
+		}
+
+		for (Cookie cookie : request.getCookies()) {
+			cookie.setMaxAge(0);
+		}
+
+		response.sendRedirect("/app/login");
 
 	}
-	
+
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		
+
 		CookieUtils.deleteCookie(request, response, "jwt");
-		
+
 		try {
 			Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-			
-			if(authentication != null) {
-				if(!authentication.isAuthenticated()) 
+
+			if (authentication != null) {
+				if (!authentication.isAuthenticated())
 					return;
-			
+
 				SecurityContextHolder.getContext().getAuthentication().setAuthenticated(false);
 				SecurityContextHolder.clearContext();
-				
+
 			} else
 				return;
-			
-		} catch (Exception e) {
-			System.out.println(ConsoleColors.RED
-					+ "LoginServiceImpl.logout: User failed to logout, exception message:"
-					+ e.getMessage() + ConsoleColors.RESET);	
-		}
-		
-		HttpSession session= request.getSession(false);
-	
-		session = request.getSession(false);
-		
-		
-        if(session != null) {
-            session.invalidate();
-        }
-        
-        for(Cookie cookie : request.getCookies()) {
-            cookie.setMaxAge(0);
-        }
 
-        response.sendRedirect("/app/login");
+		} catch (Exception e) {
+			System.out.println(ConsoleColors.RED + "LoginServiceImpl.logout: User failed to logout, exception message:"
+					+ e.getMessage() + ConsoleColors.RESET);
+		}
+
+		HttpSession session = request.getSession(false);
+
+		session = request.getSession(false);
+
+		if (session != null) {
+			session.invalidate();
+		}
+
+		for (Cookie cookie : request.getCookies()) {
+			cookie.setMaxAge(0);
+		}
+
+		response.sendRedirect("/app/login");
 	}
 }

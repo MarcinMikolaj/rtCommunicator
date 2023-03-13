@@ -16,7 +16,9 @@ public interface CredentialsRepository {
 	public boolean existByEmail(String email);
 	
 	public void createQueryJPQL(String jpql);
+	
 	public Credentials deleteById(Long id);
+	public int deleteByEmail(String email);
 	
 	
 

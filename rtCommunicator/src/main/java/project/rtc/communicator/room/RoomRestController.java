@@ -15,6 +15,7 @@ import project.rtc.communicator.room.pojo.RoomResponsePayload;
 import project.rtc.communicator.room.response_service.RoomResponseService;
 import project.rtc.communicator.room.response_service.RoomResponseServiceImpl;
 
+// Is responsible for handling requests regarding room management in the application.
 @RestController
 public class RoomRestController {
 	
@@ -25,43 +26,61 @@ public class RoomRestController {
 		
 	}
 	
+	
 	@RequestMapping(path = "/app/rtc/room/create", method = RequestMethod.POST)
-	public ResponseEntity<RoomResponsePayload> createRoomWithAuthoringUser(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.createRoomWithAuthoringUser(httpServletRequest, roomRequest);
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+	public ResponseEntity<RoomResponsePayload> createRoomWithAuthoringUser(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{	
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.createRoomWithAuthoringUser(httpServletRequest, roomRequest), HttpStatus.OK);
+	 
+	}
+	
+	
+	@RequestMapping(path = "/app/rtc/room/user/add", method = RequestMethod.POST)
+	public ResponseEntity<RoomResponsePayload> addNewUserToRoom(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest){	
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.addUserToRoom(httpServletRequest, roomRequest), HttpStatus.OK);
+	
+	}
+	
 	
 	@RequestMapping(path = "/app/rtc/room/get", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> getRooms(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.getUserRooms(httpServletRequest, roomRequest);
 		
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+		return new ResponseEntity<RoomResponsePayload>(roomService.getUserRooms(httpServletRequest, roomRequest), HttpStatus.OK);
+	 
+	}
 	
 	
 	@RequestMapping(path = "/app/rtc/room/remove", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> removeRoom(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.remove(httpServletRequest, roomRequest);
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.remove(httpServletRequest, roomRequest), HttpStatus.OK);
+	 
+	}
+	
 	
 	@RequestMapping(path = "/app/rtc/room/name/update", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> renameRoom(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.renameRoom(httpServletRequest, roomRequest);
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.renameRoom(httpServletRequest, roomRequest), HttpStatus.OK);
+	
+	}
+	
 	
 	
 	@RequestMapping(path = "/app/rtc/room/user/remove", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> removeUserFromRoom(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.removeUserFromRoom(httpServletRequest, roomRequest);
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.removeUserFromRoom(httpServletRequest, roomRequest), HttpStatus.OK);	
+	 
+	}
+	
 	
 	@RequestMapping(path = "/app/rtc/room/user/leave", method = RequestMethod.POST)
 	public ResponseEntity<RoomResponsePayload> leaveRoom(@RequestBody RoomRequestPayload roomRequest, HttpServletRequest httpServletRequest) throws ServletException{
-		RoomResponsePayload roomResponse = roomService.leaveRoom(httpServletRequest, roomRequest);
-		return new ResponseEntity<RoomResponsePayload>(roomResponse, HttpStatus.OK);
-	 }
+		
+		return new ResponseEntity<RoomResponsePayload>(roomService.leaveRoom(httpServletRequest, roomRequest), HttpStatus.OK);
+	
+	}
 	
 }

@@ -25,13 +25,14 @@ public interface UserService {
 	public UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest);
 	public UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest);
 	
-	// The method enables adding a new friend request to the list of invitations of a given user.
-	// Returns the user whose invitation list has changed.
-	public User addInvitations(String nick, Invitation invitation);
-	
+
 	// Allows you to load a photo into the user class instance if this instance has a path to the photo.
 	// Returns the user with the photo loaded.
 	public User loadUserProfileImg(User user);
+	
+	// The method enables adding a new friend request to the list of invitations of a given user.
+	// Returns the user whose invitation list has changed.
+	public User addInvitations(String nick, Invitation invitation);
 	
 	// Lets you remove an invitation assigned to a given user.
 	// It accepts the invitation to be deleted as a parameter.

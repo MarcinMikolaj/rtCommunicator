@@ -38,9 +38,8 @@ public class InvitationRestController {
 	@RequestMapping(path = "/app/rtc/room/invitation/send", method = RequestMethod.POST)
 	public ResponseEntity<String> sendInvitation(@RequestBody InvitationRequestPayload invitingRequestPayload, HttpServletRequest httpServletRequest) {
 		
-		invitationService.create(invitingRequestPayload);
-		
-		System.out.println(ConsoleColors.RED + invitingRequestPayload + ConsoleColors.RESET);
+		invitationService.create(invitingRequestPayload.getInviting(), invitingRequestPayload.getInvited());
+		System.out.println("Invitation request received, payload: " + invitingRequestPayload);
 		
 		return new ResponseEntity<String>("ok", HttpStatus.OK);
 	}
@@ -51,7 +50,6 @@ public class InvitationRestController {
 	public ResponseEntity<String> accept(@RequestBody ReplyToInvitationRequest replyToInvitationRequest){
 		
 		invitationService.handleInvitation(replyToInvitationRequest);
-		
 		System.out.println(replyToInvitationRequest.getIdentyficator());
 		
 		return new ResponseEntity<String>("decision", HttpStatus.OK);

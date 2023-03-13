@@ -100,7 +100,7 @@ let updateUserEmailBtn;
 let updateUserPasswordBtn;
 let updateProfilePictureBtn;
 
-
+const login_page_adress = 'http://localhost:8080/app/panel'
 
 
 // Prepare DOM Elements
@@ -424,13 +424,17 @@ function sendHttpRequestRoom(url, payload){
 			return response.json();
 		})
 		.then((data) => {
+			
 			console.log(data);
+			
 			if(data.success === true){
 				currentRoomList = data.rooms;
 				unreadMessages = data.unreadMessages;
 				loadDeliveredRooms(data.rooms, data.unreadMessages);
 			}
+			
 			addStatementMessageToRoomManagerInUI(data.statements);
+			
 		})
 		.catch((error) => console.log(error));
 		
@@ -495,8 +499,7 @@ function sendHttpRequestAccount(url, payload) {
 		body: JSON.stringify(payload),
 	})
 		.then((response) => {
-			return response.json();
-		})
+			return response.json();})
 		.then((data) => {
 			console.log(data);
 			if(data.success === true){
@@ -509,8 +512,7 @@ function sendHttpRequestAccount(url, payload) {
 	resteAccountManagerInputs();
 }
 
-const deleteAccountRequest = () => {
-	
+const deleteAccountRequest = () => {	
 	fetch('http://localhost:8080/app/account/delete', {
 		method: 'POST',
 		headers: {
@@ -519,12 +521,17 @@ const deleteAccountRequest = () => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({email: removeAccountInput.value}),
-	})
-		.then((response) => {
-			logoutRequest();
+	}).then((response) => {
+			return response.json();})
+	  .then((data) => {
+			if(data.success === true){			
+				console.log('Adress replace: ' + login_page_adress);
+				window.location.replace(login_page_adress);
+			} else {
+				addStatementMessageToRoomManagerInUI(data.statements);
+			}
 		})
-		.catch((error) => console.log(error));
-		
+		.catch((error) => console.log(error));		
 		resteAccountManagerInputs();
 };
 
@@ -597,11 +604,10 @@ const s = (fileInBase64) => {
 
 // Method allows you to set information such as nickname or profile picture in the user interface.
 const setLoggedUserInPanel =(user) => {
-	
 	myProfileImg.src = user.profilePicture.fileInBase64;
-	document.querySelector('.b').src = user.profilePicture.fileInBase64;
-	
+	document.querySelector('.b').src = user.profilePicture.fileInBase64;	
 }
+
 
 // ***********************************************************
 // ----------- Box Manager and additional features -----------
@@ -1115,7 +1121,7 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 	removeAllQueryResultMessageForAddFriend();
 	
 	statements.forEach((statements) => {
-		switch (statements.roomAction) {
+		switch (statements.action) {
 			
 			case 'CREATE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_create_room');
@@ -1165,7 +1171,7 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_profile_picture');
 			    break;
 			    
-			case 'DELETE_USER':
+			case 'DELETE_ACCOUNT':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_delete_account');
 			    break;
 			    

@@ -172,30 +172,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		}
 	}
 	
-	private Map<String, Integer> countUnreadMessages(List<Room> roomList, String userNick) {
-		
-		Map<String, Integer> unreadMessages = new HashMap<String, Integer>();
-		
-		roomList.stream()
-		   .filter(r -> r != null)
-		   .filter(r -> r.getRoomId() != null)
-		   .peek(r -> unreadMessages.put(r.getRoomId(), count(r, userNick)))
-		   .collect(Collectors.toList()).size();
-		  
-		return unreadMessages;
-	}
-	
-	
-	private int count(Room room, String userNick) {
-		
-		return room.getMessages().stream()
-		   .filter(m -> m != null)
-		   .filter(m -> m.getMissedBy().contains(userNick))
-		   .collect(Collectors.toList())
-		   .size();
-	}
-	
-	
+
 	@Override
 	public RoomResponsePayload remove(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) throws ServletException {
 		
@@ -292,12 +269,11 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		
 	    
 		try {
-			roomService.deleteUserFromRoom(room, roomRequest.getUserNick());			
+			roomService.deleteUserFromRoom(room, roomRequest.getUserNick());
 			roomResponse.setRooms(roomService.getUserRooms(sendRequestUser));
 			roomResponse.setSuccess(true);
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.REMOVE_USER_FROM_ROOM, "Removed !", StatementType.SUCCES_STATEMENT));
-			return roomResponse;
-			
+			return roomResponse;			
 		} catch (NullPointerException | IllegalArgumentException e) {
 			e.printStackTrace();
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.REMOVE_USER_FROM_ROOM, "User don't exist",StatementType.ERROR_STATEMENT));
@@ -331,10 +307,11 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		try {
 			room = roomRepository.findByRoomId(roomRequest.getRoomId()).get();
 		} catch (NoSuchElementException e) {
-			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.ADD_USER_TO_ROOM, "User not found", StatementType.ERROR_STATEMENT));
+			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.ADD_USER_TO_ROOM, "This room does not exist", StatementType.ERROR_STATEMENT));
 			e.printStackTrace();
 			return roomResponse;
 		}
+		
 		
 		try {
 			user = userRepository.findByNick(roomRequest.getUserNick()).get();
@@ -343,7 +320,6 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 			e.printStackTrace();
 			return roomResponse;
 		}
-		
 		
 		
 		try {
@@ -366,8 +342,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		
 		
 		try {
-			roomService.addUserToRoom(room, user);
-			
+			roomService.addUserToRoom(room, user);	
 			roomResponse.setRooms(roomService.getUserRooms(sendRequestUser));
 			roomResponse.setSuccess(true);
 			roomResponse.getStatements().add(new Statement<RoomAction>(RoomAction.ADD_USER_TO_ROOM, "User added !", StatementType.SUCCES_STATEMENT));
@@ -482,7 +457,29 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		}		
 	}
 	
+	
+	private Map<String, Integer> countUnreadMessages(List<Room> roomList, String userNick) {
 		
+		Map<String, Integer> unreadMessages = new HashMap<String, Integer>();
+		
+		roomList.stream()
+		   .filter(r -> r != null)
+		   .filter(r -> r.getRoomId() != null)
+		   .peek(r -> unreadMessages.put(r.getRoomId(), count(r, userNick)))
+		   .collect(Collectors.toList()).size();
+		  
+		return unreadMessages;
+	}
+	
+	
+	private int count(Room room, String userNick) {
+		
+		return room.getMessages().stream()
+		   .filter(m -> m != null)
+		   .filter(m -> m.getMissedBy().contains(userNick))
+		   .collect(Collectors.toList())
+		   .size();
+	}	
 
 	// Checks if a given room has a user
 	private boolean containUser(Room room, String nick) {

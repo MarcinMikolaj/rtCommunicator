@@ -9,7 +9,7 @@ import project.rtc.exceptions.UserNotFoundException;
 
 public interface InvitationService {
 	
-	public Invitation create(InvitationRequestPayload invitingRequestPayload);
+	public Invitation create(String inviting, String invited);
 	
 	public List<Invitation> getAll(HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException;
 	

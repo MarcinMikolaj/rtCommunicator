@@ -10,7 +10,6 @@ import project.rtc.communicator.room.RoomAction;
 
 public class RoomResponsePayload {
 	
-	
 	private boolean success;
 	private RoomAction action;
 	private List<Room> rooms = new ArrayList<Room>();

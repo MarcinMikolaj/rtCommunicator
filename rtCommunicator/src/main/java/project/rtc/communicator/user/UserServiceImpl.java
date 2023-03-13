@@ -1,5 +1,7 @@
 package project.rtc.communicator.user;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.Set;
@@ -20,6 +22,7 @@ import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.CredentialsService;
 import project.rtc.authorization.basic_login.credentials.CredentialsServiceImpl;
 import project.rtc.communicator.invitations.Invitation;
+import project.rtc.communicator.room.Room;
 import project.rtc.communicator.room.RoomService;
 import project.rtc.communicator.room.RoomServiceImpl;
 import project.rtc.communicator.room.pojo.Statement;
@@ -129,60 +132,54 @@ public class UserServiceImpl implements UserService {
 	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		
 		User user;
-		UserResponseBody userResponseBody = new UserResponseBody();
-		userResponseBody.setAction(UserAction.DELETE_USER);
-		
-
+		UserResponseBody userResponseBody = new UserResponseBody(false, UserAction.DELETE_ACCOUNT);
+			
 		try {
 			user = getUser(httpServletRequest);
 		} catch (UserNotFoundException | NoAuthorizationTokenException e) {
 			e.printStackTrace();
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Account not found or you are not authorized.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
-		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
-		
-		// If password not equals
-		if(!credentials.getEmail().equals(email)) {
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Login is incorrect", StatementType.ERROR_STATEMENT));
+		// If emails not equals
+		if(!user.getEmail().equals(email)) {
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Login is incorrect.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		}
 		
-		// removes the user from all his rooms
-		try {
-			
-			// remove the user from all his rooms
-			user.getRoomsId().stream()
-			  .filter(id -> id !=null)
-			  .peek(id -> roomService.deleteUserFromRoom(id, user.getNick()))
-			  .toList().size();
-			
-			
-			User userForClient = loadUserProfileImg(userRepository.findById(user.getMongoId()).get());
-			userResponseBody.setUser(userForClient);
-					
-			// deletes the user's account
-			userRepository.delete(user);
-			credentialsRepository.deleteById(credentials.getId());
-			userResponseBody.setSuccess(true);
-			
-			
-			
-			
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Account deleted", StatementType.SUCCES_STATEMENT));
+		
+		try {		
+			deleteUser(user);	
+			userResponseBody.setSuccess(true);			
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Account deleted.", StatementType.SUCCES_STATEMENT));
 			return userResponseBody;
 			
 		} catch (Exception e) {
 			e.printStackTrace();
-			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_USER, "Something went wrong", StatementType.ERROR_STATEMENT));
+			userResponseBody.getStatements().add(new Statement<UserAction>(UserAction.DELETE_ACCOUNT, "Something went wrong.", StatementType.ERROR_STATEMENT));
 			return userResponseBody;
 		} 
 		
 	}
 
-
-
+	// Allows you to completely remove a user from the site, including their account information, credentials, and references to them in other rooms.
+	// Return deleted user.
+	public User deleteUser(User u) {
+		
+		// remove credentials
+		credentialsRepository.deleteByEmail(u.getEmail());
+		
+		// remove user references to other rooms.
+		u.getRoomsId().stream().filter(id -> id != null).forEach(id -> roomService.deleteUserFromRoom(id, u.getNick()));
+		
+		// remove user account information
+		userRepository.deleteById(u.getMongoId());
+		
+		return u;
+	}
+	
+	
 	@Override
 	public UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest) {
 		

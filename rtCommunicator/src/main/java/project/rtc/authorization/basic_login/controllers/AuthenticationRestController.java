@@ -18,14 +18,17 @@ import project.rtc.authorization.basic_login.controllers.pojo.LoginResponsePaylo
 import project.rtc.authorization.basic_login.controllers.pojo.LogoutRequestPayload;
 
 @RestController	
-public class AuthenticationRestController {
+// TODO: @RequiredArgsConstructur,
+// constructure to remove, field to final
+public class AuthenticationRestController { //TODO: exctract an interface
 	
-	private AuthenticationService loginService;
+	private final AuthenticationService loginService;
 	
 	public AuthenticationRestController(AuthenticationServiceImpl loginServiceImpl) {
 		this.loginService = loginServiceImpl;
 	}
 	
+	//TODO: PostMapping
 	@RequestMapping(path = "/app/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest){
 		
@@ -35,7 +38,7 @@ public class AuthenticationRestController {
 			return new ResponseEntity<LoginResponsePayload>(loginResponsePayload, HttpStatus.OK);	
 		else
 			return new ResponseEntity<LoginResponsePayload>(loginResponsePayload, HttpStatus.UNAUTHORIZED);
-		
+		//TODO: AOP, creare an exception handler, that will handle AuthenticationException and return the UNAUTHORIZED ResponseEntity
 	}
 	
 	

@@ -27,7 +27,8 @@ import project.rtc.registration.validators.Password;
     @NamedQuery(name = "Credentials.updatePasswordByEmail", query = "UPDATE Credentials c SET c.password = :password WHERE c.email = :email"),
     @NamedQuery(name = "Credentials.existByEmail", query ="SELECT CASE WHEN count(c) > 0 THEN true ELSE false END FROM Credentials c where c.email = :email"),
     @NamedQuery(name = "Credentials.updateEmailById", query ="UPDATE Credentials c SET c.email = :email WHERE c.id = :id"),
-    @NamedQuery(name = "Credentials.updatePasswordById", query ="UPDATE Credentials c SET c.password = :password WHERE c.id = :id")
+    @NamedQuery(name = "Credentials.updatePasswordById", query ="UPDATE Credentials c SET c.password = :password WHERE c.id = :id"),
+    @NamedQuery(name = "Credentials.deleteByEmail", query ="DELETE FROM Credentials c WHERE c.email = :email")
 })
 @Table(name = "credentials")
 public class Credentials implements UserDetails, OAuth2User {

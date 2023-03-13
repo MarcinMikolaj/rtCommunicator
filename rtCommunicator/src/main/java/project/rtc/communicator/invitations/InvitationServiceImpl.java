@@ -39,29 +39,27 @@ public class InvitationServiceImpl implements InvitationService {
 		this.roomService = roomServiceImpl;
 	}
 
+
+
 	// The method returns the created invitation.
+	// Accepts the nicknames of the inviter and the invitee as arguments.
 	@Override
-	public Invitation create(InvitationRequestPayload invitingRequestPayload) {
-		
+	public Invitation create(String inviting, String invited) {
+			
 		Invitation invitation;
-		String invited;
 		String identificator;
 		Date sqlDate;
-		
+			
 		identificator = UUID.randomUUID().toString();
 		sqlDate = new Date(System.currentTimeMillis());
-		
-		invited = invitingRequestPayload.getInvited();
-		invitation = new Invitation(identificator, invitingRequestPayload.getInviting(), invitingRequestPayload.getInvited(), sqlDate);
-		
-		// Warunek sprawdzający czy użytkownik nie posiada już takiego zaproszenia
-		// Sprawdz czy identyfikator jest unikalny
-		
+			
+		invitation = new Invitation(identificator, inviting, invited, sqlDate);
+			
 		invitationRepository.save(invitation);
 		userService.addInvitations(invited, invitation);
-		
+			
 		return invitation;
-	}
+		}
 	
 
 	@Override
