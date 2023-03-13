@@ -15,7 +15,6 @@ public class RtCommunicatorApplication {
 		SpringApplication.run(RtCommunicatorApplication.class, args);
 	}
 	
-	
 	@Bean
 	PasswordEncoder createPasswordEncoder() {
 		return new BCryptPasswordEncoder();

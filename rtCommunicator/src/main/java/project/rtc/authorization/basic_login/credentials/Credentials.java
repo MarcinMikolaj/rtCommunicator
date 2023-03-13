@@ -13,6 +13,7 @@ import javax.persistence.Table;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+import lombok.*;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -31,6 +32,10 @@ import project.rtc.registration.validators.Password;
     @NamedQuery(name = "Credentials.deleteByEmail", query ="DELETE FROM Credentials c WHERE c.email = :email")
 })
 @Table(name = "credentials")
+@NoArgsConstructor
+@Getter
+@Setter
+@ToString
 public class Credentials implements UserDetails, OAuth2User {
 	
 	private static final long serialVersionUID = -7340660922729835855L;
@@ -38,13 +43,17 @@ public class Credentials implements UserDetails, OAuth2User {
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
+
+	@Getter(AccessLevel.NONE)
 	private String password;
+
 	private String email;
+
 	private String name;
+
 	private String provider;
+
 	private boolean isAccountNonLocked;
-	
-	public Credentials() {}
 	
 	public Credentials(String password, String email, String name, String provider) {
 		super();
@@ -54,44 +63,6 @@ public class Credentials implements UserDetails, OAuth2User {
 		this.provider = provider;
 		isAccountNonLocked = true;
 		
-	}
-	
-	public Long getId() {
-		return id;
-	}
-
-	public void setId(Long id) {
-		this.id = id;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-	
-	
-	public String getProvider() {
-		return provider;
-	}
-
-	public void setProvider(String provider) {
-		this.provider = provider;
-	}
-	
-	
-	public String getEmail() {
-		return email;
-	}
-
-	public void setEmail(String email) {
-		this.email = email;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
 	}
 
 	@Override
@@ -137,6 +108,5 @@ public class Credentials implements UserDetails, OAuth2User {
 	public Map<String, Object> getAttributes() {
 		return null;
 	}
-	
-	
+
 }

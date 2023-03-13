@@ -15,7 +15,6 @@ public interface UserRepository extends MongoRepository<User, String> {
 	public Optional<User> findByEmail(String email);
 	public boolean existsByNick(String nick);
 	
-	
 	@Modifying
 	@Transactional
 	@Query("UPDATE User u SET u.roomsId = :roomsId WHERE u.mongoId = :mongoId")
