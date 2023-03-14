@@ -4,7 +4,7 @@ import java.io.IOException;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -19,14 +19,10 @@ import project.rtc.authorization.forgot_password.ForgotPasswordRequest;
 import project.rtc.authorization.forgot_password.ForgotPasswordService;
 
 @RestController
+@RequiredArgsConstructor
 public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestController {
 	
-	private ForgotPasswordService forgotPasswordService;
-	
-	@Autowired
-	public void setForgotPasswordService(ForgotPasswordService forgotPasswordService) {
-		this.forgotPasswordService = forgotPasswordService;
-	}
+	private final ForgotPasswordService forgotPasswordService;
 
 	@Override
 	@RequestMapping(path = "/app/forgot/send", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)

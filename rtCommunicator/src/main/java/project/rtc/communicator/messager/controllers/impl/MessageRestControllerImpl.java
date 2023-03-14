@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.handler.annotation.MessageMapping;
@@ -25,15 +26,12 @@ import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 
 @RestController
+@RequiredArgsConstructor
 public class MessageRestControllerImpl implements MessageRestController {
 	
-	private MessageService messageService;
-	private UserService userService;
+	private final MessageService messageService;
+	private final UserService userService;
 	
-	public MessageRestControllerImpl(MessageServiceImpl messageServiceImpl, UserServiceImpl userServiceImpl) {
-		this.messageService = messageServiceImpl;
-		this.userService = userServiceImpl;
-	}
 
 	@Override
 	@MessageMapping("/messenger")

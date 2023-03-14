@@ -5,6 +5,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -25,14 +26,11 @@ import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.dto.ProfilePicture;
 
 @RestController
+@RequiredArgsConstructor
 public class UserRestControllerImpl implements UserRestController {
 	
-	private UserService userService;
-	
-	public UserRestControllerImpl(UserServiceImpl userServiceImpl) {
-		this.userService = userServiceImpl;	
-	}
-	
+	private final UserService userService;
+
 	// Responsible for sending information about the currently logged in user
 	@Override
 	@RequestMapping(path = "/app/account/get", method = RequestMethod.GET)

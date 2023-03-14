@@ -4,6 +4,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,14 +22,12 @@ import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 
 @RestController
+@RequiredArgsConstructor
 public class InvitationRestControllerImpl implements InvitationRestController {
 	
-	private InvitationService invitationService;
+	private final InvitationService invitationService;
 	
-	public InvitationRestControllerImpl(InvitationServiceImpl invitationServiceImpl) {
-		this.invitationService = invitationServiceImpl;
-	}
-	
+
 	// Is responsible for handling the query regarding the download of all invitations for the currently logged in user.
 	@Override
 	@RequestMapping(path = "/app/rtc/invitation/get/all", method = RequestMethod.GET)

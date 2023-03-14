@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -34,25 +35,18 @@ import project.rtc.exceptions.UserNotFoundException;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class RoomResponseServiceImpl implements RoomResponseService {
 	
-	private RoomRepository roomRepository;
-	private UserRepository userRepository;
-	private UserServiceImpl userService;
-	private MessageService messageService;
+	private final RoomRepository roomRepository;
+	private final UserRepository userRepository;
+	private final UserServiceImpl userService;
+	private final MessageService messageService;
 	
 	private RoomService roomService;
 
 	
-	public RoomResponseServiceImpl(RoomRepository roomRepository, UserRepository userRepository,
-			UserServiceImpl userServiceImpl, RoomServiceImpl roomServiceImpl, MessageServiceImpl messageServiceImpl) {
-		this.roomRepository = roomRepository;
-		this.userRepository = userRepository;
-		this.userService = userServiceImpl;
-		this.roomService = roomServiceImpl;
-		this.messageService = messageServiceImpl;
-	}
-	
+
 	@Override
 	public RoomResponsePayload createRoomWithAuthoringUser(HttpServletRequest httpServletRequest, RoomRequestPayload roomRequest) throws ServletException {
 		

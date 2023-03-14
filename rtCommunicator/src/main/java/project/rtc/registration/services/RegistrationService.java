@@ -11,6 +11,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -34,34 +35,17 @@ import org.hibernate.validator.internal.engine.path.PathImpl;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class RegistrationService {
 	
-	private CredentialsService credentialsService;
-    private ActivateAccountTokenService activateAccountTokenService;
-    private MailSenderService mailSenderService;
-	private Validator validator;
-	private JwtTokenProvider jwtTokenProvider;
-	private UserServiceImpl userService;
+	private final CredentialsService credentialsService;
+    private final ActivateAccountTokenService activateAccountTokenService;
+    private final MailSenderService mailSenderService;
+	private final Validator validator;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final UserServiceImpl userService;
 	
-	public RegistrationService(CredentialsServiceImpl credentialsServiceImpl,
-			UserServiceImpl userService, ActivateAccountTokenService activateAccountTokenService, Validator validator) {
-		this.credentialsService = credentialsServiceImpl;
-		this.userService = userService;
-		this.validator = validator;
-		this.activateAccountTokenService = activateAccountTokenService;
-	}
-	
-	@Autowired
-	public void setMailSenderService(MailSenderServiceImpl mailSenderServiceImpl) {
-		this.mailSenderService = mailSenderServiceImpl;
-	}
-	
-	@Autowired
-	public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
-	
-	
+
 	// User registration consists in creating new private credentials to which only the registrant has access
 	// and a public user account sent to friends during e.g. refreshing the friends list in the customer panel
 	public RegistrationResponse registerAccount(RegistrationRequest reqisterRequest) {

@@ -3,7 +3,7 @@ package project.rtc.registration.controllers.impl;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -17,15 +17,11 @@ import project.rtc.registration.services.RegistrationService;
 import project.rtc.registration.controllers.RegistrationRestController;
 
 @RestController
+@RequiredArgsConstructor
 public class RegistrationRestControllerImpl implements RegistrationRestController {
 	
-	private RegistrationService registrationService;
-	
-	@Autowired
-	public void setRegistrationService(RegistrationService registrationService) {
-		this.registrationService = registrationService;
-	}
-	
+	private final RegistrationService registrationService;
+
 	@CrossOrigin(origins = "*", maxAge = 3600)
 	@RequestMapping(path = "/app/registration/create", method = RequestMethod.POST)
 	public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest registrationRequest){

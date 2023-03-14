@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
@@ -19,25 +20,18 @@ import project.rtc.communicator.messager.repositories.MessageRepository;
 import project.rtc.communicator.room.dto.Room;
 import project.rtc.communicator.room.repositories.RoomRepository;
 import project.rtc.communicator.room.response_service.RoomService;
-import project.rtc.communicator.room.response_service.impl.RoomServiceImpl;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class MessageServiceImpl implements MessageService {
 	
-	private MessageRepository messageRepository;
-	private RoomRepository roomRepository;
-	private RoomService roomService;
-	private SimpMessagingTemplate simpMessagingTemplate;
-	private Validator validator;
+	private final MessageRepository messageRepository;
+	private final RoomRepository roomRepository;
+	private final RoomService roomService;
+	private final SimpMessagingTemplate simpMessagingTemplate;
+	private final Validator validator;
 	
-	public MessageServiceImpl(MessageRepository messageRepository, RoomServiceImpl roomServiceImpl, RoomRepository roomRepository, SimpMessagingTemplate simpMessagingTemplate, Validator validator) {
-		this.messageRepository = messageRepository;
-		this.roomRepository = roomRepository;
-		this.roomService = roomServiceImpl;
-		this.simpMessagingTemplate = simpMessagingTemplate;
-		this.validator = validator;
-	}
 
 	// This method allows you to save a new message for each transferred room.
 	// Saving the message is validated.

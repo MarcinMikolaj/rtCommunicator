@@ -3,6 +3,7 @@ package project.rtc.registration.activateAccountToken.services;
 import java.sql.Timestamp;
 import java.util.Date;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -12,21 +13,13 @@ import project.rtc.registration.activateAccountToken.repositories.impl.ActivateA
 import project.rtc.utils.jwt.JwtTokenProvider;
 
 @Service
+@RequiredArgsConstructor
 public class ActivateAccountTokenService {
 	
-	private ActivateAccountTokenRepository activateAccountTokenRepository;
-	private JwtTokenProvider jwtTokenProvider;
+	private final ActivateAccountTokenRepository activateAccountTokenRepository;
+	private final JwtTokenProvider jwtTokenProvider;
 	
-	@Autowired
-	public void setActivateAccountTokenService(ActivateAccountTokenRepositoryImpl activateAccountTokenRepositoryImpl) {
-		this.activateAccountTokenRepository = activateAccountTokenRepositoryImpl;
-	}
-	
-	@Autowired
-	public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
-	
+
 	public ActivateAccountToken assignNewTokenToAccount(String email) {
 		
 		String authorizationToken;

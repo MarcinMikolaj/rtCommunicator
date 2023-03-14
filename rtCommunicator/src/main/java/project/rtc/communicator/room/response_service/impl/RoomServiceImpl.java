@@ -6,6 +6,7 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.UUID;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -21,17 +22,14 @@ import project.rtc.utils.FileUtils;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class RoomServiceImpl implements RoomService {
 	
-	private RoomRepository roomRepository;
-	private UserRepository userRepository;
+	private final RoomRepository roomRepository;
+	private final UserRepository userRepository;
 	
-	public RoomServiceImpl(RoomRepository roomRepository, UserRepository userRepository) {
-		this.roomRepository = roomRepository;
-		this.userRepository = userRepository;
-	}
-	
-	
+
+
 	// This method allows you to create a new room to which the users will be assigned.
 	@Override
 	public Room createRoom(String roomName, List<User> users) {

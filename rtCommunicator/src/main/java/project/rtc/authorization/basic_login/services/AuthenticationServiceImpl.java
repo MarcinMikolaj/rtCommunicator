@@ -4,6 +4,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,18 +28,13 @@ import javax.servlet.http.Cookie;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
 
-	private AuthenticationManager authenticationManager;
-	private CredentialsService credentialsService;
-	private JwtTokenProvider jwtTokenProvider;
+	private final AuthenticationManager authenticationManager;
+	private final CredentialsService credentialsService;
+	private final JwtTokenProvider jwtTokenProvider;
 
-	public AuthenticationServiceImpl(AuthenticationManager authenticationManager, CredentialsService credentialsService,
-			JwtTokenProviderImpl jwtTokenProviderImpl) {
-		this.authenticationManager = authenticationManager;
-		this.credentialsService = credentialsService;
-		this.jwtTokenProvider = jwtTokenProviderImpl;
-	}
 
 	// This method authenticates the user trying to access the application.
 	// If the user has an account, he will be assigned an authorization token under

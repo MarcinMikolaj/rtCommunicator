@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -29,22 +30,15 @@ import project.rtc.exceptions.UserNotFoundException;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
+@RequiredArgsConstructor
 public class InvitationServiceImpl implements InvitationService {
-	
-	private InvitationRepository invitationRepository;
-	private UserService userService;
-	private UserRepository userRepository;
-	private RoomService roomService;
-	
-	public InvitationServiceImpl(InvitationRepositoryImpl invitationRepositoryImpl, UserServiceImpl userServiceImpl,
-								 UserRepository userRepository, RoomServiceImpl roomServiceImpl) {
-		this.invitationRepository = invitationRepositoryImpl;
-		this.userService = userServiceImpl;
-		this.userRepository = userRepository;
-		this.roomService = roomServiceImpl;
-	}
 
 
+	private final InvitationRepository invitationRepository;
+	private final UserService userService;
+	private final UserRepository userRepository;
+	private final RoomService roomService;
+	
 
 	// The method returns the created invitation.
 	// Accepts the nicknames of the inviter and the invitee as arguments.

@@ -1,5 +1,6 @@
 package project.rtc.authorization.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -12,14 +13,11 @@ import project.rtc.authorization.basic_login.credentials.repositories.impl.Crede
 import project.rtc.utils.ConsoleColors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 	
-	private CredentialsRepository credentialsRepository;
-	
-	@Autowired
-	public void setCredentialsRepository(CredentialsRepositoryImpl credentialsRepositoryImpl) {
-		this.credentialsRepository = credentialsRepositoryImpl;
-	}
+	private final CredentialsRepository credentialsRepository;
+
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

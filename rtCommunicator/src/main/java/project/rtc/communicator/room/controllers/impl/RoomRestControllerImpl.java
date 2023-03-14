@@ -3,6 +3,7 @@ package project.rtc.communicator.room.controllers.impl;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,14 +19,11 @@ import project.rtc.communicator.room.response_service.impl.RoomResponseServiceIm
 
 // Is responsible for handling requests regarding room management in the application.
 @RestController
+@RequiredArgsConstructor
 public class RoomRestControllerImpl implements RoomRestController {
 	
-	private RoomResponseService roomService;
+	private final RoomResponseService roomService;
 
-	public RoomRestControllerImpl(RoomResponseServiceImpl roomServiceImpl) {
-		this.roomService = roomServiceImpl;
-		
-	}
 
 	@Override
 	@RequestMapping(path = "/app/rtc/room/create", method = RequestMethod.POST)

@@ -1,5 +1,6 @@
 package project.rtc.authorization.oauth2;
 
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
@@ -19,20 +20,12 @@ import project.rtc.authorization.oauth2.provider.OAuth2UserInfoFactory;
 import project.rtc.utils.ConsoleColors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomOAuth2UserService extends DefaultOAuth2UserService{
 	
-	private CredentialsRepository credentialsRepository;
-	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	public void setCredentialsRepository(CredentialsRepositoryImpl credentialsRepositoryImpl) {
-		this.credentialsRepository = credentialsRepositoryImpl;
-	}
-	
-	@Autowired
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
+	private final CredentialsRepository credentialsRepository;
+	private final PasswordEncoder passwordEncoder;
+
 
 	@Override
 	public OAuth2User loadUser(OAuth2UserRequest userRequest) throws OAuth2AuthenticationException {

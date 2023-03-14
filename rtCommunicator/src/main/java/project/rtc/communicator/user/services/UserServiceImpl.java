@@ -12,6 +12,7 @@ import javax.validation.ConstraintViolation;
 
 import javax.validation.Validator;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.services.AuthenticationServiceImpl;
@@ -38,33 +39,22 @@ import project.rtc.utils.jwt.JwtTokenProvider;
 import project.rtc.utils.jwt.JwtTokenProviderImpl;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
 	
-    private CredentialsRepository credentialsRepository;
-    private UserRepository userRepository;
+    private final CredentialsRepository credentialsRepository;
+    private final UserRepository userRepository;
     
-    private RoomService roomService;
-    private CredentialsService credentialsService;
-    private JwtTokenProvider jwtTokenProvider;
+    private final RoomService roomService;
+    private final CredentialsService credentialsService;
+    private final JwtTokenProvider jwtTokenProvider;
     
-    private Validator validator;
+    private final Validator validator;
     
-    private String pathToProfilePictures = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\ProfilePictures\\";
+    private final String pathToProfilePictures = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\ProfilePictures\\";
     
     
-    public UserServiceImpl(UserRepository userRepository, JwtTokenProviderImpl jwtTokenProviderImpl,
-    		Validator validator, CredentialsRepository credentialsRepository,
-    		RoomServiceImpl roomServiceImpl, CredentialsServiceImpl credentialsServiceImpl, AuthenticationServiceImpl authenticationServiceImpl) {
-    	this.userRepository = userRepository;
-    	this.jwtTokenProvider = jwtTokenProviderImpl;
-    	this.validator = validator;
-    	this.credentialsRepository = credentialsRepository;
-    	this.roomService = roomServiceImpl;
-    	this.credentialsService = credentialsServiceImpl;
 
-    }
-	
-    
 	// Allows you to create a new User object for a given user via ReqisterRequest
 	public User createUserAndSaveInDataBase(RegistrationRequest registrationRequest) {
 		

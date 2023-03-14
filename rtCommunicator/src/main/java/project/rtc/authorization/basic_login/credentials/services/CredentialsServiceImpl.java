@@ -1,6 +1,6 @@
 package project.rtc.authorization.basic_login.credentials.services;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +11,11 @@ import project.rtc.authorization.basic_login.credentials.repositories.impl.Crede
 import project.rtc.registration.dto.RegistrationRequest;
 
 @Service
+@RequiredArgsConstructor
 public class CredentialsServiceImpl implements CredentialsService {
 	
-	private CredentialsRepository credentialsRepository;
-	private PasswordEncoder passwordEncoder;
-	
-	@Autowired
-	public void setCredentialsRepository(CredentialsRepositoryImpl credentialsRepositoryImpl) {
-		this.credentialsRepository = credentialsRepositoryImpl;
-	}
-	
-	@Autowired
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
+	private final CredentialsRepository credentialsRepository;
+	private final PasswordEncoder passwordEncoder;
 	
 
 	@Override
@@ -38,7 +29,6 @@ public class CredentialsServiceImpl implements CredentialsService {
 	
 		return false;
 	}
-	
 	
 
 	@Override
