@@ -1,15 +1,14 @@
 package project.rtc.registration.controllers.impl;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import project.rtc.registration.controllers.RegistrationController;
 
 @Controller
 public class RegistrationControllerImpl implements RegistrationController {
 
 	@Override
-	@RequestMapping(path = "/app/register", method = RequestMethod.GET)
+	@GetMapping(path = "/app/register")
 	public String getRegisterPage() {
 		return "RegisterPage";
 	}

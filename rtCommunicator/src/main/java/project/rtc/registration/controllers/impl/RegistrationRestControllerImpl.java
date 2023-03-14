@@ -6,11 +6,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.rtc.registration.dto.RegistrationRequest;
 import project.rtc.registration.dto.RegistrationResponse;
 import project.rtc.registration.services.RegistrationService;
@@ -23,7 +19,7 @@ public class RegistrationRestControllerImpl implements RegistrationRestControlle
 	private final RegistrationService registrationService;
 
 	@CrossOrigin(origins = "*", maxAge = 3600)
-	@RequestMapping(path = "/app/registration/create", method = RequestMethod.POST)
+	@PostMapping(path = "/app/registration/create")
 	public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest registrationRequest){
 		
 		RegistrationResponse registrationResponse = registrationService.registerAccount(registrationRequest);
@@ -34,7 +30,7 @@ public class RegistrationRestControllerImpl implements RegistrationRestControlle
 			return new ResponseEntity<RegistrationResponse>(registrationResponse, HttpStatus.CONFLICT);
 	}
 	
-	@RequestMapping(path = "/app/registration/activate", method = RequestMethod.GET)
+	@GetMapping(path = "/app/registration/activate")
 	public ResponseEntity<String> activate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		
 		boolean result = registrationService.activateAccount(httpServletRequest, httpServletResponse);

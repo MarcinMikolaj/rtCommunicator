@@ -9,10 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import project.rtc.authorization.forgot_password.controllers.ForgotPasswordRestController;
 import project.rtc.authorization.forgot_password.reset_password_token.ChangePasswordRequest;
 import project.rtc.authorization.forgot_password.ForgotPasswordRequest;
@@ -25,7 +22,7 @@ public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestContr
 	private final ForgotPasswordService forgotPasswordService;
 
 	@Override
-	@RequestMapping(path = "/app/forgot/send", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/forgot/send", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> handleTheRequestToChangeThePassword(
 			@RequestBody ForgotPasswordRequest forgotPasswordRequest, HttpServletResponse response) throws IOException {
 		
@@ -39,7 +36,7 @@ public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestContr
     }
 
 	@Override
-	@RequestMapping(path = "/app/forgot/credentials/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/forgot/credentials/update", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<?> handleTheAttemptToChangeThePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
 		
 	boolean result = forgotPasswordService.changePasswordIfTokenIsCorrect(changePasswordRequest.getToken(), changePasswordRequest.getPassword());

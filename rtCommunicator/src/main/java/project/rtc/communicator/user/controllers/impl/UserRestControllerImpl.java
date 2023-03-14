@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
 
@@ -20,7 +17,6 @@ import project.rtc.communicator.user.dto.User;
 import project.rtc.communicator.user.dto.UserResponseBody;
 import project.rtc.communicator.user.controllers.UserRestController;
 import project.rtc.communicator.user.services.UserService;
-import project.rtc.communicator.user.services.UserServiceImpl;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.dto.ProfilePicture;
@@ -33,7 +29,7 @@ public class UserRestControllerImpl implements UserRestController {
 
 	// Responsible for sending information about the currently logged in user
 	@Override
-	@RequestMapping(path = "/app/account/get", method = RequestMethod.GET)
+	@GetMapping(path = "/app/account/get")
 	public ResponseEntity<User> getActualLoggedUser(HttpServletRequest httpServletRequest) {
 		
 		User user;
@@ -54,7 +50,7 @@ public class UserRestControllerImpl implements UserRestController {
 	
 	// Handles the request to change the user's nick
 	@Override
-	@RequestMapping(path = "/app/account/update/nick", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/account/update/nick", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserResponseBody> updateUserNick(@RequestBody Map<String, ?> nick, HttpServletRequest httpServletRequest) {
 		
 		JSONObject jsonObject = new JSONObject(nick);
@@ -69,7 +65,7 @@ public class UserRestControllerImpl implements UserRestController {
 	
 	// Handles the request to change the user's email
 	@Override
-	@RequestMapping(path = "/app/account/update/email", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/account/update/email", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserResponseBody> updateUserEmail(@RequestBody Map<String, ?> email, HttpServletRequest httpServletRequest) {
 			
 		JSONObject jsonObject = new JSONObject(email);
@@ -83,7 +79,7 @@ public class UserRestControllerImpl implements UserRestController {
 	
 	// Handles the request to change the user's email
 	@Override
-	@RequestMapping(path = "/app/account/update/password", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/account/update/password", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserResponseBody> updateUserPassword(@RequestBody Map<String, ?> attributes, HttpServletRequest httpServletRequest) {
 				
 		JSONObject jsonObject = new JSONObject(attributes);
@@ -99,7 +95,7 @@ public class UserRestControllerImpl implements UserRestController {
 	
 	// Handles the request to change the user's picture
 	@Override
-	@RequestMapping(path = "/app/account/update/picture", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/account/update/picture", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserResponseBody> updateUserProfilePicture(@RequestBody ProfilePicture profilePicture, HttpServletRequest httpServletRequest) {
 		
 		System.out.print(profilePicture);
@@ -114,7 +110,7 @@ public class UserRestControllerImpl implements UserRestController {
 	
 	// Handles the request to delete user
 	@Override
-	@RequestMapping(path = "/app/account/delete", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/account/delete", produces = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<UserResponseBody> deleteUser(@RequestBody Map<String, ?> email,
 			HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 		

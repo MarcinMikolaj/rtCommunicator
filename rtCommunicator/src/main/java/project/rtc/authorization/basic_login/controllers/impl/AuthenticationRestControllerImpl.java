@@ -9,10 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import project.rtc.authorization.basic_login.controllers.AuthenticationRestController;
 import project.rtc.authorization.basic_login.services.AuthenticationService;
@@ -26,9 +23,8 @@ public class AuthenticationRestControllerImpl implements AuthenticationRestContr
 	
 	private final AuthenticationService loginService;
 
-	//TODO: PostMapping
 	@Override
-	@RequestMapping(path = "/app/login", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/login", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest){
 
 		LoginResponsePayload loginResponsePayload = loginService.authenticate(response, loginRequest);
@@ -42,7 +38,7 @@ public class AuthenticationRestControllerImpl implements AuthenticationRestContr
 
 
 	@Override
-	@RequestMapping(path = "/app/logout", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
+	@PostMapping(path = "/app/logout", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> logout(@RequestBody LogoutRequestPayload logoutRequestPayload, HttpServletRequest request, HttpServletResponse response) throws IOException{
 		
 		loginService.logout(request, response, logoutRequestPayload);
