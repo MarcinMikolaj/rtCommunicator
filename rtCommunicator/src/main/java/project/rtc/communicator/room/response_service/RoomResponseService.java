@@ -3,8 +3,8 @@ package project.rtc.communicator.room.response_service;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 
-import project.rtc.communicator.room.pojo.RoomRequestPayload;
-import project.rtc.communicator.room.pojo.RoomResponsePayload;
+import project.rtc.communicator.room.dto.RoomRequestPayload;
+import project.rtc.communicator.room.dto.RoomResponsePayload;
 
 public interface RoomResponseService {
 	

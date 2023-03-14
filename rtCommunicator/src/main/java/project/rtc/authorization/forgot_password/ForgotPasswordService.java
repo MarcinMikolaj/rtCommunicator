@@ -11,9 +11,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.Credentials;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepositoryImpl;

@@ -10,9 +10,9 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.Credentials;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.authorization.oauth2.provider.AuthProvider;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfo;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfoFactory;
