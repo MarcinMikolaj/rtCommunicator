@@ -5,6 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,7 +21,6 @@ import project.rtc.authorization.basic_login.credentials.services.CredentialsSer
 import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.CookieUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;
-import project.rtc.utils.jwt.JwtTokenProviderImpl;
 
 import java.io.IOException;
 
@@ -34,6 +34,10 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	private final AuthenticationManager authenticationManager;
 	private final CredentialsService credentialsService;
 	private final JwtTokenProvider jwtTokenProvider;
+
+    //	Expire time for JWT token
+	@Value("${app.security.jwt.expiry_time}")
+	private Integer expiryTime;
 
 
 	// This method authenticates the user trying to access the application.
@@ -56,11 +60,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 				null);
 
 		response.addHeader("Authorization", "Bearer " + authorizationToken);
-		// TODO: 6000000 to parametrize in app.props
-		// add app.security.jwt.expiry_time=6000000
-		// then add @Value("${app.security.jwt.expiry_time}") private Integer
-		// expiryTime;
-		CookieUtils.addCookie(response, "jwt", authorizationToken, 6000000);
+
+		CookieUtils.addCookie(response, "jwt", authorizationToken,  expiryTime);
 
 		return new LoginResponsePayload(null, true);
 
