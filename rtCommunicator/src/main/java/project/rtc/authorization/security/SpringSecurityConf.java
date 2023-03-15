@@ -70,6 +70,8 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	                        "/**/*.css",
 	                        "/**/*.js")
 	                        .permitAll()
+				   .antMatchers("/my-api-docs").permitAll() // openAPI docs
+				   .antMatchers("/my-api-docs.yaml").permitAll() // openAPI docs
 	               .antMatchers("/").permitAll() //test 
 	               .antMatchers("/app/register").permitAll() // GET register form
 	               .antMatchers("/app/registration/create").permitAll() // POST create account 
@@ -81,6 +83,7 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 			       .antMatchers("/app/forgot/send").permitAll()
 			       .antMatchers("/app/forgot/password/tk/**").permitAll()
 			       .antMatchers("/app/forgot/credentials/update").permitAll()
+
 			       .anyRequest().authenticated()
 			       .and()			       
 		    .oauth2Login()
