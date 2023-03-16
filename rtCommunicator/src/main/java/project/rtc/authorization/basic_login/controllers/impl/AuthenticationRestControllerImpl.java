@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import project.rtc.authorization.basic_login.controllers.AuthenticationRestController;
+import project.rtc.authorization.basic_login.controllers.impl.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.services.AuthenticationService;
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
 import project.rtc.authorization.basic_login.controllers.dto.LoginResponsePayload;
@@ -25,15 +26,10 @@ public class AuthenticationRestControllerImpl implements AuthenticationRestContr
 
 	@Override
 	@PostMapping(path = "/app/login", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest){
+	public ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest) throws AuthenticationException {
 
-		LoginResponsePayload loginResponsePayload = loginService.authenticate(response, loginRequest);
+		return new ResponseEntity<LoginResponsePayload>(loginService.authenticate(response, loginRequest), HttpStatus.OK);
 
-		if(loginResponsePayload.isAuthenticated())
-			return new ResponseEntity<LoginResponsePayload>(loginResponsePayload, HttpStatus.OK);
-		else
-			return new ResponseEntity<LoginResponsePayload>(loginResponsePayload, HttpStatus.UNAUTHORIZED);
-		//TODO: AOP, creare an exception handler, that will handle AuthenticationException and return the UNAUTHORIZED ResponseEntity
 	}
 
 

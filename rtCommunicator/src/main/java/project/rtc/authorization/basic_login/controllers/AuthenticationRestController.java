@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
 import project.rtc.authorization.basic_login.controllers.dto.LoginResponsePayload;
 import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
+import project.rtc.authorization.basic_login.controllers.impl.exceptions.AuthenticationException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -12,7 +13,7 @@ import java.io.IOException;
 
 public interface AuthenticationRestController {
 
-    ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest);
+    ResponseEntity<LoginResponsePayload> authenticate(HttpServletResponse response, @RequestBody LoginRequestPayload loginRequest) throws AuthenticationException;
 
     ResponseEntity<String> logout(@RequestBody LogoutRequestPayload logoutRequestPayload, HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

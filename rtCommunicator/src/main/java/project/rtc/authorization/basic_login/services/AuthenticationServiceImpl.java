@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
 import project.rtc.authorization.basic_login.controllers.dto.LoginResponsePayload;
 import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
+import project.rtc.authorization.basic_login.controllers.impl.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
 import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.CookieUtils;
@@ -44,13 +45,14 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	// If the user has an account, he will be assigned an authorization token under
 	// which he will be able to access specific resources.
 	@Override
-	public LoginResponsePayload authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) {
+	public LoginResponsePayload authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) throws AuthenticationException {
 
 		String authorizationToken;
 		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
 
 		if (!credentialsService.exist(loginRequestPayload))
-			return new LoginResponsePayload(null, false);
+			throw new AuthenticationException();
+
 
 		usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(),
 				loginRequestPayload.getPassword());
