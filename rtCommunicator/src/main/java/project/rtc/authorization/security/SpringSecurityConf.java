@@ -72,6 +72,7 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	                        .permitAll()
 				   .antMatchers("/my-api-docs").permitAll() // openAPI docs
 				   .antMatchers("/my-api-docs.yaml").permitAll() // openAPI docs
+				   .antMatchers("/actuator/**/*").permitAll() // Spring Boot Actuator
 	               .antMatchers("/").permitAll() //test 
 	               .antMatchers("/app/register").permitAll() // GET register form
 	               .antMatchers("/app/registration/create").permitAll() // POST create account 
