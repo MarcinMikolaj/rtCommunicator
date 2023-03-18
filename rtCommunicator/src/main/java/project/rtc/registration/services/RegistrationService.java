@@ -12,13 +12,11 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
-import project.rtc.authorization.basic_login.credentials.services.CredentialsServiceImpl;
 import project.rtc.communicator.user.services.UserServiceImpl;
 import project.rtc.registration.activateAccountToken.dto.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.services.ActivateAccountTokenService;
@@ -28,7 +26,6 @@ import project.rtc.registration.dto.RegistrationRequest;
 import project.rtc.registration.dto.RegistrationResponse;
 import project.rtc.utils.jwt.JwtTokenProvider;
 import project.rtc.utils.mail.MailSenderService;
-import project.rtc.utils.mail.MailSenderServiceImpl;
 
 import javax.validation.Path;
 import org.hibernate.validator.internal.engine.path.PathImpl;

@@ -16,12 +16,10 @@ public interface AuthenticationService {
 	// If the user has an account, he will be assigned an authorization token under which he will be able to access specific resources.
 	LoginResponsePayload authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) throws AuthenticationException;
 
-
-	// This method allows the currently logged in user to log out. Clear current SecurityContext.
+	// This method allows the currently logged-in user to log out. Clear current SecurityContext.
 	// The assigned authorization token is revoked.
 	// Set current Authentication to false.
 	void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException;
-
 
 	void logout(HttpServletRequest request, HttpServletResponse response) throws IOException;
 

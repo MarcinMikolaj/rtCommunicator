@@ -9,36 +9,36 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.rtc.registration.dto.RegistrationRequest;
 import project.rtc.registration.dto.RegistrationResponse;
-import project.rtc.registration.services.RegistrationService;
+import project.rtc.registration.services.RegistrationServiceImpl;
 import project.rtc.registration.controllers.RegistrationRestController;
 
 @RestController
 @RequiredArgsConstructor
 public class RegistrationRestControllerImpl implements RegistrationRestController {
 	
-	private final RegistrationService registrationService;
+	private final RegistrationServiceImpl registrationServiceImpl;
 
 	@CrossOrigin(origins = "*", maxAge = 3600)
-	@PostMapping(path = "/app/registration/create")
-	public ResponseEntity<RegistrationResponse> register(@RequestBody RegistrationRequest registrationRequest){
-		
-		RegistrationResponse registrationResponse = registrationService.registerAccount(registrationRequest);
-		
+	public ResponseEntity<RegistrationResponse> register(RegistrationRequest registrationRequest){
+
+		RegistrationResponse registrationResponse = registrationServiceImpl.registerAccount(registrationRequest);
+
 		if(registrationResponse.isSuccessful())
-			return new ResponseEntity<RegistrationResponse>(registrationResponse, HttpStatus.CREATED);
+			return new ResponseEntity<>(registrationResponse, HttpStatus.CREATED);
 		else
-			return new ResponseEntity<RegistrationResponse>(registrationResponse, HttpStatus.CONFLICT);
+			return new ResponseEntity<>(registrationResponse, HttpStatus.CONFLICT);
 	}
 	
-	@GetMapping(path = "/app/registration/activate")
-	public ResponseEntity<String> activate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
-		
-		boolean result = registrationService.activateAccount(httpServletRequest, httpServletResponse);
-		
+
+	public ResponseEntity<String> activate(HttpServletRequest httpServletRequest,
+										   HttpServletResponse httpServletResponse) {
+
+		boolean result = registrationServiceImpl.activateAccount(httpServletRequest, httpServletResponse);
+
 		if(result)
-			return new ResponseEntity<String>("", HttpStatus.OK);
+			return new ResponseEntity<>("", HttpStatus.OK);
 		else 
-			return new ResponseEntity<String>("", HttpStatus.INTERNAL_SERVER_ERROR);
+			return new ResponseEntity<>("", HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 }

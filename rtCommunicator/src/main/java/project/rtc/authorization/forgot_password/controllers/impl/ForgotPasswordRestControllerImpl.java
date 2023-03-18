@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
@@ -22,11 +21,11 @@ public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestContr
 	private final ForgotPasswordService forgotPasswordService;
 
 	@Override
-	@PostMapping(path = "/app/forgot/send", consumes = MediaType.APPLICATION_JSON_VALUE)
 	public ResponseEntity<String> handleTheRequestToChangeThePassword(
-			@RequestBody ForgotPasswordRequest forgotPasswordRequest, HttpServletResponse response) throws IOException {
+			ForgotPasswordRequest forgotPasswordRequest, HttpServletResponse response) throws IOException {
 		
-			boolean result = forgotPasswordService.startTheProcessOfChangingThePassword(forgotPasswordRequest.getEmail(), response);
+			boolean result = forgotPasswordService.startTheProcessOfChangingThePassword(forgotPasswordRequest.getEmail()
+					, response);
 			
 			if(result)
 				return new ResponseEntity<String>(HttpStatus.OK);
@@ -36,10 +35,10 @@ public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestContr
     }
 
 	@Override
-	@PostMapping(path = "/app/forgot/credentials/update", consumes = MediaType.APPLICATION_JSON_VALUE)
-	public ResponseEntity<?> handleTheAttemptToChangeThePassword(@RequestBody ChangePasswordRequest changePasswordRequest) {
+	public ResponseEntity<?> handleTheAttemptToChangeThePassword(ChangePasswordRequest changePasswordRequest) {
 		
-	boolean result = forgotPasswordService.changePasswordIfTokenIsCorrect(changePasswordRequest.getToken(), changePasswordRequest.getPassword());
+	boolean result = forgotPasswordService.changePasswordIfTokenIsCorrect(changePasswordRequest.getToken()
+			, changePasswordRequest.getPassword());
 	
 	if(result)
 		return ResponseEntity.ok(null);
