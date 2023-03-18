@@ -18,7 +18,7 @@ import project.rtc.communicator.user.dto.User;
 import project.rtc.communicator.user.repositories.UserRepository;
 import project.rtc.registration.dto.ProfilePicture;
 import project.rtc.registration.dto.RegistrationRequest;
-import project.rtc.registration.services.RegistrationServiceImpl;
+import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.utils.FileUtils;
 
 @RestController

@@ -9,7 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import project.rtc.registration.dto.RegistrationRequest;
 import project.rtc.registration.dto.RegistrationResponse;
-import project.rtc.registration.services.RegistrationServiceImpl;
+import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.registration.controllers.RegistrationRestController;
 
 @RestController

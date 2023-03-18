@@ -1,4 +1,4 @@
-package project.rtc.authorization.basic_login.services;
+package project.rtc.authorization.basic_login.services.impl;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -19,6 +19,7 @@ import project.rtc.authorization.basic_login.controllers.dto.LoginResponsePayloa
 import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
 import project.rtc.authorization.basic_login.controllers.impl.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
+import project.rtc.authorization.basic_login.services.AuthenticationService;
 import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.CookieUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;

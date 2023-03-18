@@ -1,4 +1,4 @@
-package project.rtc.communicator.messager.services;
+package project.rtc.communicator.messager.services.impl;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import project.rtc.communicator.messager.dto.Message;
 import project.rtc.communicator.messager.repositories.MessageRepository;
+import project.rtc.communicator.messager.services.MessageService;
 import project.rtc.communicator.room.dto.Room;
 import project.rtc.communicator.room.repositories.RoomRepository;
 import project.rtc.communicator.room.response_service.RoomService;

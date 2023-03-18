@@ -1,4 +1,4 @@
-package project.rtc.communicator.invitations.services;
+package project.rtc.communicator.invitations.services.impl;
 
 import java.sql.Date;
 import java.util.ArrayList;
@@ -18,13 +18,11 @@ import project.rtc.communicator.invitations.dto.Invitation;
 import project.rtc.communicator.invitations.dto.InvitationResponsePayload;
 import project.rtc.communicator.invitations.dto.ReplyToInvitationRequest;
 import project.rtc.communicator.invitations.repositories.InvitationRepository;
-import project.rtc.communicator.invitations.repositories.InvitationRepositoryImpl;
+import project.rtc.communicator.invitations.services.InvitationService;
 import project.rtc.communicator.room.response_service.RoomService;
-import project.rtc.communicator.room.response_service.impl.RoomServiceImpl;
 import project.rtc.communicator.user.dto.User;
 import project.rtc.communicator.user.repositories.UserRepository;
 import project.rtc.communicator.user.services.UserService;
-import project.rtc.communicator.user.services.UserServiceImpl;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 

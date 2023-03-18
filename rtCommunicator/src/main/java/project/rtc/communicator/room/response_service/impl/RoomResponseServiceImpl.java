@@ -17,7 +17,6 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import project.rtc.communicator.messager.services.MessageService;
-import project.rtc.communicator.messager.services.MessageServiceImpl;
 import project.rtc.communicator.room.dto.Room;
 import project.rtc.communicator.room.dto.RoomAction;
 import project.rtc.communicator.room.repositories.RoomRepository;
@@ -29,7 +28,7 @@ import project.rtc.communicator.room.dto.StatementType;
 import project.rtc.communicator.room.response_service.RoomResponseService;
 import project.rtc.communicator.user.dto.User;
 import project.rtc.communicator.user.repositories.UserRepository;
-import project.rtc.communicator.user.services.UserServiceImpl;
+import project.rtc.communicator.user.services.impl.UserServiceImpl;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 

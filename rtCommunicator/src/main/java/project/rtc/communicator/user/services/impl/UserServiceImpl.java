@@ -1,4 +1,4 @@
-package project.rtc.communicator.user.services;
+package project.rtc.communicator.user.services.impl;
 
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -15,20 +15,18 @@ import javax.validation.Validator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.services.AuthenticationServiceImpl;
 import project.rtc.authorization.basic_login.credentials.dto.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
-import project.rtc.authorization.basic_login.credentials.services.CredentialsServiceImpl;
 import project.rtc.communicator.invitations.dto.Invitation;
 import project.rtc.communicator.room.response_service.RoomService;
-import project.rtc.communicator.room.response_service.impl.RoomServiceImpl;
 import project.rtc.communicator.room.dto.Statement;
 import project.rtc.communicator.room.dto.StatementType;
 import project.rtc.communicator.user.dto.User;
 import project.rtc.communicator.user.dto.UserAction;
 import project.rtc.communicator.user.repositories.UserRepository;
 import project.rtc.communicator.user.dto.UserResponseBody;
+import project.rtc.communicator.user.services.UserService;
 import project.rtc.exceptions.NoAuthorizationTokenException;
 import project.rtc.exceptions.UserNotFoundException;
 import project.rtc.registration.dto.ProfilePicture;
@@ -36,7 +34,6 @@ import project.rtc.registration.dto.RegistrationRequest;
 import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.FileUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;
-import project.rtc.utils.jwt.JwtTokenProviderImpl;
 
 @Service
 @RequiredArgsConstructor
