@@ -3,8 +3,8 @@ package project.rtc.registration.validators.impl;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 
-import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.registration.validators.ExistsByEmail;
 
 public class ExistByEmailValidator implements ConstraintValidator<ExistsByEmail, String> {

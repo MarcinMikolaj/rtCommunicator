@@ -1,14 +1,9 @@
 package project.rtc.authorization.basic_login.controllers;
 
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 
-@Controller
-public class AuthenticationPageController {
-	
-	@RequestMapping(path = "/app/login")
-	public String get() {
-		return "LoginPage";
-	}
-	
+public interface AuthenticationPageController {
+
+    @GetMapping(path = "/app/login")
+    String get();
 }

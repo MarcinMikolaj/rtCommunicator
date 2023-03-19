@@ -7,13 +7,14 @@ import java.util.Date;
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.Credentials;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepositoryImpl;
@@ -26,41 +27,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @Service
+@RequiredArgsConstructor
 public class ForgotPasswordService {
 	
-	private JwtTokenProvider jwtTokenProvider;
-	private MailSenderService mailSenderService;
-	private CredentialsRepository credentialsRepository;
-	private ResetPasswordTokenRepository resetPasswordTokenRepository;
-	private PasswordEncoder passwordEncoder;
+	private final JwtTokenProvider jwtTokenProvider;
+	private final MailSenderService mailSenderService;
+	private final CredentialsRepository credentialsRepository;
+	private final ResetPasswordTokenRepository resetPasswordTokenRepository;
+	private final PasswordEncoder passwordEncoder;
 	private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordService.class);
-	
-	@Autowired
-	public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-		this.passwordEncoder = passwordEncoder;
-	}
-	
-	@Autowired
-	public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-		this.jwtTokenProvider = jwtTokenProvider;
-	}
-	
-	@Autowired
-	public void setResetPasswordTokenRepository(ResetPasswordTokenRepositoryImpl resetPasswordTokenRepositoryImpl) {
-		this.resetPasswordTokenRepository = resetPasswordTokenRepositoryImpl;
-	}
-	
-	
-	@Autowired
-	public void setMailSenderService(MailSenderServiceImpl mailSenderServiceImpl) {
-		this.mailSenderService = mailSenderServiceImpl;
-	}
-	
-	@Autowired
-	public void setCredentialsRepository(CredentialsRepositoryImpl credentialsRepositoryImpl) {
-	   this.credentialsRepository = credentialsRepositoryImpl;
-	}
-	
+
 	
 	// This method is called to begin the password change process for the user.
     // Allows you to assign a token for a given account for which the password is to be updated.

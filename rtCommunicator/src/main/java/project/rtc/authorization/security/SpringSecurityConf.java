@@ -1,5 +1,6 @@
 package project.rtc.authorization.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -26,34 +27,15 @@ import project.rtc.authorization.security.jwt.JwtTokenAuthenticationFilter;
 @SuppressWarnings("deprecation")
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
 public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	
-	private CustomOAuth2UserService customOAuth2UserService;
-	private CustomUserDetailsService customUserDetailsService;
-	private AuthenticationSuccessHandler authenticationSuccessHandler;
-	private JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
+	private final CustomOAuth2UserService customOAuth2UserService;
+	private final CustomUserDetailsService customUserDetailsService;
+	private final AuthenticationSuccessHandler authenticationSuccessHandler;
+	private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
 	
-	@Autowired
-	public void setCustomUserDetailsService(CustomUserDetailsService customUserDetailsService) {
-		this.customUserDetailsService = customUserDetailsService;
-	}
-    
-	@Autowired
-	public void setCustomOAuth2UserService(CustomOAuth2UserService customOAuth2UserService) {
-		this.customOAuth2UserService = customOAuth2UserService;
-	}
-	
-	@Autowired
-	public void setJwtTokenAuthenticationFilter(JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter) {
-		this.jwtTokenAuthenticationFilter = jwtTokenAuthenticationFilter;
-	}
-	
-	@Autowired
-	private void setAuthenticationSuccessHandler(OAuth2AuthenticationSuccessHandler oAuth2AuthenticationSuccessHandler) {
-		this.authenticationSuccessHandler = oAuth2AuthenticationSuccessHandler;
-	}
-	
-	
+
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
 	public AuthenticationManager authenticationManager() throws Exception {
@@ -88,6 +70,9 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	                        "/**/*.css",
 	                        "/**/*.js")
 	                        .permitAll()
+				   .antMatchers("/my-api-docs").permitAll() // openAPI docs
+				   .antMatchers("/my-api-docs.yaml").permitAll() // openAPI docs
+				   .antMatchers("/actuator/**/*").permitAll() // Spring Boot Actuator
 	               .antMatchers("/").permitAll() //test 
 	               .antMatchers("/app/register").permitAll() // GET register form
 	               .antMatchers("/app/registration/create").permitAll() // POST create account 
@@ -99,6 +84,7 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 			       .antMatchers("/app/forgot/send").permitAll()
 			       .antMatchers("/app/forgot/password/tk/**").permitAll()
 			       .antMatchers("/app/forgot/credentials/update").permitAll()
+
 			       .anyRequest().authenticated()
 			       .and()			       
 		    .oauth2Login()

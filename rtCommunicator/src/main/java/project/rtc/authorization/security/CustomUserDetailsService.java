@@ -1,25 +1,23 @@
 package project.rtc.authorization.security;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.Credentials;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.CredentialsRepositoryImpl;
+import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
+import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.utils.ConsoleColors;
 
 @Service
+@RequiredArgsConstructor
 public class CustomUserDetailsService implements UserDetailsService {
 	
-	private CredentialsRepository credentialsRepository;
-	
-	@Autowired
-	public void setCredentialsRepository(CredentialsRepositoryImpl credentialsRepositoryImpl) {
-		this.credentialsRepository = credentialsRepositoryImpl;
-	}
+	private final CredentialsRepository credentialsRepository;
+
 
 	@Override
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

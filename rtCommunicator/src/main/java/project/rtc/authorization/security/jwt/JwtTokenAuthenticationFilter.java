@@ -8,6 +8,7 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -22,23 +23,14 @@ import project.rtc.utils.ConsoleColors;
 import project.rtc.utils.CookieUtils;
 import project.rtc.utils.jwt.JwtTokenProvider;
 
-// This class is used to read JWT authentication token from the request,
-// verify it, and set Spring Security’s SecurityContext if the token is valid
+// This class is used to read JWT authentication token from the request, verify it, and set Spring Security’s SecurityContext if the token is valid.
 @Component
+@RequiredArgsConstructor
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 	
-    private CustomUserDetailsService customUserDetailsService;
-	private JwtTokenProvider jwtTokenProvider;
-    
-    @Autowired
-    public void setJwtTokenProvider(JwtTokenProvider jwtTokenProvider) {
-    	this.jwtTokenProvider = jwtTokenProvider;
-    }
-    
-    @Autowired
-    public void setCustomUserDetailsService(CustomUserDetailsService customUserDetailsService) {
-    	this.customUserDetailsService = customUserDetailsService;
-    }
+    private final CustomUserDetailsService customUserDetailsService;
+	private final JwtTokenProvider jwtTokenProvider;
+
 	
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)

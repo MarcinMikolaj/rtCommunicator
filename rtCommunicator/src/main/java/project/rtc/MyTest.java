@@ -3,48 +3,36 @@ package project.rtc;
 import java.util.ArrayList;
 import java.util.List;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import project.rtc.authorization.oauth2.provider.AuthProvider;
-import project.rtc.communicator.invitations.InvitationService;
-import project.rtc.communicator.invitations.InvitationServiceImpl;
-import project.rtc.communicator.messager.Message;
-import project.rtc.communicator.messager.MessageRepository;
-import project.rtc.communicator.messager.MessageService;
-import project.rtc.communicator.messager.MessageServiceImpl;
-import project.rtc.communicator.room.RoomRepository;
-import project.rtc.communicator.room.RoomService;
-import project.rtc.communicator.user.User;
-import project.rtc.communicator.user.UserRepository;
-import project.rtc.registration.ProfilePicture;
-import project.rtc.registration.RegistrationRequest;
-import project.rtc.registration.RegistrationService;
+import project.rtc.communicator.invitations.services.InvitationService;
+import project.rtc.communicator.messager.dto.Message;
+import project.rtc.communicator.messager.repositories.MessageRepository;
+import project.rtc.communicator.messager.services.MessageService;
+import project.rtc.communicator.room.repositories.RoomRepository;
+import project.rtc.communicator.room.response_service.RoomService;
+import project.rtc.communicator.user.dto.User;
+import project.rtc.communicator.user.repositories.UserRepository;
+import project.rtc.registration.dto.ProfilePicture;
+import project.rtc.registration.dto.RegistrationRequest;
+import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.utils.FileUtils;
 
 @RestController
+@RequiredArgsConstructor
 public class MyTest {
 	
-	private RegistrationService registrationService;
-	private MessageRepository messageRepository;
-	private MessageService messageService;
-	private UserRepository userRepository;
-	private RoomRepository roomRepository;
-	private RoomService roomService;
-	private InvitationService invitationService;
-	
-	
-	public MyTest(UserRepository userRepository, RoomRepository roomRepository,RegistrationService registrationService,
-			RoomService roomService, MessageRepository messageRepository, MessageServiceImpl messageServiceImpl, InvitationServiceImpl invitationServiceImpl) {
-		this.userRepository = userRepository;
-		this.roomRepository = roomRepository;
-		this.registrationService = registrationService;
-		this.roomService = roomService;
-		this.messageRepository = messageRepository;
-		this.messageService = messageServiceImpl;
-		this.invitationService = invitationServiceImpl;
-	}
-	
+	private final RegistrationServiceImpl registrationServiceImpl;
+	private final MessageRepository messageRepository;
+	private final MessageService messageService;
+	private final UserRepository userRepository;
+	private final RoomRepository roomRepository;
+	private final RoomService roomService;
+	private final InvitationService invitationService;
+
 	@RequestMapping(path = "/", method = RequestMethod.GET)
 	public void invokeTests() {	
 		
@@ -149,7 +137,7 @@ public class MyTest {
 	
 	private void createAccount(String email, String nick, String password, String authProvider, boolean statements, String pathToImg) {
 			RegistrationRequest registrationRequest = new RegistrationRequest(email, nick, password, authProvider, statements, loadPicture(pathToImg));
-			registrationService.registerAccount(registrationRequest);
+			registrationServiceImpl.registerAccount(registrationRequest);
 	}
 	
 	// Imitacja dołanczania zdjęcia podczas rejestracji
