@@ -7,15 +7,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import project.rtc.utils.CookieUtils;
-import project.rtc.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.CookieUtils;
+import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
 
 @Component
 @RequiredArgsConstructor

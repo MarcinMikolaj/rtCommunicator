@@ -5,7 +5,7 @@ import javax.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.ToString;
-import project.rtc.registration.validators.ImgFileExtension;
+import project.rtc.infrastructure.validators.user.ImgFileExtension;
 
 @AllArgsConstructor
 @Getter

@@ -12,7 +12,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
-import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
 
 @Repository

@@ -17,7 +17,7 @@ let errorPassword;
 let errorStatement;
 let errorPicture;
 
-// boxex
+// Boxes
 let wrapper; // the wrapper contains the registration form
 let successMessageBox; // the box contains success message
 
@@ -112,7 +112,7 @@ const send = () => {
 	}
 };
 
-// This method is responsible for sendind register request
+// This method is responsible for send register request.
 const sendRegisterRequestToServer = (fileInBase64) => {
 	let profilePicture = createProfilePictureObject(fileInBase64);
 
@@ -132,15 +132,12 @@ const sendRegisterRequestToServer = (fileInBase64) => {
 			picture: profilePicture,
 		}),
 	})
-		.then((response) => {
-			return response.json();
-		})
+		.then(response => {return response.json();})
 		.then((data) => {
-			if (data.successful === true) {
-				showSuccessMessage();
-			} else {
-				showErrors(data.errorMessages);
-			}
+			 if (data.status === 200)
+			 	showSuccessMessage();
+			 else
+			    showErrors(new Map(Object.entries(data.errors)));
 		})
 		.catch((error) => console.log(error));
 };
@@ -165,7 +162,6 @@ const createProfilePictureObject = (fileInBase64) => {
 			fileInBase64: '',
 		};
 	}
-
 	return pictureFromUser;
 };
 
@@ -187,22 +183,22 @@ const hidePasswordInUI = () => {
 };
 
 const showErrors = (errorMessages) => {
-	errorMessages.forEach((error) => {
-		switch (error.field) {
+	errorMessages.forEach((value, key) => {
+		switch (key) {
 			case 'email':
-				showEmailErrorsInUI(error.message);
+				showEmailErrorsInUI(value);
 				break;
 			case 'nick':
-				showNickErrorsInUI(error.message);
+				showNickErrorsInUI(value);
 				break;
 			case 'password':
-				showPasswordErrorsInUI(error.message);
+				showPasswordErrorsInUI(value);
 				break;
 			case 'statements':
-				showStatementErrorsInUI(error.message);
+				showStatementErrorsInUI(value);
 				break;
 			case 'picture.name':
-				showPictureErrorsInUI(error.message);
+				showPictureErrorsInUI(value);
 				break;
 			default:
 			// none

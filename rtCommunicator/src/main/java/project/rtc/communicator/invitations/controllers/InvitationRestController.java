@@ -1,36 +1,28 @@
 package project.rtc.communicator.invitations.controllers;
 
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import project.rtc.communicator.invitations.dto.InvitationRequestPayload;
-import project.rtc.communicator.invitations.dto.InvitationResponsePayload;
-import project.rtc.communicator.invitations.dto.ReplyToInvitationRequest;
-import project.rtc.exceptions.NoAuthorizationTokenException;
-import project.rtc.exceptions.UserNotFoundException;
+import org.springframework.web.bind.annotation.*;
+import project.rtc.communicator.invitations.dto.InvitationRequestDto;
+import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
+import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
+import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 
 import javax.servlet.http.HttpServletRequest;
-import java.util.List;
 
-@RequestMapping(value = "/app/rtc")
+@RequestMapping(value = "/app/api")
 public interface InvitationRestController {
 
-    // Is responsible for handling the query regarding the download of all invitations for the currently logged-in user.
     @GetMapping(path = "/invitation/get/all")
-    ResponseEntity<List<InvitationResponsePayload>> getInvitations(HttpServletRequest httpServletRequest)
+    ResponseEntity<?> getInvitations(HttpServletRequest httpServletRequest)
             throws UserNotFoundException, NoAuthorizationTokenException;
 
+    @PostMapping(value = "/invitation/accept")
+    ResponseEntity<?> acceptInvitation(@RequestBody InvitationRequestDto dto
+            , HttpServletRequest httpServletRequest) throws UserNotFoundException
+            , RoomNotFoundException, NoAuthorizationTokenException;
 
-    // Responsible for creating an invitation for a given user.
-    @PostMapping(path = "/room/invitation/send")
-    ResponseEntity<String> sendInvitation(@RequestBody InvitationRequestPayload invitingRequestPayload
-            , HttpServletRequest httpServletRequest);
-
-
-    // Responsible for handling the decision on the given invitation.
-    @PostMapping(path = "/invitation/decision")
-    ResponseEntity<String> accept(@RequestBody ReplyToInvitationRequest replyToInvitationRequest);
+    @PostMapping(value = "/invitation/decline")
+    ResponseEntity<?> declineInvitation(@RequestBody InvitationRequestDto dto
+            , HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException;
 
 }

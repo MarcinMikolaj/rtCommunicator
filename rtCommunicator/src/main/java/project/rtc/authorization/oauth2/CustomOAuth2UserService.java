@@ -2,7 +2,6 @@ package project.rtc.authorization.oauth2;
 
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
@@ -11,13 +10,12 @@ import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.authorization.oauth2.provider.AuthProvider;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfo;
 import project.rtc.authorization.oauth2.provider.OAuth2UserInfoFactory;
-import project.rtc.utils.ConsoleColors;
+import project.rtc.infrastructure.utils.ConsoleColors;
 
 @Service
 @RequiredArgsConstructor

@@ -3,7 +3,7 @@ package project.rtc.authorization.oauth2.provider;
 import java.util.Map;
 
 import project.rtc.authorization.oauth2.OAuth2AuthenticationException;
-import project.rtc.utils.ConsoleColors;
+import project.rtc.infrastructure.utils.ConsoleColors;
 
 public abstract class OAuth2UserInfoFactory {
 	

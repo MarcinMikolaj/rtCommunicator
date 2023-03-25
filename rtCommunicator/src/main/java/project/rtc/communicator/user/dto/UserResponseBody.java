@@ -1,33 +1,20 @@
 package project.rtc.communicator.user.dto;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Date;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import project.rtc.communicator.room.dto.Statement;
+import project.rtc.communicator.user.entities.User;
 
 @Getter
 @Setter
 @ToString
+@Builder
 public class UserResponseBody {
-	
-	private boolean success;
-	private UserAction action;
+
+	private Date timestamp;
+	private UserOperation operation;
 	private User user;
-	private List<Statement<UserAction>> statements = new ArrayList<Statement<UserAction>>();
-	
-
-	public UserResponseBody() {
-		super();
-		this.success = false;
-	}
-
-	public UserResponseBody(boolean success, UserAction action) {
-		super();
-		this.success = success;
-		this.action = action;
-	}
-	
 }

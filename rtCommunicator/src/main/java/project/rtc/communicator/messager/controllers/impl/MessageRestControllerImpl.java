@@ -11,12 +11,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.nimbusds.jose.shaded.json.JSONObject;
 
-import project.rtc.communicator.messager.dto.Message;
+import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.messager.services.MessageService;
 import project.rtc.communicator.messager.controllers.MessageRestController;
 import project.rtc.communicator.user.services.UserService;
-import project.rtc.exceptions.NoAuthorizationTokenException;
-import project.rtc.exceptions.UserNotFoundException;
+import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
+import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
+import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +27,7 @@ public class MessageRestControllerImpl implements MessageRestController {
 	private final UserService userService;
 
 	@Override
-	public void processMessageFromClient(Message message) {
+	public void processMessageFromClient(Message message) throws RoomNotFoundException, UserNotFoundException {
 		messageService.save(message);
 		messageService.send("/queue/messages", message);
 	}

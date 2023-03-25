@@ -8,20 +8,16 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
 import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
-import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepositoryImpl;
-import project.rtc.utils.ConsoleColors;
-import project.rtc.utils.jwt.JwtTokenProvider;
-import project.rtc.utils.mail.MailSenderService;
-import project.rtc.utils.mail.MailSenderServiceImpl;
+import project.rtc.infrastructure.utils.ConsoleColors;
+import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.mail.MailSenderService;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

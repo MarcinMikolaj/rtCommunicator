@@ -4,22 +4,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import project.rtc.authorization.oauth2.provider.AuthProvider;
 import project.rtc.communicator.invitations.services.InvitationService;
-import project.rtc.communicator.messager.dto.Message;
+import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.messager.repositories.MessageRepository;
 import project.rtc.communicator.messager.services.MessageService;
 import project.rtc.communicator.room.repositories.RoomRepository;
-import project.rtc.communicator.room.response_service.RoomService;
-import project.rtc.communicator.user.dto.User;
+import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.user.repositories.UserRepository;
+import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
+import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 import project.rtc.registration.dto.ProfilePicture;
-import project.rtc.registration.dto.RegistrationRequest;
+import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.impl.RegistrationServiceImpl;
-import project.rtc.utils.FileUtils;
+import project.rtc.infrastructure.utils.FileUtils;
 
 @RestController
 @RequiredArgsConstructor
@@ -34,8 +36,7 @@ public class MyTest {
 	private final InvitationService invitationService;
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
-	public void invokeTests() {	
-		
+	public void invokeTests() throws MethodArgumentNotValidException, UserNotFoundException, RoomNotFoundException {
 		userRepository.deleteAll();
 		roomRepository.deleteAll();
 		messageRepository.deleteAll();
@@ -47,16 +48,14 @@ public class MyTest {
 		//Fri Oct 07 2022 05:12:30 GMT+0200 (Central European Summer Time)
 		createTestMessage(roomId01, "mateusz86", "Hey how's your day going today ?", "1633489950000");
 		createTestMessage(roomId01, "anastazja2", "I'm fine, I had a fantastic day at school today!", "1665112350000");
-		
-		
+
 		createTestMessage(roomId01, "ewelina32", "Nice to hear it", "1665112350000");
 		createTestMessage(roomId01, "ewelina32", "I have something cool to tell about my adventures at school today", "1633489950000");
 		
 		//Sun Oct 09 2022 23:23:42 GMT+0200 (Central European Summer Time)
 		createTestMessage(roomId01, "anastazja2", "I'd love to hear your story", "1665350589580");	
 		//Sun Oct 09 2022 23:28:47 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, "ewelina32", "A lot happened at school yesterday. This morning, on my way to class, I tripped over my shoelace. I should have taken that as a sign that today wasn't going to be the best day, but I didn't think so at the time. I went further. There was an unannounced quiz in the first lesson. I wasn't prepared at the time, so I didn't do very well.", "1665350927257");	
-		
+		createTestMessage(roomId01, "ewelina32", "A lot happened at school yesterday. This morning, on my way to class, I tripped over my shoelace. I should have taken that as a sign that today wasn't going to be the best day, but I didn't think so at the time. I went further. There was an unannounced quiz in the first lesson. I wasn't prepared at the time, so I didn't do very well.", "1665350927257");
 		
 		//Sun Oct 09 2022 23:35:11 GMT+0200 (Central European Summer Time)
 		createTestMessage(roomId01, "mateusz86", "Sounds amazing !", "1665351311701");	
@@ -109,21 +108,18 @@ public class MyTest {
 		String roomId10 = createTestRooms(List.of("marcin.mikolajczyk22@gmail.com", "asia2@gmail.com"), "AsIa");
 		//Sun Oct 09 2022 23:41:21 GMT+0200 (Central European Summer Time)
 		createTestMessage(roomId10, "anastazja2", "Hey !", "1665351681759");
-		
-		
+
 		// test invitations
-		createTestInvitations();
+		createTestInvitations(roomId06, "mateusz86", "anastazja2");
+		createTestInvitations(roomId07, "mateusz86", "magdaPiwowar");
+		createTestInvitations(roomId08, "mateusz86", "anastazja2");
 	}
-	
-	
+
 	// This method create test user accounts
-	private void createTestAccounts() {
-		
+	private void createTestAccounts() throws MethodArgumentNotValidException {
 		String basicPath = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\Test\\";
-		
 		createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "anastazja2\\picture.bin");
 		createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423", AuthProvider.local.toString(), true, basicPath + "mateusz86\\picture.bin");
-		
 		createAccount("ewelina@gmail.com", "ewelina32", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "ewelina32\\picture.bin");
 		createAccount("miłosz.mad@o2.pl", "mionszu2", "d1d2A@d12234", AuthProvider.local.toString(), true, basicPath + "mionszu2\\picture.bin");
 		createAccount("kacper78@gov.pl", "kacper78", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "kacper78\\picture.bin");
@@ -132,12 +128,11 @@ public class MyTest {
 		createAccount("paulina@mail.com", "paulinka", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "paulinka\\picture.bin");
 		createAccount("julia@gmail.com", "JulkaFromFrance", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "JulkaFromFrance\\picture.bin");
 		createAccount("asia2@gmail.com", "AsIa", "d2A@1234", AuthProvider.local.toString(), true, basicPath + "AsIa\\picture.bin");
-		
 	}
 	
-	private void createAccount(String email, String nick, String password, String authProvider, boolean statements, String pathToImg) {
-			RegistrationRequest registrationRequest = new RegistrationRequest(email, nick, password, authProvider, statements, loadPicture(pathToImg));
-			registrationServiceImpl.registerAccount(registrationRequest);
+	private void createAccount(String email, String nick, String password, String authProvider, boolean statements, String pathToImg) throws MethodArgumentNotValidException {
+			RegistrationRequestDto dto = new RegistrationRequestDto(email, nick, password, authProvider, statements, loadPicture(pathToImg));
+			registrationServiceImpl.registerAccount(dto);
 	}
 	
 	// Imitacja dołanczania zdjęcia podczas rejestracji
@@ -148,29 +143,23 @@ public class MyTest {
 	}
 	
 	// Create test message
-	private void createTestMessage(String roomId, String owner, String content, String dateMilisecondsUTC) {
+	private void createTestMessage(String roomId, String owner, String content, String dateMilisecondsUTC) throws RoomNotFoundException, UserNotFoundException {
 		Message message = new Message(roomId, owner, content, dateMilisecondsUTC);
 		messageService.save(message);
 	}
-	
-	// Create test room, retur roomId
-	private String createTestRooms(List<String> emails, String roomName) {
-		
-		List<User> users = new ArrayList<User>();
-		
-        for(String email: emails) {
-        	users.add(userRepository.findByEmail(email).get());
-        }
-        
-		return roomService.createRoom(roomName, users).getRoomId();
+
+
+	// Create test room, return roomId
+	private String createTestRooms(List<String> emails, String roomName) throws UserNotFoundException {
+		List<String> usersId = new ArrayList<>();
+        for(String email: emails){
+			usersId.add(userRepository.findByEmail(email).get().getUserId());
+		}
+		return roomService.create(roomName, usersId).getRoomId();
 	}
-	
-	
-	private void createTestInvitations() {
-		
-		invitationService.create("mionszu2", "anastazja2");
-		invitationService.create("mateusz86", "anastazja2");
-		invitationService.create("mateusz86", "anastazja2");
+
+	private void createTestInvitations(String roomId, String invited, String inviting) throws UserNotFoundException {
+		invitationService.create(roomId, invited, inviting);
 	}
 	
 }

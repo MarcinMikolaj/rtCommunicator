@@ -8,7 +8,7 @@ import javax.persistence.TypedQuery;
 import javax.persistence.Query;
 
 import org.springframework.stereotype.Repository;
-import project.rtc.registration.activateAccountToken.dto.ActivateAccountToken;
+import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.repositories.ActivateAccountTokenRepository;
 
 @Repository

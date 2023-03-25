@@ -6,9 +6,9 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
-import project.rtc.registration.dto.RegistrationRequest;
-import project.rtc.registration.dto.RegistrationResponse;
+import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.registration.controllers.RegistrationRestController;
 
@@ -19,16 +19,10 @@ public class RegistrationRestControllerImpl implements RegistrationRestControlle
 	private final RegistrationServiceImpl registrationServiceImpl;
 
 	@CrossOrigin(origins = "*", maxAge = 3600)
-	public ResponseEntity<RegistrationResponse> register(RegistrationRequest registrationRequest){
-
-		RegistrationResponse registrationResponse = registrationServiceImpl.registerAccount(registrationRequest);
-
-		if(registrationResponse.isSuccessful())
-			return new ResponseEntity<>(registrationResponse, HttpStatus.CREATED);
-		else
-			return new ResponseEntity<>(registrationResponse, HttpStatus.CONFLICT);
+	public ResponseEntity<?> register(RegistrationRequestDto registrationRequestDto) throws MethodArgumentNotValidException {
+		registrationServiceImpl.registerAccount(registrationRequestDto);
+		return new ResponseEntity<>(HttpStatus.valueOf(200));
 	}
-	
 
 	public ResponseEntity<String> activate(HttpServletRequest httpServletRequest,
 										   HttpServletResponse httpServletResponse) {

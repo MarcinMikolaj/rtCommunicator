@@ -10,7 +10,7 @@ import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
-import project.rtc.utils.ConsoleColors;
+import project.rtc.infrastructure.utils.ConsoleColors;
 
 @Repository
 public class ResetPasswordTokenRepositoryImpl implements ResetPasswordTokenRepository{

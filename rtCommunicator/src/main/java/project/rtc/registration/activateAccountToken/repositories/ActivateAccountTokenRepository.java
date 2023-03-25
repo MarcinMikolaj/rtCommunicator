@@ -1,11 +1,11 @@
 package project.rtc.registration.activateAccountToken.repositories;
 
-import project.rtc.registration.activateAccountToken.dto.ActivateAccountToken;
+import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 
 public interface ActivateAccountTokenRepository {
 	
-	public ActivateAccountToken create(ActivateAccountToken activateAccountToken);
-	public ActivateAccountToken findByToken(String token);
-	public int deleteByEmail(String email);
+	ActivateAccountToken create(ActivateAccountToken activateAccountToken);
+	ActivateAccountToken findByToken(String token);
+	int deleteByEmail(String email);
 
 }

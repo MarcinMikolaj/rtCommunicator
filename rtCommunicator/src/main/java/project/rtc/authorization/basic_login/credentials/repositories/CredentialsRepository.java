@@ -1,6 +1,6 @@
 package project.rtc.authorization.basic_login.credentials.repositories;
 
-import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 
 public interface CredentialsRepository {
 	

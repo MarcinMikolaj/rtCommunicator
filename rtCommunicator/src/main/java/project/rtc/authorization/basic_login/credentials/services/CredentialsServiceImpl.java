@@ -5,10 +5,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
-import project.rtc.authorization.basic_login.credentials.dto.Credentials;
+import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
-import project.rtc.authorization.basic_login.credentials.repositories.impl.CredentialsRepositoryImpl;
-import project.rtc.registration.dto.RegistrationRequest;
+import project.rtc.registration.dto.RegistrationRequestDto;
 
 @Service
 @RequiredArgsConstructor
@@ -32,7 +31,7 @@ public class CredentialsServiceImpl implements CredentialsService {
 	
 
 	@Override
-	public Credentials createCredentialsAndSaveInDatabase(RegistrationRequest reqisterRequest) {
+	public Credentials createCredentialsAndSaveInDatabase(RegistrationRequestDto reqisterRequest) {
 		
 		Credentials credentials = new Credentials();
 		credentials.setEmail(reqisterRequest.getEmail());

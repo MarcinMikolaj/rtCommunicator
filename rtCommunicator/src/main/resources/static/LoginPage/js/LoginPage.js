@@ -13,11 +13,9 @@ let credentialsPasswordInput; // password input
 let rememberMeInput;
 
 let errorMessage; // This error should be display after unauthorized login
-
-let grantedAuthorizationToken;
-
 let credentialsForm;
 
+let swiper;
 
 const prepareDOMElements = () => {
 	// Sign in buttons
@@ -47,7 +45,7 @@ const prepareDOMElements = () => {
 
 const prepareDOMEvents = () => {
 	// call sign in function by click or enter event
-	signInByCredentials.addEventListener('click', signInFuction);
+	signInByCredentials.addEventListener('click', signInFunction);
 	credentialsPasswordInput.addEventListener('keyup', signInFuction_enter_key);
 	credentialsLoginInput.addEventListener('keyup', signInFuction_enter_key);
 	
@@ -76,14 +74,12 @@ const main = () => {
 
 const signInFuction_enter_key = (event) => {
 	if (event.keyCode === 13) {
-		signInFuction();
+		signInFunction();
 	}
 };
 
-const signInFuction = () => {
-	console.log(rememberMeInput.checked);
-	sendCredentialsToServer(
-		credentialsLoginInput.value, credentialsPasswordInput.value, rememberMeInput.checked);
+const signInFunction = () => {
+	sendCredentialsToServer(credentialsLoginInput.value, credentialsPasswordInput.value, rememberMeInput.checked);
 	reset();
 };
 
@@ -93,29 +89,19 @@ const reset = () => {
 	credentialsPasswordInput.value = '';
 };
 
-
 //Redirect to sign in by Google site
-const signInByGoogleRedirect = () => {
-	window.location.href = "http://localhost:8080/oauth2/authorization/google";
-}
+const signInByGoogleRedirect = () => {window.location.href = "http://localhost:8080/oauth2/authorization/google";}
 
 //Redirect to sign in by Facebook site
-const signInByFacebookRedirect = () => {
-	window.location.href = "http://localhost:8080/oauth2/authorization/facebook";
-}
+const signInByFacebookRedirect = () => {window.location.href = "http://localhost:8080/oauth2/authorization/facebook";}
 
+//Redirect to Forgot password site
+const forgotPasswordRedirect = () => {window.location.href = "http://localhost:8080/app/forgot";}
 
-//Redirect to Forgot passsword site
-const forgotPasswordRedirect = () => {
-	window.location.href = "http://localhost:8080/app/forgot";
-}
+//Redirect to Forgot password site
+const registerRedirect = () => {window.location.href = "http://localhost:8080/app/register";}
 
-//Redirect to Forgot passsword site
-const registerRedirect = () => {
-	window.location.href = "http://localhost:8080/app/register";
-}
-
-
+const redirectToAppPanel = () => {window.location.href = "http://localhost:8080/app/panel";};
 
 const sendCredentialsToServer = (email, password, remember_me) => {
 	fetch('http://localhost:8080/app/login', {
@@ -132,18 +118,14 @@ const sendCredentialsToServer = (email, password, remember_me) => {
 		}),
 	}).then((response) => {
 		if(response.status === 200){	
-			redirectToAppPanel(grantedAuthorizationToken)
+			redirectToAppPanel();
 		} else if(response.status === 401) {
 			errorMessage.style.display = 'flex';
 		} else {
-			//
+			//TODO: Prepare message for others http status
 	    }
+		console.log(response.json())
     }).catch((error) => console.log(error))
-};
-
-
-const redirectToAppPanel = () => {
-	window.location.href = "http://localhost:8080/app/panel";
 };
 
 
@@ -161,7 +143,7 @@ const hidePasswordEye = () => {
 
 
 // Swiper js configuration
-const swiper = new Swiper('.swiper', {
+swiper = new Swiper('.swiper', {
 	effect: 'cube',
 	cubeEffect: {
 		shadow: false,

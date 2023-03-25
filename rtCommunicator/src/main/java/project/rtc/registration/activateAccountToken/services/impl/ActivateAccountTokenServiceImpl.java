@@ -6,10 +6,10 @@ import java.util.Date;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import project.rtc.registration.activateAccountToken.dto.ActivateAccountToken;
+import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.repositories.ActivateAccountTokenRepository;
 import project.rtc.registration.activateAccountToken.services.ActivateAccountTokenService;
-import project.rtc.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
 
 @Service
 @RequiredArgsConstructor

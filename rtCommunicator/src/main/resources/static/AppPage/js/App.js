@@ -46,24 +46,19 @@ let showOnlyFriendsBoxBtn; // Show friend-box button, ony for devices 769 breakp
 let showMenuBtn; // Allow you to display menu box
 let closeManagerRoomBoxBtn;
 
-
 //-----Actual Logged user information -----
 let myProfileImg;
-
 
 //----- Information about the currently selected room  -----
 //provides information to the user about the selected room picture and name
 let selectedRoomPicture; // <img> element
 let selectedRoomName; // <p> element
 
-
 //----- Manager Invitations -----
 let acceptInvitationBtnCollection;
 let declineInvitationBtnCollection;
 
-
 //----- Manager Room -----
-
 // manage room inputs
 let createRoomInput;
 let addFriendInput;
@@ -81,10 +76,7 @@ let removeRoomBtn;
 let renameRoomBtn;
 let leaveRoomBtn;
 
-
-
 //----- Manager Account -----
-
 // manage account inputs
 let changeNickInput;
 let removeAccountInput;
@@ -92,7 +84,6 @@ let updateUserEmailInput;
 let updateUserPasswordInput;
 let updateUserPasswordConfirmByLoginInput;
 let updateProfilePictureInput;
-
 // manage account buttons
 let changeNickBtn;
 let removeAccountBtn;
@@ -102,17 +93,13 @@ let updateProfilePictureBtn;
 
 const login_page_adress = 'http://localhost:8080/app/panel'
 
-
 // Prepare DOM Elements
 const prepareDOMElements = () => {
 	friendList = document.getElementById('room-list');
-	
 	searchFriendInput = document.querySelector('.search-friend-input');
-
 	communicatorContent = document.querySelector('.communicator-content');
 	enterMessageInput = document.querySelector('.enter-message-input');
 	sendMessageBtn = document.querySelector('.send-message-btn');
-
 	// boxes
 	roomBox = document.querySelector('.friends-box');
 	communicatorBox = document.querySelector('.communicator-box');
@@ -122,12 +109,10 @@ const prepareDOMElements = () => {
 	createGroupBox = document.querySelector('.create-group-box');
 	manageAccountBox = document.querySelector('.manage-account-box');
 	invitationsBox = document.querySelector('.invitations-box');
-
 	// open buttons
 	openVideoCallBtn = document.querySelector('.open-video-call-btn');
 	openPhoneCallBtn = document.querySelector('.open-phone-call-btn');
 	openManageRoomBtn = document.querySelector('.open-manage-room-btn');
-
 	// menu buttons
 	openRoomsBoxBtn = document.querySelector('.open-friends-box-btn');
 	openAddFriendBoxBtn = document.querySelector('.open-add-friend-box-btn');
@@ -135,25 +120,18 @@ const prepareDOMElements = () => {
 	openManageAccountBoxBtn = document.querySelector('.open-manager-account-box-btn');
 	logoutBtn = document.querySelector('.logout-btn');
 	openInvitationBoxBtn = document.querySelector('.open-invitations-box-btn');
-	
-
 	// other buttons
 	showOnlyFriendsBoxBtn = document.querySelector('.show-only-friends-box-btn');
 	showMenuBtn = document.querySelectorAll('.show-menu-btn');
 	closeManagerRoomBoxBtn = document.querySelector('.close-manage-room-box-btn');
-	
 	// actual logged user information
 	myProfileImg = document.querySelector('.my-profile-img');
-	
-	//----- Information about the currently selected room  -----
+	// Information about the currently selected room
     selectedRoomPicture = document.querySelector('.chosen-friend-img');
 	selectedRoomName = document.querySelector('.chosen-friend-nick');
-	
 	// manage invitations btn 
     acceptInvitationBtnCollection = document.getElementsByClassName('invitation-accept-button') ;
     declineInvitationBtnCollection = document.getElementsByClassName('invitation-reject-button');
-    
-   
 	// manage account inputs
 	changeNickInput = document.querySelector('.change-nick-input');
 	removeAccountInput = document.querySelector('.remove-account-input');
@@ -161,15 +139,12 @@ const prepareDOMElements = () => {
 	updateUserPasswordInput = document.querySelector('.update-user-password-input');
 	updateUserPasswordConfirmByLoginInput = document.querySelector('.update-user-password-confirm-by-login-input');
 	updateProfilePictureInput = document.querySelector('.update-profile-picture-input');
-	
     // manage account buttons
     changeNickBtn = document.querySelector('.change-nick-btn');
     removeAccountBtn = document.querySelector('.remove-account-btn');
     updateUserEmailBtn = document.querySelector('.update-user-email-btn');
     updateUserPasswordBtn = document.querySelector('.update-user-password-btn');
     updateProfilePictureBtn = document.querySelector('.update-profile-picture-btn');
-    
-   
 	// manage room inputs
 	createRoomInput = document.querySelector('.create-room-input');
     addFriendInput = document.querySelector('.add-friend-input');
@@ -177,8 +152,6 @@ const prepareDOMElements = () => {
 	removeUserFromRoomInput = document.querySelector('.remove-user-from-room-input');
 	removeRoomInput = document.querySelector('.remove-room-input');
 	renameRoomInput = document.querySelector('.rename-room-input');
-	
-	
 	//manage room buttons
 	createRoomBtn = document.querySelector('.create-room-btn');
 	addNewFriendBtn = document.querySelector('.add-new-friend-btn');
@@ -187,9 +160,7 @@ const prepareDOMElements = () => {
 	removeRoomBtn = document.querySelector('.remove-room-btn');
 	renameRoomBtn = document.querySelector('.rename-room-btn');
 	leaveRoomBtn = document.querySelector('.leave-room-btn');
-	
 };
-
 
 // Prepare DOM Events
 const prepareDOMEvents = () => {
@@ -197,15 +168,13 @@ const prepareDOMEvents = () => {
 
     friendList.addEventListener('click', showCommunicatorBoxForMobile);
     friendList.addEventListener('click', setRoom);
-    
-   
+
 	enterMessageInput.addEventListener(
 		'keypress',
 		addRightMessageToUIByEnterKeyPress
 	);
 	sendMessageBtn.addEventListener('click', sendMessageByWebSocketOverSTOMP);
-	
-	
+
 	document.querySelector('.communicator-box').addEventListener('click', clearNofification);
 
 	// Menu open box buttons
@@ -215,7 +184,6 @@ const prepareDOMEvents = () => {
 	openManageAccountBoxBtn.addEventListener('click', openManageAccountBox);
 	myProfileImg.addEventListener('click', openManageAccountBox); 
 	openInvitationBoxBtn.addEventListener('click', openInvitationBox);
-	
 
 	showOnlyFriendsBoxBtn.addEventListener('click', showFriendsBoxForMobile);
 	showMenuBtn.forEach((btn) => btn.addEventListener('click', openMenuBox));
@@ -243,43 +211,32 @@ const prepareDOMEvents = () => {
     
     // logout
 	logoutBtn.addEventListener('click', logoutRequest);
-    
 };
 
 
 const main = () => {
 	prepareDOMElements();
 	prepareDOMEvents();
-	
-	// reset user interface before load data
-	reset();
-	
+	reset(); // reset user interface before load data
+
 	// get user information like profile picture, nick etc.
 	getLoggedUser();
-	
-	// get user rooms
-	getRooms();
-	
+
 	// get connect webSocket
 	//connectWebSocket();
-	
 	updateInvitationList();
 };
 
 const reset = () => {
 	searchFriendInput.value = '';
 	enterMessageInput.value = '';
-
 	addFriendBox.style.display = 'none';
 	menuBox.style.display = 'none';
 	createGroupBox.style.display = 'none';
-	manageAccountBox.style.display = 'none'; 
-
+	manageAccountBox.style.display = 'none';
 	communicatorContent.innerHTML = ''; // clear message list
-	
 	resteManageRoomInputs();
 	resteAccountManagerInputs();
-	
 };
 
 //reset manage room inputs
@@ -301,81 +258,58 @@ const resteAccountManagerInputs = () => {
     updateUserPasswordConfirmByLoginInput.value = ''; 
 }
 
-
 // **************************************************************************
 // -------------------- Message manager WebSocket STOMP ---------------------
 // **************************************************************************
 
 const connectWebSocket = (data) => {
-	client = Stomp.client('ws://localhost:8080/messenger'); //ws - information abut protocol, localhost.. - chat endpoint
-	
+	client = Stomp.client('ws://localhost:8080/messenger');
 	client.connect({ username: currentlyLoggedUser.email}, function (frame) {
 		client.subscribe('/users/queue/messages', function (data) {
 			if(data.body){
 				let message = JSON.parse(data.body);
-				
-				if(message.roomId === currentluSelectedRoomId){
-				    addLeftMessageToUI(message);
-				}
-				
+				if(message.roomId === currentluSelectedRoomId)
+					addLeftMessageToUI(message);
+
 				// Allows you to add an unread notification counter item to the room item.
 				addMessageCounterElementToRoom(message, unreadMessages);
-						
-			} else {
-				console.log("websocket: got empy message")
-			}
-			
+			} else
+				console.log("websocket: got empty message")
 		});
 	});
 }
 
 // Allows you to add a message from you that will be visible in UI by enter keypress
 const addRightMessageToUIByEnterKeyPress = (event) => {
-	
-	if (event.key !== 'Enter') {
+	if (event.key !== 'Enter')
 		return;
-	}
-	
-	if(enterMessageInput.value.length < 1){
-		console.log("The message cannot be empty");
+
+	if(enterMessageInput.value.length < 1)
 		return;
-	}
-	
+
 	sendMessageByWebSocketOverSTOMP();
 };
 
 const sendMessageByWebSocketOverSTOMP = () => {
-	
 	let messageContent = enterMessageInput.value
 	
-	if(enterMessageInput.value.length < 1){
-		console.log("The message cannot be empty");
+	if(enterMessageInput.value.length < 1)
 		return;
-	}
-	
-	// if user don't select room.
-	if(currentluSelectedRoomId == null){
-		console.log("you must select a room to be able to send a message");
+
+	if(currentluSelectedRoomId == null)
 		return;
-	}
-	
-    addRightMessageToUI(messageContent);
-    
-    
-	let quote = { 
+
+	let body = {
 		roomId: currentluSelectedRoomId,
 		content: messageContent,
-		owner: currentlyLoggedUser.nick,
-		// number of milliseconds, UTC
+		userId: currentlyLoggedUser.userId,
+		userNick: currentlyLoggedUser.nick,
 		dateMilisecondsUTC: new Date().getTime() 
 		};
 		
-	client.send('/app/messenger', {}, JSON.stringify(quote));
-
+	client.send('/app/messenger', {}, JSON.stringify(body));
+	addRightMessageToUI(messageContent);
 };
-
-
-
 
 // ***********************************************************
 // ---------------- Logout Requests -----------------
@@ -391,26 +325,20 @@ const logoutRequest = () => {
 		},
 		body: JSON.stringify({
 			logout: true
-		}),
-	})
+		}),})
 		.then((response) => {
 			console.log(response);
-			
-			if(response.redirected === true){
+			if(response.redirected === true)
 				window.location.replace(response.url);
-			}
 		})
 		.catch((error) => console.log(error));
 };
-
-
 
 // ***********************************************************
 // ----------------------- Room Requests ---------------------
 // ***********************************************************
 
-function sendHttpRequestRoom(url, payload){
-	
+function sendHttpRequestRoom(url, body){
 	fetch(url, {
 		method: 'POST',
 		headers: {
@@ -418,57 +346,93 @@ function sendHttpRequestRoom(url, payload){
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify(payload),
+		body: JSON.stringify(body),
 	})
-		.then((response) => {
-			return response.json();
-		})
+		.then((response) => {return response.json()})
 		.then((data) => {
-			
 			console.log(data);
-			
-			if(data.success === true){
-				currentRoomList = data.rooms;
-				unreadMessages = data.unreadMessages;
+			if(data.status === 200){
+				console.log("LOAD ROOMS FROM RECEIVED DTO");
 				loadDeliveredRooms(data.rooms, data.unreadMessages);
-			}
-			
-			addStatementMessageToRoomManagerInUI(data.statements);
-			
+			} else if(data.status === 400)
+				console.log("LOAD VALIDATION MESSAGE FORM DTO");
+			else
+				console.log("RECEIVED EXCEPTION FROM SERVER");
+
+			    // TODO: Display valid info for user.
+				// if(data.status === 201){
+				// 	currentRoomList = data.rooms;
+				// 	unreadMessages = data.unreadMessages;
+				//	loadDeliveredRooms(data.rooms, data.unreadMessages);
+			    // 	addStatementMessageToRoomManagerInUI(data.statements);
+				// }
 		})
 		.catch((error) => console.log(error));
-		
 		resteManageRoomInputs();
 }
 
-// Get rooms request.
-const getRooms = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/get', {}) };
-
-// Create room request.
-const createRoomRequest = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/create', {roomName: createRoomInput.value}) };
-
-// Add user to room request.
-const addUserToRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/add', {userNick: addNewUserToRoomInput.value, roomId: currentluSelectedRoomId}) };
-
-// Remove user from room request.
-const removeUserFromRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/remove', {userNick: removeUserFromRoomInput.value, roomId: currentluSelectedRoomId}) };
-
-// Update room name request.
-const renameRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/name/update', {roomId: currentluSelectedRoomId, roomName: renameRoomInput.value}) };
-
-// Remove room request.
-const removeRoomRequest = () => { sendHttpRequestRoom('http://localhost:8080/app/rtc/room/remove', { roomName: removeRoomInput.value, roomId: currentluSelectedRoomId}) };
-
-// Leave room request.
-const leaveRoomRequest = () => {sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/leave', {roomId: currentluSelectedRoomId}) };
-
-
-
+const getRooms = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/get',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, userNick: 'none'
+		, roomName: 'none'
+	})};
+const createRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/create',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: 'none'
+		, userNick: 'none'
+		, roomName: createRoomInput.value
+	})};
+const addUserToRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/add',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, changedUserId: getUserIdByNick(addNewUserToRoomInput.value , currentSelectedRoom)
+		, userNick: addNewUserToRoomInput.value
+		, roomName: 'none'
+	})};
+const removeUserFromRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/remove',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, changedUserId: getUserIdByNick(removeUserFromRoomInput.value, currentSelectedRoom)
+		, userNick: removeUserFromRoomInput.value
+		, roomName: 'none'
+	})};
+const renameRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/name/update',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, userNick: 'none'
+		, roomName: renameRoomInput.value
+	})};
+const removeRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/remove',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, userNick: 'none'
+		, roomName: removeRoomInput.value
+	})};
+const leaveRoomRequest = () => {
+	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/leave',
+	{
+		userId: currentlyLoggedUser.userId
+		, roomId: currentluSelectedRoomId
+		, userNick: 'none'
+		, roomName: 'none'
+	}) };
 
 // ***********************************************************
 // ---------------------- Account Requests -------------------
 // ***********************************************************
-
 const getLoggedUser = () => {
 	fetch('http://localhost:8080/app/account/get', {
 		method: 'GET',
@@ -479,16 +443,16 @@ const getLoggedUser = () => {
 		.then((response) => response.json())
 		.then((data) => {
 			console.log(data);
-			currentlyLoggedUser = data;
-			setLoggedUserInPanel(data);
+			currentlyLoggedUser = data.user;
+			setLoggedUserInPanel(data.user);
 		})
+		.then(data => getRooms())
 		.then((data) => connectWebSocket(data))
 		.catch((error) => console.log('err: ', error));
 };
 
 
-function sendHttpRequestAccount(url, payload) {
-	
+function sendHttpRequestAccount(url, body) {
 	fetch(url, {
 		method: 'POST',
 		headers: {
@@ -496,16 +460,14 @@ function sendHttpRequestAccount(url, payload) {
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify(payload),
+		body: JSON.stringify(body),
 	})
 		.then((response) => {
 			return response.json();})
 		.then((data) => {
 			console.log(data);
-			if(data.success === true){
-				currentlyLoggedUser = data.user;
-				setLoggedUserInPanel(data.user)
-			}
+			currentlyLoggedUser = data.user;
+			setLoggedUserInPanel(data.user)
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
@@ -535,18 +497,22 @@ const deleteAccountRequest = () => {
 		resteAccountManagerInputs();
 };
 
-// Change Nick Request
-const changeNickRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/nick', {nick: changeNickInput.value}) };
-
-// Change email request.
-const changeEmailRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/email', {email: updateUserEmailInput.value}) };
-
-// Change password request.
-const changePasswordRequest = () => { sendHttpRequestAccount('http://localhost:8080/app/account/update/password', {email: updateUserPasswordConfirmByLoginInput.value, password: updateUserPasswordInput.value}) };
-
+const changeNickRequest = () => {
+	sendHttpRequestAccount('http://localhost:8080/app/account/update/nick'
+		, {nick: changeNickInput.value
+	})};
+const changeEmailRequest = () => {
+	sendHttpRequestAccount('http://localhost:8080/app/account/update/email'
+		, {email: updateUserEmailInput.value
+	})};
+const changePasswordRequest = () => {
+	sendHttpRequestAccount('http://localhost:8080/app/account/update/password'
+		, {
+		email: updateUserPasswordConfirmByLoginInput.value
+			, password: updateUserPasswordInput.value
+	})};
 
 const updateProfilePictureRequest = () => {
-	
 	let file = updateProfilePictureInput.files[0];
 	let reader = new FileReader();
 
@@ -556,22 +522,16 @@ const updateProfilePictureRequest = () => {
 		s(reader.result);
 	};
 
-	reader.onerror = function (error) {
-		console.log('Error: ', error);
-	};
+	reader.onerror = function (error) {console.log('Error: ', error);};
 
-	if (!!file) {
+	if (!!file)
 		reader.readAsDataURL(file);
-	} else {
-		s(null);
-	}
+	 else
+		 s(null);
 };
 
-
 const s = (fileInBase64) => {
-	
 	let file = updateProfilePictureInput.files[0];
-	
 	fetch('http://localhost:8080/app/account/update/picture', {
 		method: 'POST',
 		headers: {
@@ -580,11 +540,12 @@ const s = (fileInBase64) => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({
-			name: file.name,
-			type: file.type,
-			size: file.size,
-			fileInBase64: fileInBase64,
-			}),
+			profilePicture: {
+				name: file.name,
+				type: file.type,
+				size: file.size,
+				fileInBase64: fileInBase64,
+			}}),
 	})
 		.then((response) => {
 			return response.json();
@@ -597,10 +558,8 @@ const s = (fileInBase64) => {
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
-		
 		resteAccountManagerInputs();
 };
-
 
 // Method allows you to set information such as nickname or profile picture in the user interface.
 const setLoggedUserInPanel =(user) => {
@@ -608,11 +567,9 @@ const setLoggedUserInPanel =(user) => {
 	document.querySelector('.b').src = user.profilePicture.fileInBase64;	
 }
 
-
 // ***********************************************************
 // ----------- Box Manager and additional features -----------
 // ***********************************************************
-
 
 // Allows you to search for friends using the given pattern
 const searchFriend = (event) => {
@@ -631,20 +588,14 @@ const searchFriend = (event) => {
 	}
 };
 
-
-
 const showCommunicatorBoxForMobile = () => {
-	
-	if (window.innerWidth > 769) {
+	if (window.innerWidth > 769)
 		return;
-	}
 
 	roomBox.style.display = 'none';
 	communicatorBox.style.display = 'flex';
 	communicatorContent.scrollTop = communicatorContent.scrollHeight;
 };
-
-
 
 const openManageAccountBox = () => {
 	roomBox.style.display = 'none';
@@ -725,11 +676,10 @@ const openInvitationBox = () => {
 // *************************************************************
 
 const setRoom = (e) => {
-	
 	let currentRoom = e.target.closest('.friend');
 	console.log("selected roomId: " + e.target.closest('.friend').getAttribute('roomId'));
 	currentluSelectedRoomId = currentRoom.getAttribute('roomId')
-	
+
 	fetch('http://localhost:8080/app/rtc/room/get', {
 		method: 'POST',
 		headers: {
@@ -738,43 +688,44 @@ const setRoom = (e) => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({
+			userId: currentlyLoggedUser.userId,
 			roomId: currentluSelectedRoomId,
 			userNick: currentlyLoggedUser.nick,
+			roomName: 'none'
 		}),
 	})
-		.then((response) => {
-			return response.json();
-		})
+		.then((response) => {return response.json();})
 		.then((data) => {
-			if(data.success === true){
+			if(data.status === 200){
 				currentRoomList = data.rooms;
 				unreadMessages = data.unreadMessages;
-				console.log(data.unreadMessages);
 				loadDeliveredRooms(data.rooms, data.unreadMessages);
-				
-				
-				
-	currentRoomList.forEach(room => {
-		if(currentluSelectedRoomId === room.roomId){
-			currentSelectedRoom = room;
-		}
-	})
-	
-	setInformationAboutSelectedRoom();
-	loadMessageContent();
-				
-				
-		}
-			addStatementMessageToRoomManagerInUI(data.statements);
+
+				currentRoomList.forEach(room => {
+					if(currentluSelectedRoomId === room.roomId){
+						currentSelectedRoom = room;
+					}
+				})
+				setInformationAboutSelectedRoom();
+				loadMessageContent();
+			}
+			//addStatementMessageToRoomManagerInUI(data.statements);
 		})
 		.catch((error) => console.log(error));
-		
-		resteManageRoomInputs();
+
+	resteManageRoomInputs();
+}
+
+// Allow get userId form selected room
+// example. getUserIdByNick(removeUserFromRoomInput.value, currentSelectedRoom);
+function getUserIdByNick(nick, room){
+	let result;
+	room.users.forEach(u => {if(u.nick === nick) result =  u.userId;});
+	return result
 }
 
 // Allows you to set information about the currently selected room
 const setInformationAboutSelectedRoom = () => {
-	
 	let picture;
 	
 	// If no room is selected
@@ -785,8 +736,7 @@ const setInformationAboutSelectedRoom = () => {
     // clear before load new content
     selectedRoomPicture.src = ''; 
     selectedRoomName.innerHTML = ''; 
-    
-    
+
     // set room picture
     currentSelectedRoom.users.forEach((user) => {
 	  picture = user.profilePicture.fileInBase64;
@@ -796,64 +746,46 @@ const setInformationAboutSelectedRoom = () => {
     
     // set room name
     selectedRoomName.innerHTML = `${currentSelectedRoom.name}`;
-   
 }
-
 
 // Allows you to load all messages from the currently selected room and display them in UI
 async function loadMessageContent()  {
-	
-	// clear message list before load messages
-	communicatorContent.innerHTML = ''; 
-	
-	// get message list from room
+	// clear message list before load messages.
+	communicatorContent.innerHTML = '';
+	// get message list from room.
 	let messages = currentSelectedRoom.messages;
-	
-	if(messages.length <= 0){
-		console.log("there are no messages to display");
+	// if no message return.
+	if(messages.length <= 0)
 		return;
-	}
-	
 	// add all message to UI
 	messages.forEach((message, index) => {
-		
-		if(message.owner === currentlyLoggedUser.nick){
-			
-			if(index === 0){
+		if(message.userNick === currentlyLoggedUser.nick){
+
+			if(index === 0)
 				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
-			}
-			
-			
-			if(index >= 1 && messages.length > index){
+
+			if(index >= 1 && messages.length > index)
 				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
-			}
-			
+
 			addRightMessageToUI(message.content);
 			
 		} else {
 			
-			if(index === 0){
+			if(index === 0)
 				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
-			}
-			
-			
-			if(index >= 1 && messages.length > index){
+
+			if(index >= 1 && messages.length > index)
 				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
-			}
-			
+
 			addLeftMessageToUI(message); 
 		}
 	})
-	
 }
 
 // The method allows you to find the user in the room and download and return his profile picture
 function getUserPictureFromRoom(room, nick) {
-	
 	let picture;
-	
 	for (let i = 0; i < room.users.length; i++) {
-		
 			if(room.users[i].nick === nick){
 			   picture = room.users[i].profilePicture.fileInBase64;
 			   break;
@@ -877,14 +809,12 @@ const addRightMessageToUI = (content) => {
 	communicatorContent.appendChild(element);
 	enterMessageInput.value = '';
 	communicatorContent.scrollTop = communicatorContent.scrollHeight;
-	
-	
 };
 
 // Allows you to add a message from you that will be visible in UI
 const addLeftMessageToUI = (message) => {
 	
-	let picture = getUserPictureFromRoom(currentSelectedRoom, message.owner);
+	let picture = getUserPictureFromRoom(currentSelectedRoom, message.userNick);
 			
 	let element = document.createElement('div');
 	element.classList.add('left-message-box');
@@ -911,10 +841,9 @@ const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeL
 	let diffBetweenLastTwoMessage = diff_minutes(a, b);
 	//console.log("diffBetweenLastTwoMessage: " + diffBetweenLastTwoMessage);
 	
-	if(diffBetweenLastTwoMessage <= 3){
+	if(diffBetweenLastTwoMessage <= 3)
 		return;
-	}
-	
+
 	//choose a format
 	let diff = diff_days(current_date, delivered_date);
 	//console.log("diff: " + diff)
@@ -927,15 +856,12 @@ const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeL
 	} else {
 		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
 	} 
-	
-	
+
 	// Create element and add to user interface (message list)
 	let element = document.createElement('p');
 	element.classList.add('message-date');
 	element.innerHTML = `${result_to_print}`;
-	
 	communicatorContent.appendChild(element);
-	
 }
 
 const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
@@ -947,20 +873,19 @@ const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
 	//choose a format
 	let diff = diff_days(current_date, delivered_date);
 	
-	if(diff < 1){
+	if(diff < 1)
 		result_to_print = delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} else if(diff >= 1 && diff < 7) {
+	else if(diff >= 1 && diff < 7) {
 		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 		result_to_print = days[delivered_date.getDay()] + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} else {
+	} else
 		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} 
+
 	
 	// Create element and add to user interface (message list)
 	let element = document.createElement('p');
 	element.classList.add('message-date');
 	element.innerHTML = `${result_to_print}`;
-	
 	communicatorContent.appendChild(element);
 }
 
@@ -973,21 +898,18 @@ const loadDeliveredRooms = (rooms, unreadMessages) => {
 	rooms.forEach((room) => loadRooms(room, unreadMessages));
 }
 
-// This function allow add new friend in UI to FrienList,
+// This function allow add new friend in UI to FriendList,
 // attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
 const loadRooms = (room, unreadMessages) => {
-	
 	let lastmessageContent = "";
 	let lastMessageCreator = "";
 	let lastMessagetime = "";
 	let numberOfUnreadMessages = unreadMessages[room.roomId];
 	
-	
 	if(room.messages.length > 0){
 		room.messages.forEach((message) => {
 		  lastmessageContent = message.content;
-		  lastMessageCreator = message.owner;
-		  
+		  lastMessageCreator = message.userNick;
 		  lastMessagetime = getDateDiffirence(parseInt(message.dateMilisecondsUTC));
 	    })
 	}
@@ -1002,14 +924,12 @@ const loadRooms = (room, unreadMessages) => {
 	friend.setAttribute('roomId', room.roomId);
 	
 	let lastUserPicture;
-	
-	
+
 	//load picture
 	room.users.forEach((user) => {
 		lastUserPicture = user.profilePicture.fileInBase64
 	});
-	
-	
+
 	if(unreadMessages !== null && numberOfUnreadMessages >= 1){
 		
 		friend.innerHTML = `<div class="friend-img">
@@ -1035,48 +955,41 @@ const loadRooms = (room, unreadMessages) => {
 	</div>
 	<div class="new-message-notification"></div>`;
 	}
-	
-	
+
 	friendList.append(friend);
 };
 
 
 // Allows you to add an unread notification counter item to the room item
 function addMessageCounterElementToRoom(message) {
-	
 	let roomListDOM;
 	let roomId;
 	let notificationElement;
 	
 	roomListDOM = document.querySelectorAll('.room-list .friend');
-	
+
 	roomListDOM.forEach(room => {
-		
 		roomId = room.getAttribute('roomId');
 		unreadMessages[roomId] = unreadMessages[roomId] + 1;
 		
 		if(message.roomId === roomId) {
-		
 			notificationElement = room.querySelector('.new-message-notification');
 			notificationElement.innerHTML = `<i class="fa-solid fa-comment new-message-notification-img"></i>
                         <p class="new-message-notification-text">new message</p>
                         <p class="new-message-notification-counter">${unreadMessages[roomId]}</p>`
 		}
-		
 	})
 }
 
 // clear notifications after clicking on communicator because
 const clearNofification = () => {
-	
 	let roomListDOM;
 	let notificationElement;
 	let roomId;
 	
-	if(currentluSelectedRoomId === null || typeof currentluSelectedRoomId === "undefined"){
+	if(currentluSelectedRoomId === null || typeof currentluSelectedRoomId === "undefined")
 		return;
-	}
-	
+
 	roomListDOM = document.querySelectorAll('.room-list .friend');
 	roomListDOM.forEach(room => {
 		
@@ -1088,15 +1001,13 @@ const clearNofification = () => {
 		}
 		
 	})
-	
 	if(unreadMessages[currentluSelectedRoomId] > 0)
 	     sendUpdateReadMessagesRequest({roomId: currentluSelectedRoomId})
-	
-	
+
 	unreadMessages[currentluSelectedRoomId] = 0;
 }
 
-const sendUpdateReadMessagesRequest = (payload) => {
+const sendUpdateReadMessagesRequest = (body) => {
 	fetch('http://localhost:8080/app/message/update/readby', {
 		method: 'POST',
 		headers: {
@@ -1104,7 +1015,7 @@ const sendUpdateReadMessagesRequest = (payload) => {
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify(payload),
+		body: JSON.stringify(body),
 	})
 		.catch((error) => console.log(error));
 }
@@ -1181,16 +1092,12 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 	});
 };
 
-
-
 // This method adds and displays a message and the execution status of the query operation for the server for room management.
 const loadResultMessageForRoomManagerQuery = (statements, className) => {
-	
 	let li = document.createElement('li');
 	li.classList.add('manager-room-option-message');
 	li.addEventListener('click', () => li.remove());
-	
-	
+
 	switch (statements.type) {
      case 'SUCCES_STATEMENT':    
           li.classList.add('manager-room-option-success-message');
@@ -1206,18 +1113,15 @@ const loadResultMessageForRoomManagerQuery = (statements, className) => {
     }
 	
 	document.querySelector('.' + className).appendChild(li);
-	
 };
 
 
 // This method adds and displays a message and the execution status of the query operation for the server for account management.
 const loadResultMessageForAccountManagerQuery = (statements, className) => {
-	
 	let li = document.createElement('li');
 	li.classList.add('manager-account-option-message');
 	li.addEventListener('click', () => li.remove());
-	
-	
+
 	switch (statements.type) {
      case 'SUCCES_STATEMENT':    
           li.classList.add('manager-account-option-success-message');
@@ -1233,17 +1137,14 @@ const loadResultMessageForAccountManagerQuery = (statements, className) => {
     }
 	
 	document.querySelector('.' + className).appendChild(li);
-	
 };
 
 // This method adds and displays a message and the execution status of the query operation for the server for add friend feature.
 const loadResultMessageForAddFriendQuery = (statements, className) => {
-	
 	let li = document.createElement('li');
 	li.classList.add('add-friend-message');
 	li.addEventListener('click', () => li.remove());
-	
-	
+
 	switch (statements.type) {
      case 'SUCCES_STATEMENT':    
           li.classList.add('add-friend-success-message');
@@ -1259,7 +1160,6 @@ const loadResultMessageForAddFriendQuery = (statements, className) => {
     }
 	
 	document.querySelector('.' + className).appendChild(li);
-	
 };
 
 
@@ -1294,19 +1194,19 @@ const removeAllQueryResultMessageForAddFriend = () => {
 // -------------------- Invitation Requests ------------------
 // ***********************************************************
 
-// The method enables querying the server for a list of invitations held by the user
+// The method enables querying the server for a list of invitations held by the user.
 const updateInvitationList = () => {
-	
+	const httpPath = 'http://localhost:8080/app/api/invitation/get/all';
+
 	// Load invitations after page load
-	getInvitationsRequest();
-	
+	getInvitationsRequest(httpPath);
+
 	// Update invitations periodically
-	setInterval(getInvitationsRequest, 30000); //30s
+	setInterval(getInvitationsRequest(httpPath), 30000); //30s
 };
 
-function getInvitationsRequest() {
-	
-	fetch('http://localhost:8080/app/rtc/invitation/get/all', {
+function getInvitationsRequest(httpPath) {
+	fetch(httpPath, {
 		method: 'GET',
 		headers: {
 			'Content-Type': 'application/json',
@@ -1319,54 +1219,28 @@ function getInvitationsRequest() {
             addInvitation(data);
 		})
 		.catch((error) => console.log('err: ', error));
-	
 }
 
-
-function acceptOrDeclineInvitationRequest(identyficator, accepted) {
-	fetch('http://localhost:8080/app/rtc/invitation/decision', {
+function acceptOrDeclineInvitationRequest(invitationId, path) {
+	fetch(path, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify({
-			accepted: accepted,
-			identyficator: identyficator
-		}),
+		body: JSON.stringify({invitationId: invitationId})
 	})
-		.then((response) => {
-			console.log(response);
-			getInvitationsRequest();
-		})
+		.then((response) => {return response.json();})
+		.then(data => {
+			console.log(data)
+			addInvitation(data);})
 		.catch((error) => console.log(error));
 };
 
-function acceptOrDeclineInvitationRequest1(identyficator, accepted) {
-	fetch('http://localhost:8080/app/rtc/invitation/decision', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			accepted: accepted,
-			identyficator: identyficator
-		}),
-	})
-		.then((response) => {
-			console.log(response);
-			getInvitationsRequest();
-		})
-		.catch((error) => console.log(error));
-};
-
-// The method allows you to send a query regarding the invitation of a new user
+//The method allows you to send a query regarding the invitation of a new user
 const sendInvitationRequest = () => {
-	
-	fetch('http://localhost:8080/app/rtc/room/invitation/send', {
+	fetch('http://localhost:8080/app/api/invitation/create', {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
@@ -1375,29 +1249,24 @@ const sendInvitationRequest = () => {
 		},
 		body: JSON.stringify({
 			invited: addFriendInput.value,
-			inviting: currentlyLoggedUser.nick
+			inviting: currentlyLoggedUser.nick,
+			roomId: currentluSelectedRoomId
 		}),
 	})
-		.then((response) => {
-			return response.json();
-		})
-		.then((data) => {
-			console.log(data);
-		})
+		.then((response) => {return response.json();})
+		.then((data) => {console.log(data);})
 		.catch((error) => console.log(error));
-		
+
 		resteManageRoomInputs();
 };
 
 // ***********************************************************
 // ------------------- Invitation Manager --------------------
 // ***********************************************************
-
 // This section is responsible for the ability to add and display invitations for a given user in the user interface.
 
 // The method allows you to add a new friend request to the invitations list;
 function addInvitation(invitations) {
-	
 	let invitationElement;
 	let invitationList = document.querySelector('.invitation-list');
 	invitationList.innerHTML = '';
@@ -1413,7 +1282,7 @@ function createInvitation(invitation) {
 	let element = document.createElement('li');
 	
 	element.classList.add('invitation-box');
-	element.setAttribute('identificator', invitation.identificator);
+	element.setAttribute('invitationId', invitation.invitationId);
 	element.innerHTML = `<img class="invitation-img" src="${invitation.user.profilePicture.fileInBase64}" alt="img">
 	<div class="invitation-description-box">
 
@@ -1428,36 +1297,30 @@ function createInvitation(invitation) {
 		</div>
 
 		<div class="invitation-buttons-box">
-			<button class="invitation-button invitation-accept-button" identificator=${invitation.identificator}>Accept</button>
-			<button class="invitation-button invitation-reject-button" identificator=${invitation.identificator}>Reject</button>
+			<button class="invitation-button invitation-accept-button" invitationId=${invitation.invitationId}>Accept</button>
+			<button class="invitation-button invitation-reject-button" invitationId=${invitation.invitationId}>Reject</button>
 		</div>
 	</div>`;
 	
 	element.querySelector('.invitation-accept-button').addEventListener('click', CallAcceptInvitationRequest);
-	element.querySelector('.invitation-reject-button').addEventListener('click', CallAcceptInvitationRequest);
-
+	element.querySelector('.invitation-reject-button').addEventListener('click', CallDeclineInvitation);
 	return element;
 }
 
-
 const CallAcceptInvitationRequest = (event) => {
+	let invitationId = event.target.getAttribute('invitationId')
+	console.log('accept invitation, invitationId: ' + invitationId);
 	
-	let identyficator = event.target.getAttribute('identificator')
-	console.log('accet invitation, identificator: ' + identyficator);
-	
-	if(identyficator !== null)
-	  acceptOrDeclineInvitationRequest(identyficator, true);
-	
+	if(invitationId !== null)
+		acceptOrDeclineInvitationRequest(invitationId , 'http://localhost:8080/app/api/invitation/accept');
 }
 
-const declineInvitation = (event) => {
+const CallDeclineInvitation = (event) => {
+	let invitationId = event.target.getAttribute('invitationId');
+	console.log('decline invitation, invitationId: ' + invitationId);
 	
-	let identyficator = event.target.getAttribute('identificator');
-	console.log('decline invitation, identificator: ' + identyficator);
-	
-	if(identyficator !== null)
-	  acceptOrDeclineInvitationRequest(identyficator, false);
-	
+	if(invitationId !== null)
+		acceptOrDeclineInvitationRequest(invitationId, 'http://localhost:8080/app/api/invitation/decline');
 }
 
 // ***********************************************************
