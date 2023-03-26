@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
+import project.rtc.communicator.user.entities.User;
 import project.rtc.communicator.user.services.impl.UserServiceImpl;
 import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.services.impl.ActivateAccountTokenServiceImpl;
@@ -34,11 +35,12 @@ public class RegistrationServiceImpl implements RegistrationService {
 
 	// User registration consists in creating new private credentials to which only the registrant has access
 	// and a public user account sent to friends during e.g. refreshing the friends list in the customer panel
-	public void registerAccount(RegistrationRequestDto dto) throws MethodArgumentNotValidException {
+	public User registerAccount(RegistrationRequestDto dto) throws MethodArgumentNotValidException {
 		credentialsService.createCredentialsAndSaveInDatabase(dto);
-		userService.create(dto.getNick(), dto.getEmail(), dto.getPicture());
+		User user = userService.create(dto.getNick(), dto.getEmail(), dto.getPicture());
 		// TODO: Uncomment after tests.
 		//sendActivateAccountLinkToEmail(registrationRequest.getEmail());
+		return user;
 	}
 	
 	private boolean sendActivateAccountLinkToEmail(String email) {

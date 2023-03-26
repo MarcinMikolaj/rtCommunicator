@@ -43,9 +43,10 @@ public class Message {
 	@ToString.Exclude
 	private List<String> missedBy = new ArrayList<>();
 
-	public Message(String roomId, String userNick, String content, String dateMilisecondsUTC) {
+	public Message(String roomId, String userId, String userNick, String content, String dateMilisecondsUTC) {
 		super();
 		this.roomId = roomId;
+		this.userId = userId;
 		this.userNick = userNick;
 		this.content = content;
 		this.dateMilisecondsUTC = dateMilisecondsUTC;

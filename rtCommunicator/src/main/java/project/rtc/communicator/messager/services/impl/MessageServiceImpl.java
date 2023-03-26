@@ -50,48 +50,48 @@ public class MessageServiceImpl implements MessageService {
 		if(message.getRoomId() == null || message.getRoomId().equals("")) throw new IllegalArgumentException();
 		return roomService.getUsersFromRoom(message.getRoomId(), false).stream()
 				.filter(Objects::nonNull)
-				.filter(u -> !u.getNick().equals(message.getUserNick()))
+				.filter(u -> !u.getUserId().equals(message.getUserId()))
 				.peek(u -> simpMessagingTemplate.convertAndSendToUser(u.getEmail(), destination, message))
 				.map(User::getEmail)
 				.collect(Collectors.toList());
 	}
 
 	@Override
-	public List<Message> updateAllMessageForRoomAsReadBy(String roomId, String userNick) throws MessageNotFoundException {
-		List<Message> messages = messageRepository.findAllUnreadMessagesInARoom(roomId, userNick)
+	public List<Message> updateAllMessageForRoomAsReadBy(String roomId, String userId) throws MessageNotFoundException {
+		List<Message> messages = messageRepository.findAllUnreadMessagesInARoom(roomId, userId)
 				.orElseThrow(MessageNotFoundException::new);
 		return messageRepository.saveAll(messages.stream()
-				.filter(m -> m.getMissedBy().contains(userNick))
-				.filter(m -> !m.getReceivedBy().contains(userNick))
-				.peek(m -> m.getMissedBy().removeIf(nick -> nick.equals(userNick)))
-				.peek(m -> m.getReceivedBy().add(userNick))
+				.filter(m -> m.getMissedBy().contains(userId))
+				.filter(m -> !m.getReceivedBy().contains(userId))
+				.peek(m -> m.getMissedBy().removeIf(id -> id.equals(userId)))
+				.peek(m -> m.getReceivedBy().add(userId))
 				.collect(Collectors.toList()));
 	}
 
-	protected Message addUsersWhoNotReadMessage(Message message, List<String> nicks){
-		nicks.stream()
+	protected Message addUsersWhoNotReadMessage(Message message, List<String> usersId){
+		usersId.stream()
 				.filter(Objects::nonNull)
-				.forEach(n -> message.getMissedBy().add(n));
+				.forEach(id -> message.getMissedBy().add(id));
 		return message;
 	}
 
-	protected Message addUsersWhoReadMessage(Message message, List<String> nicks){
-		nicks.stream()
+	protected Message addUsersWhoReadMessage(Message message, List<String> usersId){
+		usersId.stream()
 				.filter(Objects::nonNull)
-				.forEach(n -> message.getReceivedBy().add(n));
+				.forEach(id -> message.getReceivedBy().add(id));
 		return message;
 	}
 
 	private Message setReadByAndMissedByForCreatedMessage(Message message, String roomId) throws RoomNotFoundException {
 		List<User> users = roomService.getUsersFromRoom(roomId, false);
-		String authorNick = message.getUserNick();
+		String authorUserId = message.getUserId();
 		message = addUsersWhoNotReadMessage(message
 				, users.stream()
-						.map(User::getNick)
-						.filter(n -> !n.equals(authorNick))
+						.map(User::getUserId)
+						.filter(id -> !id.equals(authorUserId))
 						.collect(Collectors.toList()));
 		message = addUsersWhoReadMessage(message
-				, Collections.singletonList(message.getUserNick()));
+				, Collections.singletonList(message.getUserId()));
 		return message;
 	}
 

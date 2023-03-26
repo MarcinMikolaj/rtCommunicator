@@ -10,8 +10,8 @@ import java.util.Optional;
 public interface MessageRepository extends MongoRepository<Message, String> {
 
     Optional<List<Message>> findAllByRoomId(String roomId);
-    @Query(value = "{'roomId': ?0, 'userNick': {$ne: ?1}, 'missedBy': ?1}")
-    Optional<List<Message>> findAllUnreadMessagesInARoom(String roomId, String userNick);
+    @Query(value = "{'roomId': ?0, 'userId': {$ne: ?1}, 'missedBy': ?1}")
+    Optional<List<Message>> findAllUnreadMessagesInARoom(String roomId, String userId);
 
 
 }

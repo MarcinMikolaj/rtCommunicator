@@ -48,7 +48,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
     public RoomResponseDto getUserRooms(HttpServletRequest httpServletRequest, RoomRequestDto dto)
 			throws UserNotFoundException, RoomNotFoundException, MessageNotFoundException {
 		if(dto.getRoomId() != null && dto.getRoomId().equals("none") == false)
-			messageService.updateAllMessageForRoomAsReadBy(dto.getRoomId(), dto.getUserNick());
+			messageService.updateAllMessageForRoomAsReadBy(dto.getRoomId(), dto.getUserId());
 		return prepareRoomResponsePayload(HttpStatus.OK, RoomOperation.GET_ROOMS
 				, prepareRoomDtoList(dto.getUserId()), getUnreadMessageForRooms(dto.getUserId()));
 	}
@@ -97,23 +97,23 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	private Map<String, Integer> getUnreadMessageForRooms(String userId) throws UserNotFoundException, RoomNotFoundException {
 		List<Room> rooms = roomService.getAllUserRooms(userId);
 		User user = userService.getUser(userId);
-		return countUnreadMessages(rooms, user.getNick());
+		return countUnreadMessages(rooms, user.getUserId());
 	}
 	
-	private Map<String, Integer> countUnreadMessages(List<Room> roomList, String userNick) {
+	private Map<String, Integer> countUnreadMessages(List<Room> roomList, String userId) {
 		Map<String, Integer> unreadMessages = new HashMap<>();
 		roomList.stream()
 		   .filter(Objects::nonNull)
 		   .filter(r -> r.getRoomId() != null)
-		   .peek(r -> unreadMessages.put(r.getRoomId(), count(r, userNick)))
+		   .peek(r -> unreadMessages.put(r.getRoomId(), count(r, userId)))
 		   .collect(Collectors.toList()).size();
 		return unreadMessages;
 	}
 
-	private int count(Room room, String userNick) {
+	private int count(Room room, String userId) {
 		return messageService.getAllMessageFromRoom(room.getRoomId()).stream()
 		   .filter(Objects::nonNull)
-		   .filter(m -> m.getMissedBy().contains(userNick))
+		   .filter(m -> m.getMissedBy().contains(userId))
 		   .collect(Collectors.toList())
 		   .size();
 	}
