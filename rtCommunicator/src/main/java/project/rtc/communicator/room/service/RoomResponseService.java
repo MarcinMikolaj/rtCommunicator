@@ -3,6 +3,7 @@ package project.rtc.communicator.room.service;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
+import project.rtc.infrastructure.exception.exceptions.MessageNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.room.dto.RoomRequestDto;
 import project.rtc.communicator.room.dto.RoomResponseDto;
@@ -15,7 +16,7 @@ public interface RoomResponseService {
             throws NoAuthorizationTokenException, UserNotFoundException, MethodArgumentNotValidException, RoomNotFoundException;
 
 	RoomResponseDto getUserRooms(HttpServletRequest httpServletRequest, RoomRequestDto roomRequest)
-			throws NoAuthorizationTokenException, UserNotFoundException, MethodArgumentNotValidException, RoomNotFoundException;
+            throws NoAuthorizationTokenException, UserNotFoundException, MethodArgumentNotValidException, RoomNotFoundException, MessageNotFoundException;
 
 	RoomResponseDto remove(HttpServletRequest httpServletRequest, RoomRequestDto roomRequest)
             throws NoAuthorizationTokenException, UserNotFoundException, MethodArgumentNotValidException, RoomNotFoundException;

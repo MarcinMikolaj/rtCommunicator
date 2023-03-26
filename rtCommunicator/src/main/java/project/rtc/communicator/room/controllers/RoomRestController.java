@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import project.rtc.infrastructure.exception.exceptions.MessageNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.room.dto.RoomRequestDto;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
@@ -31,7 +32,7 @@ public interface RoomRestController {
     @PostMapping(path = "/get")
     ResponseEntity<?> getRooms(@RequestBody @Valid RoomRequestDto dto
             , HttpServletRequest httpServletRequest) throws NoAuthorizationTokenException, UserNotFoundException,
-            MethodArgumentNotValidException, RoomNotFoundException;
+            MethodArgumentNotValidException, RoomNotFoundException, MessageNotFoundException;
 
     @PostMapping(path = "/remove")
     ResponseEntity<?> removeRoom(@RequestBody @Validated(RemoveRoomGroup.class) RoomRequestDto dto

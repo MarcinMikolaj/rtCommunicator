@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import project.rtc.infrastructure.exception.exceptions.MessageNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.room.controllers.RoomRestController;
 import project.rtc.communicator.room.dto.RoomRequestDto;
@@ -39,7 +40,7 @@ public class RoomRestControllerImpl implements RoomRestController {
 	@Override
 	public ResponseEntity<RoomResponseDto> getRooms(RoomRequestDto dto
 			, HttpServletRequest httpServletRequest) throws NoAuthorizationTokenException, UserNotFoundException
-			, MethodArgumentNotValidException, RoomNotFoundException {
+			, MethodArgumentNotValidException, RoomNotFoundException, MessageNotFoundException {
 		return new ResponseEntity<>(roomService.getUserRooms(httpServletRequest, dto), HttpStatus.OK);
 	}
 

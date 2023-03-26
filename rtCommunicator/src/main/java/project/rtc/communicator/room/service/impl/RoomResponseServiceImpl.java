@@ -17,6 +17,7 @@ import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.room.dto.*;
 import project.rtc.communicator.room.entities.Room;
 import project.rtc.communicator.user.services.UserService;
+import project.rtc.infrastructure.exception.exceptions.MessageNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.messager.services.MessageService;
 import project.rtc.communicator.room.service.RoomService;
@@ -45,9 +46,9 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 
 	@Override
     public RoomResponseDto getUserRooms(HttpServletRequest httpServletRequest, RoomRequestDto dto)
-			throws UserNotFoundException, RoomNotFoundException {
+			throws UserNotFoundException, RoomNotFoundException, MessageNotFoundException {
 		if(dto.getRoomId() != null && dto.getRoomId().equals("none") == false)
-			messageService.addReadBy(dto.getRoomId(), dto.getUserNick());
+			messageService.updateAllMessageForRoomAsReadBy(dto.getRoomId(), dto.getUserNick());
 		return prepareRoomResponsePayload(HttpStatus.OK, RoomOperation.GET_ROOMS
 				, prepareRoomDtoList(dto.getUserId()), getUnreadMessageForRooms(dto.getUserId()));
 	}

@@ -992,14 +992,12 @@ const clearNofification = () => {
 
 	roomListDOM = document.querySelectorAll('.room-list .friend');
 	roomListDOM.forEach(room => {
-		
 		roomId = room.getAttribute('roomId');
 		
 		if(currentluSelectedRoomId === roomId) {
 			notificationElement = room.querySelector('.new-message-notification');
 			notificationElement.innerHTML = ``;
 		}
-		
 	})
 	if(unreadMessages[currentluSelectedRoomId] > 0)
 	     sendUpdateReadMessagesRequest({roomId: currentluSelectedRoomId})

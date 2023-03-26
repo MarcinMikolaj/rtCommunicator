@@ -6,6 +6,7 @@ import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import project.rtc.communicator.messager.entities.Message;
+import project.rtc.infrastructure.exception.exceptions.MessageNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
@@ -20,5 +21,5 @@ public interface MessageRestController {
 
     @PostMapping(path = "/app/message/update/readby")
     ResponseEntity<String> updateReadBy(@RequestBody Map<String, ?> roomId, HttpServletRequest httpServletRequest)
-            throws UserNotFoundException, NoAuthorizationTokenException;
+            throws UserNotFoundException, NoAuthorizationTokenException, MessageNotFoundException;
 }
