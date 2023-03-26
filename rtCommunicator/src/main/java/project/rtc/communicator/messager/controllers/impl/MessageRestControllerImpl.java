@@ -28,19 +28,16 @@ public class MessageRestControllerImpl implements MessageRestController {
 
 	@Override
 	public void processMessageFromClient(Message message) throws RoomNotFoundException, UserNotFoundException {
-		messageService.save(message);
+		messageService.create(message);
 		messageService.send("/queue/messages", message);
 	}
 
 	@Override
 	public ResponseEntity<String> updateReadBy(Map<String, ?> roomId, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
-		
 		JSONObject jsonObject = new JSONObject(roomId);
 		String id = jsonObject.getAsString("roomId");
-		
 		messageService.addReadBy(id, userService.getUser(httpServletRequest).getNick());
-		
 		return new ResponseEntity<>("OK", HttpStatus.OK);
 	 }
 }

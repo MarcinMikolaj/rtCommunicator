@@ -2,6 +2,7 @@ package project.rtc;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -145,9 +146,9 @@ public class MyTest {
 	// Create test message
 	private void createTestMessage(String roomId, String owner, String content, String dateMilisecondsUTC) throws RoomNotFoundException, UserNotFoundException {
 		Message message = new Message(roomId, owner, content, dateMilisecondsUTC);
-		messageService.save(message);
+		//message.setMessageId(generateUniqueId());
+		messageService.create(message);
 	}
-
 
 	// Create test room, return roomId
 	private String createTestRooms(List<String> emails, String roomName) throws UserNotFoundException {
@@ -161,5 +162,7 @@ public class MyTest {
 	private void createTestInvitations(String roomId, String invited, String inviting) throws UserNotFoundException {
 		invitationService.create(roomId, invited, inviting);
 	}
+
+	private String generateUniqueId() {return UUID.randomUUID().toString();}
 	
 }

@@ -9,8 +9,6 @@ import lombok.*;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-import project.rtc.communicator.messager.entities.Message;
-
 @Document
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,9 +21,13 @@ public class Room {
 	private String mongoId;
 	private String roomId;
 	private String name;
+
+	// Points to all message which were posted in this room.
 	@ElementCollection
 	@ToString.Exclude
-	private List<Message> messages = new ArrayList<>();
+	private List<String> messagesId = new ArrayList<>();
+
+	// Points to all users who are members of the room.
 	@ElementCollection
 	@ToString.Exclude
 	private List<String> usersId = new ArrayList<>();

@@ -1,8 +1,6 @@
 package project.rtc.communicator.messager.services.impl;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.NoSuchElementException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
@@ -31,13 +29,18 @@ public class MessageServiceImpl implements MessageService {
 	private final RoomService roomService;
 
 	@Override
-	public Message save(Message message) throws RoomNotFoundException, UserNotFoundException {
-		Room room = roomRepository.findByRoomId(message.getRoomId()).orElseThrow(RoomNotFoundException::new);
-		room.getMessages().add(message);
+	public Message create(Message message) throws RoomNotFoundException, UserNotFoundException {
+		Room room = roomService.getRoom(message.getRoomId());
+		message.setMessageId(generateUniqueId());
+		room.getMessagesId().add(message.getMessageId());
 		message = loadMissedByList(message, room);
-		messageRepository.save(message);
 		roomRepository.save(room);
-		return message;
+		return messageRepository.save(message);
+	}
+
+	@Override
+	public List<Message> getAllMessageFromRoom(String roomId) {
+		return messageRepository.findAllByRoomId(roomId).orElse(new ArrayList<>());
 	}
 
 	@Override
@@ -56,20 +59,20 @@ public class MessageServiceImpl implements MessageService {
 
 	@Override
 	public List<Message> addReadBy(String roomId, String userNick) {
-		Room room = roomRepository.findByRoomId(roomId).orElseThrow(() -> new NoSuchElementException());
-		for(Message m: room.getMessages()) {
+		List<Message> messages = getAllMessageFromRoom(roomId);
+		for(Message m: messages) {
 			if(m.getMissedBy().contains(userNick) && !m.getReceivedBy().contains(userNick)) {
 				m.getMissedBy().removeIf(nick -> nick.equals(userNick));
 				m.getReceivedBy().add(userNick);
+				messageRepository.save(m);
 			}
-		}	
-		roomRepository.save(room);
-		return room.getMessages();
+		}
+		return messages;
 	}
 
-	// Allows you to populate the list indicating users (all belonging to the room) who have not read the message.
-	private Message loadMissedByList(Message message, Room room) throws UserNotFoundException, RoomNotFoundException {
-
+	// This method allow set message as not read by others user except sending users.
+	// This method need Room object to get users list.
+	private Message loadMissedByList(Message message, Room room) throws RoomNotFoundException {
 		roomService.getUsersFromRoom(room.getRoomId(), false).stream()
 				.filter(u -> u != null)
 				.filter(u -> u.getNick() != null)
@@ -80,6 +83,16 @@ public class MessageServiceImpl implements MessageService {
 
 		message.getReceivedBy().add(message.getUserNick());
 		return message;
+	}
+
+	// Generate unique ID as actual date in milliseconds + random UUID
+	private String generateUniqueId() {
+		return getDateNowInMilliseconds() + "-" + UUID.randomUUID();
+	}
+
+	protected String getDateNowInMilliseconds(){
+		Date date = new Date();
+		return Long.toString(date.getTime());
 	}
 
 }

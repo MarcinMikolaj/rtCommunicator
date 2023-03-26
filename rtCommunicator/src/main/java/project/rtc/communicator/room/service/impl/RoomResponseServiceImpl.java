@@ -16,12 +16,12 @@ import project.rtc.communicator.invitations.services.InvitationService;
 import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.room.dto.*;
 import project.rtc.communicator.room.entities.Room;
+import project.rtc.communicator.user.services.UserService;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.messager.services.MessageService;
 import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.room.service.RoomResponseService;
 import project.rtc.communicator.user.entities.User;
-import project.rtc.communicator.user.services.impl.UserServiceImpl;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 
@@ -30,7 +30,7 @@ import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 @RequiredArgsConstructor
 public class RoomResponseServiceImpl implements RoomResponseService {
 
-	private final UserServiceImpl userService;
+	private final UserService userService;
 	private final MessageService messageService;
 	private final RoomService roomService;
 	private final InvitationService invitationService;
@@ -110,7 +110,7 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	}
 
 	private int count(Room room, String userNick) {
-		return room.getMessages().stream()
+		return messageService.getAllMessageFromRoom(room.getRoomId()).stream()
 		   .filter(Objects::nonNull)
 		   .filter(m -> m.getMissedBy().contains(userNick))
 		   .collect(Collectors.toList())
@@ -133,8 +133,9 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		List<Room> rooms = roomService.getAllUserRooms(userId);
 
 		for(Room r:rooms){
-			List<User> users = roomService.getUsersFromRoom(r.getRoomId(), true);
-			roomsDto.add(buildRoomD(r, users, r.getMessages()));
+			roomsDto.add(buildRoomD(r
+					, roomService.getUsersFromRoom(r.getRoomId(), true)
+					, messageService.getAllMessageFromRoom(r.getRoomId())));
 		}
 		return roomsDto;
 	}

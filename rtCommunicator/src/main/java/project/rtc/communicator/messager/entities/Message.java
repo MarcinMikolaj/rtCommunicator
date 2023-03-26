@@ -21,10 +21,13 @@ public class Message {
 	
 	@Id
 	private String mongoId;
+	private String messageId;
 	private String roomId;
-	// userId belong to user who created message.
+
+	// Indicates the userId of the user who send the message.
 	private String userId;
-	// Indicates the nickname of the user who owns the message.
+
+	// Indicates the nickname of the user who send the message.
 	private String userNick;
 	private String content;
 	private String dateMilisecondsUTC;

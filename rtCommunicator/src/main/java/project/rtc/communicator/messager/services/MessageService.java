@@ -13,7 +13,8 @@ public interface MessageService {
 	// Saving the message is validated.
 	// Throw IllegalArgumentException if delivered message validation failed.
 	// Throw NoSuchElementException if no room found.
-	Message save(Message message) throws RoomNotFoundException, UserNotFoundException;
+	Message create(Message message) throws RoomNotFoundException, UserNotFoundException;
+	List<Message> getAllMessageFromRoom(String roomId);
 	
 	// This method allows you to send messages to all users in the room through the use of websocket
 	// The method accepts a message to be sent to users, the message must have an assigned room identifier, otherwise it will be thrown IllegalArgumentException
