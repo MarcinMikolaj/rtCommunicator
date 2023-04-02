@@ -30,7 +30,7 @@ public class Message {
 	// Indicates the nickname of the user who send the message.
 	private String userNick;
 	private String content;
-	private String dateMilisecondsUTC;
+	private String creationTimeInMillisecondsUTC;
 	
 	// Indicates the users who read this message.
 	@ElementCollection
@@ -43,13 +43,13 @@ public class Message {
 	@ToString.Exclude
 	private List<String> missedBy = new ArrayList<>();
 
-	public Message(String roomId, String userId, String userNick, String content, String dateMilisecondsUTC) {
+	public Message(String roomId, String userId, String userNick, String content, String creationTimeInMillisecondsUTC) {
 		super();
 		this.roomId = roomId;
 		this.userId = userId;
 		this.userNick = userNick;
 		this.content = content;
-		this.dateMilisecondsUTC = dateMilisecondsUTC;
+		this.creationTimeInMillisecondsUTC = creationTimeInMillisecondsUTC;
 	}
 
 }

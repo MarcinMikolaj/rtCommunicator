@@ -13,7 +13,6 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.rtc.communicator.invitations.services.InvitationService;
-import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.room.dto.*;
 import project.rtc.communicator.room.entities.Room;
 import project.rtc.communicator.user.services.UserService;
@@ -133,16 +132,14 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 		List<RoomDto> roomsDto = new ArrayList<>();
 		List<Room> rooms = roomService.getAllUserRooms(userId);
 
-		for(Room r:rooms){
-			roomsDto.add(buildRoomD(r
-					, roomService.getUsersFromRoom(r.getRoomId(), true)
-					, messageService.getAllMessageFromRoom(r.getRoomId())));
-		}
+		for(Room r:rooms)
+			roomsDto.add(buildRoomD(r, roomService.getUsersFromRoom(r.getRoomId(), true)));
+
 		return roomsDto;
 	}
 
-	private RoomDto buildRoomD(Room room, List<User> users, List<Message> messages){
-		return new RoomDto(room, users, messages);
+	private RoomDto buildRoomD(Room room, List<User> users){
+		return new RoomDto(room, users);
 	}
 
 }

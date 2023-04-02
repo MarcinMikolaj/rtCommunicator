@@ -19,10 +19,12 @@ public interface InvitationService {
 
 	// Is responsible for accepting the invitation of a given user, which means removing the invitation and creating a room for users.
 	// He accepts the invitation as an argument.
-	List<InvitationResponseDto> acceptInvitation(String invitationId, HttpServletRequest httpServletRequest) throws UserNotFoundException, RoomNotFoundException, NoAuthorizationTokenException;
+	List<InvitationResponseDto> acceptInvitation(String invitationId, HttpServletRequest httpServletRequest)
+			throws UserNotFoundException, RoomNotFoundException, NoAuthorizationTokenException;
 	
 	// Responsible for removing the invitation and indicating it from the invited user after rejecting the invitation.
 	// He accepts the invitation as an argument.
-	List<InvitationResponseDto> declineInvitation(String invitationId, HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException;
+	List<InvitationResponseDto> declineInvitation(String invitationId, HttpServletRequest httpServletRequest)
+			throws UserNotFoundException, NoAuthorizationTokenException;
 
 }

@@ -11,17 +11,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.context.request.ServletWebRequest;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
-import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
-import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
-import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
-import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
+
+import project.rtc.infrastructure.exception.exceptions.*;
 import project.rtc.infrastructure.dto.ApiExceptionDto;
 
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
-
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
@@ -62,6 +59,15 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(RoomNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleRoomNotFoundException(RoomNotFoundException e, WebRequest requestMetadata){
+        e.printStackTrace();
+        return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
+                , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(MessageNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> handleMessageNotFoundException(RoomNotFoundException e, WebRequest requestMetadata){
         e.printStackTrace();
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),

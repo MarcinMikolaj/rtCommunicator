@@ -49,23 +49,35 @@ public class MyTest {
 		// test room 01
 		String roomId01 = createTestRooms(List.of("marcin.mikolajczyk22@gmail.com", "mateusz87@gmail.com", "ewelina@gmail.com"), "Przyjaciele");
 		//Fri Oct 07 2022 05:12:30 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Hey how's your day going today ?", "1633489950000");
-		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "I'm fine, I had a fantastic day at school today!", "1665112350000");
 
-		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Nice to hear it", "1665112350000");
-		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "I have something cool to tell about my adventures at school today", "1633489950000");
-		
-		//Sun Oct 09 2022 23:23:42 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "I'd love to hear your story", "1665350589580");
-		//Sun Oct 09 2022 23:28:47 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "A lot happened at school yesterday. This morning, on my way to class, I tripped over my shoelace. I should have taken that as a sign that today wasn't going to be the best day, but I didn't think so at the time. I went further. There was an unannounced quiz in the first lesson. I wasn't prepared at the time, so I didn't do very well.", "1665350927257");
-		
-		//Sun Oct 09 2022 23:35:11 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Sounds amazing !", "1665351311701");
-		//Sun Oct 09 2022 23:41:21 GMT+0200 (Central European Summer Time)
-		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "that's right, you can finish it for us", "1665351681759");
-		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "already finishing it..", "1665351681759");
-		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Then there was a long break and we went out onto the field. There I met Monika, who just wasn't in a very good mood. We had an argument about which one of us should be on duty now. I like going for chalk and I'm happy to be on duty. She always wants to be too. I was sure it was my turn now, she claimed it was hers now.", "1665351681759");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Lorem ipsum dolor sit amet.  ?", "1533489950001");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Contrary to popular belief", "1533489950002");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "In hac habitasse platea dictumst.", "1533489950003");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. ", "1533489950004");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Fusce porttitor egestas pharetra.", "1533489950005");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Proin fringilla nulla turpis, eget efficitur orci scelerisque eget. ", "1533489950006");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Curabitur congue velit ut metus fringilla, quis tristique est malesuada. Cras fermentum tortor at gravida luctus. Fusce elementum vulputate efficitur.", "1533489950007");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Pellentesque dictum tempor justo et malesuada.", "1533489950008");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "1533489950009");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Lorem ipsum dolor sit amet.  ?", "1533489950010");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Contrary to popular belief", "1533489950011");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "In hac habitasse platea dictumst.", "1533489950012");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Class aptent taciti sociosqu ad litora torquent per conubia nostra, per inceptos himenaeos. ", "1533489950013");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Fusce porttitor egestas pharetra.", "1533489950014");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Proin fringilla nulla turpis, eget efficitur orci scelerisque eget. ", "1533489950015");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Curabitur congue velit ut metus fringilla, quis tristique est malesuada. Cras fermentum tortor at gravida luctus. Fusce elementum vulputate efficitur.", "1533489950016");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Pellentesque dictum tempor justo et malesuada.", "1533489950017");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "Lorem ipsum dolor sit amet, consectetur adipiscing elit.", "1533489950018");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Hey how's your day going today ?", "1533489950019");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "I'm fine, I had a fantastic day at school today!", "1533489950020");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Nice to hear it", "1533489950021");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "I have something cool to tell about my adventures at school today", "1533489950022");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "I'd love to hear your story", "1533489950023");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "A lot happened at school yesterday. This morning, on my way to class, I tripped over my shoelace. I should have taken that as a sign that today wasn't going to be the best day, but I didn't think so at the time. I went further. There was an unannounced quiz in the first lesson. I wasn't prepared at the time, so I didn't do very well.", "1533489950024");
+		createTestMessage(roomId01, testUsers.get("mateusz86").getUserId(), "mateusz86", "Sounds amazing !", "1533489950025");
+		createTestMessage(roomId01, testUsers.get("anastazja2").getUserId(), "anastazja2", "that's right, you can finish it for us", "1533489950026");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "already finishing it..", "1533489950027");
+		createTestMessage(roomId01, testUsers.get("ewelina32").getUserId(), "ewelina32", "Then there was a long break and we went out onto the field. There I met Monika, who just wasn't in a very good mood. We had an argument about which one of us should be on duty now. I like going for chalk and I'm happy to be on duty. She always wants to be too. I was sure it was my turn now, she claimed it was hers now.", "1533489950028");
 				
 		// test roo 02
 		String roomId02 = createTestRooms(List.of("marcin.mikolajczyk22@gmail.com", "mateusz87@gmail.com"), "pwsz");

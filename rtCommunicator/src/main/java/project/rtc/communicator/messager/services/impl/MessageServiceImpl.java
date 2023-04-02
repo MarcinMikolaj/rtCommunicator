@@ -6,6 +6,9 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -66,6 +69,25 @@ public class MessageServiceImpl implements MessageService {
 				.peek(m -> m.getMissedBy().removeIf(id -> id.equals(userId)))
 				.peek(m -> m.getReceivedBy().add(userId))
 				.collect(Collectors.toList()));
+	}
+
+	@Override
+	public Map<String, Object> getMessagePage(String roomId, int page, int size) throws MessageNotFoundException {
+		Map<String, Object> map = new HashMap<>();
+		Pageable pageable = PageRequest.of(page, size);
+		Page<Message> pageMessage = messageRepository.findAllByRoomIdOrderByCreationTimeInMillisecondsUTCDesc(roomId, pageable)
+				.orElseThrow(MessageNotFoundException::new);
+		map.put("messages", pageMessage.getContent());
+		map.put("currentPage", pageable.getPageNumber());
+		map.put("pageSize", pageable.getPageSize());
+		return map;
+	}
+
+	private List<Message> reverseList(List<Message> list){
+		List<Message> messages = new ArrayList<>();
+		for(Message m: list)
+			messages.add(0, m);
+		return messages;
 	}
 
 	protected Message addUsersWhoNotReadMessage(Message message, List<String> usersId){

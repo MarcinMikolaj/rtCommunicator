@@ -16,7 +16,8 @@ import javax.validation.Valid;
 public interface RegistrationRestController {
 
     @PostMapping(path = "/create")
-    ResponseEntity<?> register(@RequestBody @Valid RegistrationRequestDto registrationRequestDto) throws MethodArgumentNotValidException;
+    ResponseEntity<?> register(@RequestBody @Valid RegistrationRequestDto registrationRequestDto)
+            throws MethodArgumentNotValidException;
 
     @GetMapping(path = "/activate")
     ResponseEntity<String> activate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);

@@ -6,6 +6,7 @@ import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public interface MessageService {
@@ -13,6 +14,7 @@ public interface MessageService {
 	// This method allows you to save a new message for each transferred room.
 	Message create(Message message) throws RoomNotFoundException, UserNotFoundException;
 	List<Message> getAllMessageFromRoom(String roomId);
+	Map<String, Object> getMessagePage(String roomId, int page, int size) throws MessageNotFoundException;
 	
 	// This method allows you to send messages to all users in the room through the use of websocket.
 	// The method accepts a message to be sent to users, the message must have an assigned room identifier, otherwise it will be thrown IllegalArgumentException.

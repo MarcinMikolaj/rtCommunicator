@@ -77,6 +77,8 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 			       .antMatchers("/app/forgot/password/tk/**").permitAll()
 			       .antMatchers("/app/forgot/credentials/update").permitAll()
 
+				   .antMatchers("/app/api/message/get/page").permitAll() //TODO: remove, Only for test
+
 			       .anyRequest().authenticated()
 			       .and()			       
 		    .oauth2Login()

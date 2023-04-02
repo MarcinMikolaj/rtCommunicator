@@ -165,6 +165,7 @@ const prepareDOMElements = () => {
 // Prepare DOM Events
 const prepareDOMEvents = () => {
 	searchFriendInput.addEventListener('keyup', searchFriend);
+	communicatorContent.addEventListener('scroll', getMessagePageForScrollApi);
 
     friendList.addEventListener('click', showCommunicatorBoxForMobile);
     friendList.addEventListener('click', setRoom);
@@ -268,8 +269,11 @@ const connectWebSocket = (data) => {
 		client.subscribe('/users/queue/messages', function (data) {
 			if(data.body){
 				let message = JSON.parse(data.body);
-				if(message.roomId === currentluSelectedRoomId)
-					addLeftMessageToUI(message);
+				if(message.roomId === currentluSelectedRoomId){
+					let elementHTML = createLeftMessage(message);
+					communicatorContent.appendChild(elementHTML);
+					setScrollCommunicationPanelToBottom();
+				}
 
 				// Allows you to add an unread notification counter item to the room item.
 				addMessageCounterElementToRoom(message, unreadMessages);
@@ -304,11 +308,17 @@ const sendMessageByWebSocketOverSTOMP = () => {
 		content: messageContent,
 		userId: currentlyLoggedUser.userId,
 		userNick: currentlyLoggedUser.nick,
-		dateMilisecondsUTC: new Date().getTime() 
-		};
+		creationTimeInMillisecondsUTC: new Date().getTime()
+	}
 		
 	client.send('/app/messenger', {}, JSON.stringify(body));
-	addRightMessageToUI(messageContent);
+
+	// Create message element and add to communication panel.
+	let elementHTML = createRightMessage(messageContent);
+	communicatorContent.appendChild(elementHTML);
+
+	// After send message set scroll bottom.
+	setScrollCommunicationPanelToBottom();
 };
 
 // ***********************************************************
@@ -327,7 +337,6 @@ const logoutRequest = () => {
 			logout: true
 		}),})
 		.then((response) => {
-			console.log(response);
 			if(response.redirected === true)
 				window.location.replace(response.url);
 		})
@@ -353,7 +362,7 @@ function sendHttpRequestRoom(url, body){
 			console.log(data);
 			if(data.status === 200){
 				console.log("LOAD ROOMS FROM RECEIVED DTO");
-				loadDeliveredRooms(data.rooms, data.unreadMessages);
+				setRoomsInPanel(data.rooms, data.unreadMessages);
 			} else if(data.status === 400)
 				console.log("LOAD VALIDATION MESSAGE FORM DTO");
 			else
@@ -363,7 +372,7 @@ function sendHttpRequestRoom(url, body){
 				// if(data.status === 201){
 				// 	currentRoomList = data.rooms;
 				// 	unreadMessages = data.unreadMessages;
-				//	loadDeliveredRooms(data.rooms, data.unreadMessages);
+				//	setRoomsInPanel(data.rooms, data.unreadMessages);
 			    // 	addStatementMessageToRoomManagerInUI(data.statements);
 				// }
 		})
@@ -436,13 +445,10 @@ const leaveRoomRequest = () => {
 const getLoggedUser = () => {
 	fetch('http://localhost:8080/app/account/get', {
 		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
+		headers: {'Content-Type': 'application/json'},
 	})
 		.then((response) => response.json())
 		.then((data) => {
-			console.log(data);
 			currentlyLoggedUser = data.user;
 			setLoggedUserInPanel(data.user);
 		})
@@ -462,10 +468,8 @@ function sendHttpRequestAccount(url, body) {
 		},
 		body: JSON.stringify(body),
 	})
-		.then((response) => {
-			return response.json();})
+		.then((response) => {return response.json()})
 		.then((data) => {
-			console.log(data);
 			currentlyLoggedUser = data.user;
 			setLoggedUserInPanel(data.user)
 			addStatementMessageToRoomManagerInUI(data.statements);
@@ -483,8 +487,7 @@ const deleteAccountRequest = () => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({email: removeAccountInput.value}),
-	}).then((response) => {
-			return response.json();})
+	}).then((response) => {return response.json()})
 	  .then((data) => {
 			if(data.success === true){			
 				console.log('Adress replace: ' + login_page_adress);
@@ -547,13 +550,10 @@ const s = (fileInBase64) => {
 				fileInBase64: fileInBase64,
 			}}),
 	})
-		.then((response) => {
-			return response.json();
-		})
+		.then((response) => {return response.json()})
 		.then((data) => {
-			console.log(data);
 			if(data.success === true){
-				//loadDeliveredRooms(data.rooms);
+				//TODO: setRoomsInPanel(data.rooms);
 			}
 			addStatementMessageToRoomManagerInUI(data.statements);
 		})
@@ -670,10 +670,13 @@ const openInvitationBox = () => {
 	invitationsBox.style.display = 'flex';
 };
 
+// *************************************************************
+// ----------------------- Set Room ---------------------
+// *************************************************************
 
-// *************************************************************
-// ----------------------- Message Manager ---------------------
-// *************************************************************
+// Point to current message page which.
+let currentMessagePageCounter = 0;
+const currentMessagePageSize = 8;
 
 const setRoom = (e) => {
 	let currentRoom = e.target.closest('.friend');
@@ -697,23 +700,94 @@ const setRoom = (e) => {
 		.then((response) => {return response.json();})
 		.then((data) => {
 			if(data.status === 200){
-				currentRoomList = data.rooms;
-				unreadMessages = data.unreadMessages;
-				loadDeliveredRooms(data.rooms, data.unreadMessages);
+				// Set message page counter for selected room.
+				currentMessagePageCounter = 0;
 
-				currentRoomList.forEach(room => {
-					if(currentluSelectedRoomId === room.roomId){
-						currentSelectedRoom = room;
-					}
-				})
-				setInformationAboutSelectedRoom();
-				loadMessageContent();
+				// Set info about rooms.
+				setCurrentSelectedRoomAndCurrentRoomList(data)
+
+				// Show selected room in left panel.
+				setRoomsInPanel(data.rooms, data.unreadMessages);
+
+				// Show selected room in conversation panel.
+				setSelectedRoomInPanel();
 			}
-			//addStatementMessageToRoomManagerInUI(data.statements);
+			return data;
 		})
+		.then((data) => {
+			getMessagePageApi(currentMessagePageCounter,  15);
+			currentMessagePageCounter++;
+		})
+		.then(data => {return data})
 		.catch((error) => console.log(error));
 
 	resteManageRoomInputs();
+}
+
+const setCurrentSelectedRoomAndCurrentRoomList = (data) => {
+	currentRoomList = data.rooms;
+	unreadMessages = data.unreadMessages;
+	currentRoomList.forEach(room => {
+		if(currentluSelectedRoomId === room.roomId)
+			currentSelectedRoom = room;
+	})
+}
+
+// Allows you to display information about the currently selected room in interface.
+const setSelectedRoomInPanel = (room) => {
+	// If no room is selected
+	if(currentluSelectedRoomId === null){
+		console.log("Can't display selected room: selected room id is null !");
+		return;
+	}
+
+	// clear before load new content
+	selectedRoomPicture.src = '';
+	selectedRoomName.innerHTML = '';
+
+	// set room picture
+	let picture;
+	currentSelectedRoom.users.forEach((user) => {picture = user.profilePicture.fileInBase64;})
+	selectedRoomPicture.src = picture;
+
+	// set room name
+	selectedRoomName.innerHTML = `${currentSelectedRoom.name}`;
+}
+
+// *************************************************************
+// ----------------------- Message Manager ---------------------
+// *************************************************************
+
+// This function call getMessagePageApi(page, size) on scrollTop === 0.
+const getMessagePageForScrollApi = (e) => {
+	if(e.target.scrollTop === 0){
+		getMessagePageApi(currentMessagePageCounter,  currentMessagePageSize);
+		currentMessagePageCounter++;
+	}
+}
+
+// Fetch message page and call setMessagePageInPanel() on status OK.
+const getMessagePageApi = (page, size) => {
+	if(!currentluSelectedRoomId){
+		console.log("Cant set message page for user because no room selected !");
+		return;
+	}
+
+	const params = new URLSearchParams({
+		roomId: currentluSelectedRoomId,
+		size: size,
+		page: page
+	})
+
+	fetch('http://localhost:8080/app/api/message/get/page' + '?' + params, {
+		method: 'GET',
+		headers: {'Content-type': 'application/json',}
+	})
+		.then(response => {return response.json()})
+		.then(response => {return setMessagePageInPanel(response.messages, response.currentPage)})
+		.catch((error) => console.log(error));
+
+	return 1;
 }
 
 // Allow get userId form selected room
@@ -721,99 +795,53 @@ const setRoom = (e) => {
 function getUserIdByNick(nick, room){
 	let result;
 	room.users.forEach(u => {if(u.nick === nick) result =  u.userId;});
-	return result
-}
-
-// Allows you to set information about the currently selected room
-const setInformationAboutSelectedRoom = () => {
-	let picture;
-	
-	// If no room is selected
-	if(currentluSelectedRoomId === null){
-		console.log("room id cannot be empty to set this room in the interface");
-	}
-	
-    // clear before load new content
-    selectedRoomPicture.src = ''; 
-    selectedRoomName.innerHTML = ''; 
-
-    // set room picture
-    currentSelectedRoom.users.forEach((user) => {
-	  picture = user.profilePicture.fileInBase64;
-    })
-    
-    selectedRoomPicture.src = picture;
-    
-    // set room name
-    selectedRoomName.innerHTML = `${currentSelectedRoom.name}`;
+	return result;
 }
 
 // Allows you to load all messages from the currently selected room and display them in UI
-async function loadMessageContent()  {
-	// clear message list before load messages.
-	communicatorContent.innerHTML = '';
-	// get message list from room.
-	let messages = currentSelectedRoom.messages;
-	// if no message return.
+function setMessagePageInPanel(messages, page)  {
+	// If no message return.
 	if(messages.length <= 0)
 		return;
-	// add all message to UI
+
+	// Clear message list if this is first page.
+	// This condition should be called from the first fetch (get message page api)
+	if(page <= 0)
+		communicatorContent.innerHTML = '';
+
+	let messageCollection = [];
+
+	// Create and prepare Message HTMl collection.
 	messages.forEach((message, index) => {
-		if(message.userNick === currentlyLoggedUser.nick){
-
-			if(index === 0)
-				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
-
-			if(index >= 1 && messages.length > index)
-				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
-
-			addRightMessageToUI(message.content);
-			
-		} else {
-			
-			if(index === 0)
-				addTimeMessageToUIOnlyForFirstMessage(message.dateMilisecondsUTC);
-
-			if(index >= 1 && messages.length > index)
-				addTimeMessageToUI(message.dateMilisecondsUTC, messages[index-1].dateMilisecondsUTC);
-
-			addLeftMessageToUI(message); 
-		}
+		if(message.userNick === currentlyLoggedUser.nick)
+			messageCollection.push(createRightMessage(message.content));
+		 else
+			messageCollection.push(createLeftMessage(message));
 	})
+
+	// Add created message HTMl Collection to panel.
+	messageCollection.forEach((element, index) => {communicatorContent.prepend(element);});
+	setScrollCommunicationPanelToBottom();
+	return messageCollection;
 }
 
-// The method allows you to find the user in the room and download and return his profile picture
-function getUserPictureFromRoom(room, nick) {
-	let picture;
-	for (let i = 0; i < room.users.length; i++) {
-			if(room.users[i].nick === nick){
-			   picture = room.users[i].profilePicture.fileInBase64;
-			   break;
-		}
-     } 
-	return picture;
-}
-
-
-// Allows you to add a message from you that will be visible in UI
-const addRightMessageToUI = (content) => {
-	
+// Allows you to add a message from you that will be visible in UI.
+// If direction false add new element to the end, if true add at the beginning.
+const createRightMessage = (content) => {
 	if(content.length < 1){
-		console.log("addRightMessageToUI: The message cannot be empty");
+		console.log("Can't add message: message must not be empty");
 		return;
 	}
-	
 	let element = document.createElement('div');
 	element.classList.add('right-message-box');
 	element.innerHTML = `<li class="right-message">${content}</li>`;
-	communicatorContent.appendChild(element);
 	enterMessageInput.value = '';
-	communicatorContent.scrollTop = communicatorContent.scrollHeight;
+	return element;
 };
 
-// Allows you to add a message from you that will be visible in UI
-const addLeftMessageToUI = (message) => {
-	
+// Allows you to add a message from you that will be visible in UI.
+// If direction false add new element to the end, if true add at the beginning.
+const createLeftMessage = (message) => {
 	let picture = getUserPictureFromRoom(currentSelectedRoom, message.userNick);
 			
 	let element = document.createElement('div');
@@ -823,14 +851,25 @@ const addLeftMessageToUI = (message) => {
                     <img class="current-friend-img" src="${picture}" alt="img">
                     <p class="left-message">${message.content}</p>
                 </li>`;
-	
-	communicatorContent.appendChild(element);
-	communicatorContent.scrollTop = communicatorContent.scrollHeight;
-	
+	return element;
 };
 
+// Set scroll to bottom position.
+const setScrollCommunicationPanelToBottom = () => {communicatorContent.scrollTop = communicatorContent.scrollHeight;}
+
+// The method allows you to find the user in the room and download and return his profile picture
+function getUserPictureFromRoom(room, nick) {
+	let picture;
+	for (let i = 0; i < room.users.length; i++) {
+		if(room.users[i].nick === nick){
+			picture = room.users[i].profilePicture.fileInBase64;
+			break;
+		}
+	}
+	return picture;
+}
+
 const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeLast) => {
-	
 	let current_date = new Date();
 	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
 	let result_to_print = '';
@@ -839,8 +878,7 @@ const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeL
 	let b = new Date (parseInt(dateMilisecondsUTCOneBeforeLast));
 
 	let diffBetweenLastTwoMessage = diff_minutes(a, b);
-	//console.log("diffBetweenLastTwoMessage: " + diffBetweenLastTwoMessage);
-	
+
 	if(diffBetweenLastTwoMessage <= 3)
 		return;
 
@@ -865,7 +903,6 @@ const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeL
 }
 
 const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
-	
 	let current_date = new Date();
 	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
 	let result_to_print = '';
@@ -893,7 +930,7 @@ const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
 // ---------------- Room manager: display rooms in UI -------------------
 // ******************************************************************************
 
-const loadDeliveredRooms = (rooms, unreadMessages) => { 
+const setRoomsInPanel = (rooms, unreadMessages) => {
 	friendList.innerHTML = '';
 	rooms.forEach((room) => loadRooms(room, unreadMessages));
 }
@@ -901,23 +938,25 @@ const loadDeliveredRooms = (rooms, unreadMessages) => {
 // This function allow add new friend in UI to FriendList,
 // attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
 const loadRooms = (room, unreadMessages) => {
-	let lastmessageContent = "";
-	let lastMessageCreator = "";
-	let lastMessagetime = "";
+	let lastmessageContent = "Write first message !";
+	let lastMessageCreator = "...";
+	let lastMessagetime = "...";
 	let numberOfUnreadMessages = unreadMessages[room.roomId];
-	
-	if(room.messages.length > 0){
-		room.messages.forEach((message) => {
-		  lastmessageContent = message.content;
-		  lastMessageCreator = message.userNick;
-		  lastMessagetime = getDateDiffirence(parseInt(message.dateMilisecondsUTC));
-	    })
-	}
-	
-	if (lastmessageContent.length > 15) {
-		lastmessageContent = lastmessageContent.substring(0, 13);
-		lastmessageContent += '..';
-	}
+
+
+	//  TODO: change.
+	// if(room.messages.length > 0){
+	// 	room.messages.forEach((message) => {
+	// 	  lastmessageContent = message.content;
+	// 	  lastMessageCreator = message.userNick;
+	// 	  lastMessagetime = getDateDiffirence(parseInt(message.creationTimeInMillisecondsUTC));
+	//     })
+	// }
+
+	// if (lastmessageContent.length > 15) {
+	// 	lastmessageContent = lastmessageContent.substring(0, 13);
+	// 	lastmessageContent += '..';
+	// }
 	
 	const friend = document.createElement('li');
 	friend.classList.add('friend');
@@ -1006,7 +1045,7 @@ const clearNofification = () => {
 }
 
 const sendUpdateReadMessagesRequest = (body) => {
-	fetch('http://localhost:8080/app/message/update/readby', {
+	fetch('http://localhost:8080/app/api/message/update/read', {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
@@ -1031,59 +1070,45 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 	
 	statements.forEach((statements) => {
 		switch (statements.action) {
-			
 			case 'CREATE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_create_room');
 				break;
-				
 			case 'GET_ROOMS':
 				console.log('GET_ROOMS');
-				break;	
-				
+				break;
 			case 'CREATE_ROOM_WITH_FRIEND':
 				loadResultMessageForAddFriendQuery(statements, 'm_r_o_b_create_room_with_friend');
 				break;
-				
 			case 'REMOVE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_remove_room');
 				break;
-				
 			case 'RENAME_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_rename_room');
 				break;
-				
 			case 'LEAVE_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_leave_room');
 				break;
-				
 			case 'ADD_USER_TO_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_add_user_to_room');
 				break;
-				
 			case 'REMOVE_USER_FROM_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_remove_user_from_room');
 				break;
-				
 			case 'UPDATE_USER_NICK':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_change_user_nick');
 			    break;
-			    
 			case 'UPDATE_USER_EMAIL':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_email');
 			    break;
-			    
 			case 'UPDATE_USER_PASSWORD':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_password');
 			    break;
-			    
 			case 'UPDATE_USER_PICTURE':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_profile_picture');
 			    break;
-			    
 			case 'DELETE_ACCOUNT':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_delete_account');
 			    break;
-			    
 			default:
 			    console.log(`Unable to handle the type statement, statement.type: ${statements.roomAction}`);
 		}
@@ -1102,7 +1127,6 @@ const loadResultMessageForRoomManagerQuery = (statements, className) => {
 	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
           break;
      case 'ERROR_STATEMENT':
-     
          li.classList.add('manager-room-option-fail-message');
 	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
          break;        
@@ -1126,7 +1150,6 @@ const loadResultMessageForAccountManagerQuery = (statements, className) => {
 	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
           break;
      case 'ERROR_STATEMENT':
-     
          li.classList.add('manager-account-option-fail-message');
 	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
          break;        
@@ -1149,7 +1172,6 @@ const loadResultMessageForAddFriendQuery = (statements, className) => {
 	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
           break;
      case 'ERROR_STATEMENT':
-     
          li.classList.add('add-friend-fail-message');
 	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
          break;        
@@ -1333,7 +1355,6 @@ const CallDeclineInvitation = (event) => {
 // If the difference is less than the hour, the time in minuts is returned.
 // If the difference is less than the one minute, a message is returned "now".
 function getDateDiffirence(delivered_date_in_miliseconds_utc) {
-	
 	let result;
 	let current_date = new Date();
 	let delivered_date = new Date(delivered_date_in_miliseconds_utc);
@@ -1350,37 +1371,32 @@ function getDateDiffirence(delivered_date_in_miliseconds_utc) {
 	// Years
 	result = diff_years(current_date, delivered_date);
 
-	if (result >= 1) {
+	if (result >= 1)
 		return Math.trunc(result) + ' year';
-	}
 
 	// Weeks
 	result = diff_weeks(current_date, delivered_date);
 
-	if (result >= 1) {
+	if (result >= 1)
 		return Math.trunc(result) + ' week';
-	}
 
 	// Days
 	result = diff_days(current_date, delivered_date);
 
-	if (result >= 1 && result <= 6) {
+	if (result >= 1 && result <= 6)
 		return Math.trunc(result) + ' days';
-	}
 
 	// Hours
 	result = diff_hours(current_date, delivered_date);
 
-	if (result >= 1 && result <= 23) {
+	if (result >= 1 && result <= 23)
 		return Math.trunc(result) + ' hour';
-	}
 
 	// minuts
 	result = diff_minutes(current_date, delivered_date);
 
-	if (result >= 1 && result <= 59) {
+	if (result >= 1 && result <= 59)
 		return Math.trunc(result) + ' min';
-	}
 
 	return 'now';
 }
@@ -1444,7 +1460,7 @@ function diff_years(dt2, dt1) {
 
 
 // ***********************************************************
-// ---------------- DOM Content Load -----------------
+// --------------------- DOM Content Load --------------------
 // ***********************************************************
 
 // call main function
