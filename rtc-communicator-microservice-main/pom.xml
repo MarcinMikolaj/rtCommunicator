@@ -17,6 +17,7 @@
 	<properties>
 		<java.version>11</java.version>
 		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
+		<spring-cloud.version>2021.0.6</spring-cloud.version>
 	</properties>
 
 	<dependencies>
@@ -121,7 +122,15 @@
 			<artifactId>spring-security-test</artifactId>
 			<scope>test</scope>
 		</dependency>
-		
+
+		<!-- https://mvnrepository.com/artifact/org.springframework.cloud/spring-cloud-starter-netflix-eureka-client -->
+		<dependency>
+			<groupId>org.springframework.cloud</groupId>
+			<artifactId>spring-cloud-starter-netflix-eureka-client</artifactId>
+			<version>4.0.1</version>
+		</dependency>
+
+
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -216,6 +225,19 @@
 		</dependency>
 	</dependencies>
 
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>${spring-cloud.version}</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
+
+
 	<build>
 		<plugins>
 			<plugin>
@@ -230,22 +252,22 @@
 					</excludes>
 				</configuration>
 			</plugin>
-		    <plugin>
-			    <groupId>org.apache.maven.plugins</groupId>
-			    <artifactId>maven-compiler-plugin</artifactId>
-			    <version>3.8.1</version>
-			    <configuration>
-				    <source>1.8</source> <!-- depending on your project -->
-                    <target>1.8</target> <!-- depending on your project -->
-                    <annotationProcessorPaths>
-                        <path>
-                           <groupId>org.mapstruct</groupId>
-                           <artifactId>mapstruct-processor</artifactId>
-                           <version>${org.mapstruct.version}</version>
-                        </path> <!-- other annotation processors -->
-                    </annotationProcessorPaths>
-                </configuration>
-            </plugin>
+<!--		    <plugin>-->
+<!--			    <groupId>org.apache.maven.plugins</groupId>-->
+<!--			    <artifactId>maven-compiler-plugin</artifactId>-->
+<!--			    <version>3.8.1</version>-->
+<!--			    <configuration>-->
+<!--				    <source>1.8</source> &lt;!&ndash; depending on your project &ndash;&gt;-->
+<!--                    <target>1.8</target> &lt;!&ndash; depending on your project &ndash;&gt;-->
+<!--                    <annotationProcessorPaths>-->
+<!--                        <path>-->
+<!--                           <groupId>org.mapstruct</groupId>-->
+<!--                           <artifactId>mapstruct-processor</artifactId>-->
+<!--                           <version>${org.mapstruct.version}</version>-->
+<!--                        </path> &lt;!&ndash; other annotation processors &ndash;&gt;-->
+<!--                    </annotationProcessorPaths>-->
+<!--                </configuration>-->
+<!--            </plugin>-->
 		</plugins>
 	</build>
 
