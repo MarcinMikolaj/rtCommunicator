@@ -7,10 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import project.rtc.communicator.user.dto.UserRequestBody;
+import project.rtc.communicator.user.dto.UserRequestDto;
 import project.rtc.communicator.user.controllers.UserRestController;
 import project.rtc.communicator.user.services.UserService;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
@@ -29,34 +28,34 @@ public class UserRestControllerImpl implements UserRestController {
 	}
 
 	@Override
-	public ResponseEntity<?> updateUserNick(@RequestBody @Validated UserRequestBody body
+	public ResponseEntity<?> updateUserNick(@RequestBody @Validated UserRequestDto body
 			, HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException {
 		return new ResponseEntity<>(userService.updateUserNick(body.getNick(), httpServletRequest), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<?> updateUserEmail(UserRequestBody body, HttpServletRequest httpServletRequest)
+	public ResponseEntity<?> updateUserEmail(UserRequestDto body, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		return new ResponseEntity<>(userService.updateUserEmail(body.getEmail(), httpServletRequest), HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<?> updateUserPassword(UserRequestBody body, HttpServletRequest httpServletRequest)
+	public ResponseEntity<?> updateUserPassword(UserRequestDto body, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		return new ResponseEntity<>(userService.updateUserPassword(body.getEmail(), body.getPassword(), httpServletRequest)
 				, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<?> updateUserProfilePicture(UserRequestBody body, HttpServletRequest httpServletRequest)
+	public ResponseEntity<?> updateUserProfilePicture(UserRequestDto body, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 	    return new ResponseEntity<>(userService.updateUserPicture(body.getProfilePicture(), httpServletRequest)
 				, HttpStatus.OK);
 	}
 
 	@Override
-	public ResponseEntity<?> deleteUser(UserRequestBody body,
-			HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+	public ResponseEntity<?> deleteUser(UserRequestDto body,
+                                        HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		return new ResponseEntity<>(userService.deleteUser(body.getEmail(), httpServletRequest, httpServletResponse)
 				, HttpStatus.OK);

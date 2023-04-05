@@ -12,7 +12,7 @@ import project.rtc.communicator.user.entities.User;
 @Setter
 @ToString
 @Builder
-public class UserResponseBody {
+public class UserResponseDto {
 
 	private Date timestamp;
 	private UserOperation operation;

@@ -17,7 +17,7 @@ import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.user.entities.User;
 import project.rtc.communicator.user.dto.UserOperation;
 import project.rtc.communicator.user.repositories.UserRepository;
-import project.rtc.communicator.user.dto.UserResponseBody;
+import project.rtc.communicator.user.dto.UserResponseDto;
 import project.rtc.communicator.user.services.UserService;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService {
     }
 
 	@Override
-	public UserResponseBody getUserAndLoadPicture(HttpServletRequest httpServletRequest)
+	public UserResponseDto getUserAndLoadPicture(HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		String email = jwtTokenProvider.getTokenSubject(jwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
@@ -64,7 +64,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseBody deleteUser(String email, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+	public UserResponseDto deleteUser(String email, HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		deleteUser(user);
@@ -72,7 +72,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest)
+	public UserResponseDto updateUserNick(String nick, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		user.setNick(nick);
@@ -81,7 +81,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest)
+	public UserResponseDto updateUserEmail(String email, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		Credentials credentials = credentialsRepository.findByEmail(user.getEmail());
@@ -92,7 +92,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
+	public UserResponseDto updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		credentialsService.updatePasswordByEmail(user.getEmail(), password);
@@ -100,7 +100,7 @@ public class UserServiceImpl implements UserService {
 	}
 
 	@Override
-	public UserResponseBody updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest)
+	public UserResponseDto updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		// create path to profile picture
@@ -183,8 +183,8 @@ public class UserServiceImpl implements UserService {
 		return UUID.randomUUID().toString();
 	}
 
-	private UserResponseBody prepareDto(UserOperation operation, User user){
-		return UserResponseBody.builder()
+	private UserResponseDto prepareDto(UserOperation operation, User user){
+		return UserResponseDto.builder()
 				.timestamp(new Date())
 				.operation(operation)
 				.user(user)

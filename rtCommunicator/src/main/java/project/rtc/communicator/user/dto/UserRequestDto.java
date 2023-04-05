@@ -15,7 +15,7 @@ import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 @Data
-public class UserRequestBody {
+public class UserRequestDto {
 
     private String userId;
     @Password(groups = {UpdateUserPasswordGroup.class}, message = "The specified password is incorrect")

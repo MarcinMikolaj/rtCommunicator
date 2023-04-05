@@ -5,7 +5,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import project.rtc.communicator.invitations.entities.Invitation;
 import project.rtc.communicator.user.entities.User;
-import project.rtc.communicator.user.dto.UserResponseBody;
+import project.rtc.communicator.user.dto.UserResponseDto;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 import project.rtc.registration.dto.ProfilePicture;
@@ -14,19 +14,19 @@ public interface UserService {
 
 	// Returns the user with a registered and saved account, it also loads the photo to the returned user.
 	// Throw UserNotFoundException if user not found.
-	UserResponseBody getUserAndLoadPicture(HttpServletRequest httpServletRequest)
+	UserResponseDto getUserAndLoadPicture(HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
 
 	// The method allows you to delete a user account. Ensures that the user will be removed from any room they were previously assigned to.
-	UserResponseBody deleteUser(String password , HttpServletRequest httpServletRequest, HttpServletResponse response)
+	UserResponseDto deleteUser(String password , HttpServletRequest httpServletRequest, HttpServletResponse response)
 			throws UserNotFoundException, NoAuthorizationTokenException;
-	UserResponseBody updateUserNick(String nick, HttpServletRequest httpServletRequest)
+	UserResponseDto updateUserNick(String nick, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
-	UserResponseBody updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest)
+	UserResponseDto updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
-	UserResponseBody updateUserEmail(String email, HttpServletRequest httpServletRequest)
+	UserResponseDto updateUserEmail(String email, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
-	UserResponseBody updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
+	UserResponseDto updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
 
 	// Returns the user with a registered and saved account, otherwise he throws UserNotFoundException

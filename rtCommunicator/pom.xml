@@ -13,9 +13,12 @@
 	<version>0.0.1-SNAPSHOT</version>
 	<name>rtCommunicator</name>
 	<description>Real Time Communicator Project</description>
+
 	<properties>
 		<java.version>11</java.version>
+		<org.mapstruct.version>1.5.3.Final</org.mapstruct.version>
 	</properties>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -133,6 +136,7 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
@@ -140,6 +144,7 @@
             <version>5.8.2</version>
             <scope>test</scope>
         </dependency>
+
         <!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
         <dependency>
             <groupId>org.junit.platform</groupId>
@@ -203,7 +208,12 @@
 			<artifactId>spring-boot-starter-actuator</artifactId>
 		</dependency>
 
-
+        <!-- MapStruct -->
+		<dependency>
+			<groupId>org.mapstruct</groupId>
+			<artifactId>mapstruct</artifactId>
+			<version>${org.mapstruct.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -220,6 +230,22 @@
 					</excludes>
 				</configuration>
 			</plugin>
+		    <plugin>
+			    <groupId>org.apache.maven.plugins</groupId>
+			    <artifactId>maven-compiler-plugin</artifactId>
+			    <version>3.8.1</version>
+			    <configuration>
+				    <source>1.8</source> <!-- depending on your project -->
+                    <target>1.8</target> <!-- depending on your project -->
+                    <annotationProcessorPaths>
+                        <path>
+                           <groupId>org.mapstruct</groupId>
+                           <artifactId>mapstruct-processor</artifactId>
+                           <version>${org.mapstruct.version}</version>
+                        </path> <!-- other annotation processors -->
+                    </annotationProcessorPaths>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 
