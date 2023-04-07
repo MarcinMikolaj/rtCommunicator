@@ -3,6 +3,7 @@ package project.rtc;
 import java.util.*;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -34,6 +35,9 @@ public class MyTest {
 	private final RoomRepository roomRepository;
 	private final RoomService roomService;
 	private final InvitationService invitationService;
+
+	@Value("${app.file.user.pictures.test.path}")
+	private String pathTestPictures;
 
 	// Nick, User
 	private static Map<String, User> testUsers = new HashMap<>();
@@ -130,34 +134,30 @@ public class MyTest {
 
 	// This method create test user accounts
 	private void createTestAccounts() throws MethodArgumentNotValidException {
-		String basicPath = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\Test\\";
-
 		User anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "anastazja2\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "anastazja2\\picture.bin");
 		User mateusz86 = createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423"
-				, AuthProvider.local.toString(), true, basicPath + "mateusz86\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "mateusz86\\picture.bin");
 		User ewelina32 = createAccount("ewelina@gmail.com", "ewelina32", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "ewelina32\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "ewelina32\\picture.bin");
 		User mionszu2 = createAccount("miłosz.mad@o2.pl", "mionszu2", "d1d2A@d12234"
-				, AuthProvider.local.toString(), true, basicPath + "mionszu2\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "mionszu2\\picture.bin");
 		User kacper78 = createAccount("kacper78@gov.pl", "kacper78", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "kacper78\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "kacper78\\picture.bin");
 		User kasia = createAccount("kasia900@gmail.com", "kasia", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "kasia\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "kasia\\picture.bin");
 		User magdaPiwowar = createAccount("magda8920@yahoo.pl", "magdaPiwowar", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "magdaPiwowar\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "magdaPiwowar\\picture.bin");
 		User paulinka = createAccount("paulina@mail.com", "paulinka", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "paulinka\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "paulinka\\picture.bin");
 		User JulkaFromFrance = createAccount("julia@gmail.com", "JulkaFromFrance", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "JulkaFromFrance\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "JulkaFromFrance\\picture.bin");
 		User AsIa = createAccount("asia2@gmail.com", "AsIa", "d2A@1234"
-				, AuthProvider.local.toString(), true, basicPath + "AsIa\\picture.bin");
+				, AuthProvider.local.toString(), true, pathTestPictures + "AsIa\\picture.bin");
 
 		testUsers.put("anastazja2", anastazja2);
 		testUsers.put("mateusz86",  mateusz86);
-
 		testUsers.get("mateusz86").getUserId();
-
 		testUsers.put("ewelina32", ewelina32);
 		testUsers.put("mionszu2", mionszu2);
 		testUsers.put("kacper78", kacper78);
