@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.credentials.entities.Credentials;
@@ -35,7 +36,9 @@ public class UserServiceImpl implements UserService {
     private final RoomService roomService;
     private final CredentialsService credentialsService;
     private final JwtTokenProvider jwtTokenProvider;
-    private final String pathToProfilePictures = "C:\\Users\\Hawke\\Desktop\\Praca inżynierska\\Disk\\ProfilePictures\\";
+
+	@Value("${app.file.user.pictures.path}")
+    private String pathToProfilePictures;
 
 	public User create(String nick, String email, ProfilePicture profilePicture) {
 		String path = createPath(nick);
