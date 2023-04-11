@@ -1,4 +1,4 @@
-package project.rtc.authorization.forgot_password;
+package project.rtc.authorization.forgot_password.services;
 
 import java.io.IOException;
 import java.sql.Timestamp;
@@ -8,6 +8,8 @@ import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -16,37 +18,30 @@ import project.rtc.authorization.basic_login.credentials.repositories.Credential
 import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
 import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
 import project.rtc.infrastructure.utils.ConsoleColors;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 import project.rtc.infrastructure.utils.mail.MailSenderService;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class ForgotPasswordService {
-	
-	private final JwtTokenProvider jwtTokenProvider;
+
 	private final MailSenderService mailSenderService;
 	private final CredentialsRepository credentialsRepository;
 	private final ResetPasswordTokenRepository resetPasswordTokenRepository;
 	private final PasswordEncoder passwordEncoder;
-	private static final Logger logger = LoggerFactory.getLogger(ForgotPasswordService.class);
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 
-	
 	// This method is called to begin the password change process for the user.
     // Allows you to assign a token for a given account for which the password is to be updated.
 	// And it sends to the user's e-mail address a link redirecting to enter a new password
 	public boolean startTheProcessOfChangingThePassword(String email, HttpServletResponse response) throws IOException {
-		
 		Credentials credentials = credentialsRepository.findByEmail(email);
-		
-		if(credentials == null) {
+		if(credentials == null)
 			return true;
-		}
-		
+
 		PasswordResetToken resetPasswordToken = assignNewToken(email, 1800000);
-		
 		String link = "http://localhost:8080/app/forgot/password/tk/" + "?token=" + resetPasswordToken.getToken();
 		
 		String subject = "rtCommunicator";
@@ -81,7 +76,7 @@ public class ForgotPasswordService {
 		Date expitation = new Date(currentTimeInMili + expirationTimeInMilis);
 		
 		
-		String token = jwtTokenProvider.createJwtToken(email, issuedAt, expitation);
+		String token = JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expitation);
 		
 		PasswordResetToken resetPasswordToken = new PasswordResetToken();
 		resetPasswordToken.setEmail(email);
@@ -106,20 +101,19 @@ public class ForgotPasswordService {
 		
 		if(resetPasswordToken == null) 
 			return false;
-		
-		
+
 		Date currentDate = new Date();
 		
-		if(jwtTokenProvider.getTokentExpiration(resetPasswordToken.getToken()).before(currentDate)) {
-			logger.info("ForgotPasswordService.changePasswordIfTokenIsCorrect: token for user: "
-		+ jwtTokenProvider.getTokenSubject(tokenFromUrl)
+		if(JwtTokenProvider.getTokenExpiration(jwtSecretKey, resetPasswordToken.getToken()).before(currentDate)) {
+			log.info("ForgotPasswordService.changePasswordIfTokenIsCorrect: token for user: "
+		+ JwtTokenProvider.getTokenSubject(jwtSecretKey, tokenFromUrl)
 		+ " expired");
 			
 			return false;
 		}
 		
 		if(resetPasswordToken.getToken().equals(tokenFromUrl)) {
-			String email = jwtTokenProvider.getTokenSubject(tokenFromUrl);
+			String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, tokenFromUrl);
 			credentialsRepository.updatePasswordByEmail(email,passwordEncoder.encode(password));
 			resetPasswordTokenRepository.removeByToken(tokenFromUrl);
 	        return true;

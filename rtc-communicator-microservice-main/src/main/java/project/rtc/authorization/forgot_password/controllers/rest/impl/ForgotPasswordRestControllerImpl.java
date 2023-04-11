@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.*;
 import project.rtc.authorization.forgot_password.controllers.ForgotPasswordRestController;
 import project.rtc.authorization.forgot_password.reset_password_token.ChangePasswordRequest;
 import project.rtc.authorization.forgot_password.ForgotPasswordRequest;
-import project.rtc.authorization.forgot_password.ForgotPasswordService;
+import project.rtc.authorization.forgot_password.services.ForgotPasswordService;
 
 @RestController
 @RequiredArgsConstructor
