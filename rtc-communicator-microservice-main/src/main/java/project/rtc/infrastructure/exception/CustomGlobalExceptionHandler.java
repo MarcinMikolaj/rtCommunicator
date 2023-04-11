@@ -83,6 +83,15 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.UNAUTHORIZED);
     }
 
+    @ExceptionHandler(InvalidTokenException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> handleInvalidTokenException(InvalidTokenException e, WebRequest requestMetadata){
+        e.printStackTrace();
+        return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.UNAUTHORIZED, Collections.singletonList(e.getMessage())
+                , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     private Map prepareResponseMap(Exception e, HttpStatus httpStatus){
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());

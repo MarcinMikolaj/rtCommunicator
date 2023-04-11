@@ -1,7 +1,6 @@
-package project.rtc.authorization.forgot_password.controllers.impl;
+package project.rtc.authorization.forgot_password.controllers.rest.impl;
 
-import java.io.IOException;
-
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
@@ -9,42 +8,27 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.web.bind.annotation.*;
-import project.rtc.authorization.forgot_password.controllers.ForgotPasswordRestController;
-import project.rtc.authorization.forgot_password.reset_password_token.ChangePasswordRequest;
-import project.rtc.authorization.forgot_password.ForgotPasswordRequest;
-import project.rtc.authorization.forgot_password.services.ForgotPasswordService;
+import project.rtc.authorization.forgot_password.controllers.rest.ForgotPasswordRestController;
+import project.rtc.authorization.forgot_password.services.impl.ForgotPasswordServiceImpl;
+import project.rtc.infrastructure.exception.exceptions.InvalidTokenException;
 
 @RestController
 @RequiredArgsConstructor
 public class ForgotPasswordRestControllerImpl implements ForgotPasswordRestController {
 	
-	private final ForgotPasswordService forgotPasswordService;
+	private final ForgotPasswordServiceImpl forgotPasswordService;
 
 	@Override
-	public ResponseEntity<String> handleTheRequestToChangeThePassword(
-			ForgotPasswordRequest forgotPasswordRequest, HttpServletResponse response) throws IOException {
-		
-			boolean result = forgotPasswordService.startTheProcessOfChangingThePassword(forgotPasswordRequest.getEmail()
-					, response);
-			
-			if(result)
-				return new ResponseEntity<String>(HttpStatus.OK);
-			else
-				return new ResponseEntity<String>(HttpStatus.NOT_FOUND);
-			
+	public ResponseEntity<?> handleTheRequestToChangeThePassword(String email, HttpServletResponse response)
+			throws MessagingException {
+			forgotPasswordService.startTheProcessOfChangingThePassword(email, response);
+			return new ResponseEntity<>(HttpStatus.OK);
     }
 
 	@Override
-	public ResponseEntity<?> handleTheAttemptToChangeThePassword(ChangePasswordRequest changePasswordRequest) {
-		
-	boolean result = forgotPasswordService.changePasswordIfTokenIsCorrect(changePasswordRequest.getToken()
-			, changePasswordRequest.getPassword());
-	
-	if(result)
-		return ResponseEntity.ok(null);
-	
-	return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(null);
-	
+	public ResponseEntity<?> handleTheAttemptToChangeThePassword(String token, String password) throws InvalidTokenException {
+		forgotPasswordService.changePasswordIfTokenIsCorrect(token, password);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 }

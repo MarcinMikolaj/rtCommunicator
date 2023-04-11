@@ -1,4 +1,4 @@
-package project.rtc.infrastructure.utils.jwt;
+package project.rtc.infrastructure.utils.token;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

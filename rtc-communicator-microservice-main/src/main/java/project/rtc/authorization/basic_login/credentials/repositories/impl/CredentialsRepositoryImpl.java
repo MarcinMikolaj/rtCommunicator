@@ -1,6 +1,5 @@
 package project.rtc.authorization.basic_login.credentials.repositories.impl;
 
-import javax.persistence.EntityExistsException;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
@@ -23,66 +22,37 @@ public class CredentialsRepositoryImpl implements CredentialsRepository {
 
 	@Override
 	public Credentials save(Credentials credentials) {
-		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
-		
-		try {
-			entityTransaction.begin();
-			entityManager.persist(credentials);
-			entityTransaction.commit();
-			entityManager.close();
-			return credentials;
-		} catch (EntityExistsException entityExistsException) {
-			System.out.println(entityExistsException.getMessage().toString());
-			entityManager.close();
-			return null;
-		} catch (IllegalArgumentException illegalArgumentException) {
-			System.out.println(illegalArgumentException.getMessage().toString());
-			entityManager.close();
-			return null;
-		}
-		
+		entityTransaction.begin();
+		entityManager.persist(credentials);
+		entityTransaction.commit();
+		entityManager.close();
+		return credentials;
 	}
 
 	@Override
 	public Credentials update(Credentials credentials) {
-		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
-		
-		try {
-			entityTransaction.begin();
-			entityManager.merge(credentials);
-			entityTransaction.commit();
-			entityManager.close();
-			return credentials;
-		} catch (IllegalArgumentException illegalArgumentException) {
-			System.out.println(illegalArgumentException.getMessage().toString());
-			entityManager.close();
-			return null;
-		}
+		entityTransaction.begin();
+		entityManager.merge(credentials);
+		entityTransaction.commit();
+		entityManager.close();
+		return credentials;
 	}
-	
-	
+
 	@Override
 	public Credentials findByEmail(String email) throws NoResultException {
-		
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		EntityTransaction entityTransaction = entityManager.getTransaction();
 		TypedQuery<Credentials> typedQuery = entityManager.createNamedQuery("Credentials.findByEmail", Credentials.class);
 		typedQuery.setParameter("email", email);
-		
-		try {
-			entityTransaction.begin();
-			Credentials credentials = typedQuery.getSingleResult();
-			entityTransaction.commit();
-			entityManager.close();
-			return credentials;
-		} catch (NoResultException noResultException) {
-			entityManager.close();
-			return null;
-		}
+		entityTransaction.begin();
+		Credentials credentials = typedQuery.getSingleResult();
+		entityTransaction.commit();
+		entityManager.close();
+		return credentials;
 	}
 
 	@Override

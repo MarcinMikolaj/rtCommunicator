@@ -1,6 +1,9 @@
 // Declare the variable
-let showPasswordEyeBtn; //Click this button to show password
-let hidePasswordEyeBtn; //Click this button to hide password
+
+// Click this button to show password.
+let showPasswordEyeBtn;
+// Click this button to hide password.
+let hidePasswordEyeBtn;
 
 let redirectLoginPageBtn;
 let confirmBtn;
@@ -9,7 +12,8 @@ let cancelBtn;
 let wrapper;
 let successMessage;
 let newPasswordInput;
-let token; // Authentication token from Url
+// Authentication token from Url
+let token;
 
 const prepareDOMElements = () => {
 	newPasswordInput = document.querySelector('.new-password-input');
@@ -49,37 +53,29 @@ const getTokenFromUrl = () => {
 	token = params.get('token');
 };
 
-// Allow send 'change password request' to server
+// Allow sent 'change password request' to server.
 const sendChangePasswordRequest = () => {
-	fetch('http://localhost:8080/app/forgot/credentials/update', {
+	let params = new URLSearchParams({
+		password: newPasswordInput.value,
+		token: token,
+	})
+	fetch('http://localhost:8080/app/forgot/credentials/update' + '?' + params, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 		},
 		'Access-Control-Allow-Origin': '*',
-		body: JSON.stringify({
-			password: newPasswordInput.value,
-			token: token,
-		}),
 	})
 		.then((response) => {
 			console.log(response);
-			if (response.status == 200) {
+			if (response.status == 200)
 				showSuccessMessage();
-			} else {
-				console.log('oops something went wrong');
-			}
 		})
 		.catch((error) => console.log(error));
-
-	console.log(
-		'sent change password request to server, new password: ' +
-			newPasswordInput.value
-	);
 };
 
-//Redirect to Login Page
+// Redirect to Login Page.
 const loginPageRedirect = () => {
 	window.location.href = 'http://localhost:8080/app/login';
 };
@@ -96,7 +92,7 @@ const hidePasswordEye = () => {
 	showPasswordEyeBtn.style.display = 'flex';
 };
 
-// Show success messgae if the server returned information about the success of changing the password
+// Show success message if the server returned information about the success of changing the password.
 const showSuccessMessage = () => {
 	wrapper.style.display = 'none';
 	successMessage.style.display = 'flex';

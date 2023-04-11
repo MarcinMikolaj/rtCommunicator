@@ -7,6 +7,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
 import project.rtc.communicator.user.entities.User;
 import project.rtc.communicator.user.services.impl.UserServiceImpl;
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.services.impl.ActivateAccountTokenServiceImpl;
 import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.RegistrationService;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
 import project.rtc.infrastructure.utils.mail.MailSenderService;
 
 @Service
@@ -30,8 +31,9 @@ public class RegistrationServiceImpl implements RegistrationService {
 	private final CredentialsService credentialsService;
     private final ActivateAccountTokenServiceImpl activateAccountTokenServiceImpl;
     private final MailSenderService mailSenderService;
-	private final JwtTokenProvider jwtTokenProvider;
 	private final UserServiceImpl userService;
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 
 	// User registration consists in creating new private credentials to which only the registrant has access
 	// and a public user account sent to friends during e.g. refreshing the friends list in the customer panel
@@ -44,14 +46,8 @@ public class RegistrationServiceImpl implements RegistrationService {
 	}
 	
 	private boolean sendActivateAccountLinkToEmail(String email) {
-		
-		ActivateAccountToken activateAccountToken;
-		String link;
-		
-		activateAccountToken = activateAccountTokenServiceImpl.assignNewTokenToAccount(email);
-
-		link = "http://localhost:8080/app/registration/activate" + "?token=" + activateAccountToken.getToken();
-		
+		ActivateAccountToken activateAccountToken = activateAccountTokenServiceImpl.assignNewTokenToAccount(email);
+		String link = "http://localhost:8080/app/registration/activate" + "?token=" + activateAccountToken.getToken();
 		String text = "Hello Marcin!\r\n"
 				+ "We received a request to create rtCommunicator account for you.\r\n"
 				+ "Enter the following link to activate account: " + link;
@@ -64,8 +60,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 		}
 		return false;
 	}
-	
-	// Enables the account to be activated if a valid token has been provided by the user
+
 	public boolean activateAccount(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse) {
 
 		String email;
@@ -75,13 +70,13 @@ public class RegistrationServiceImpl implements RegistrationService {
 		
 		try {
 			activateAccountToken = activateAccountTokenServiceImpl.findByToken(token);
-			email = jwtTokenProvider.getTokenSubject(token);
+			email = JwtTokenProvider.getTokenSubject(jwtSecretKey, token);
 		} catch (Exception e) {
 			System.out.print(e.getMessage());
 			return false;
 		}
 
-		if(jwtTokenProvider.getTokentExpiration(token).before(new Date()))
+		if(JwtTokenProvider.getTokenExpiration(jwtSecretKey, token).before(new Date()))
 			return false;
 
 			

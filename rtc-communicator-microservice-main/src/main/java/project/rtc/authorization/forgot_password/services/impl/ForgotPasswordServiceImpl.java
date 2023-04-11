@@ -1,125 +1,86 @@
-package project.rtc.authorization.forgot_password.services;
+package project.rtc.authorization.forgot_password.services.impl;
 
-import java.io.IOException;
 import java.sql.Timestamp;
 import java.util.Date;
 
 import javax.mail.MessagingException;
+import javax.persistence.NoResultException;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
-import project.rtc.authorization.forgot_password.reset_password_token.PasswordResetToken;
-import project.rtc.authorization.forgot_password.reset_password_token.ResetPasswordTokenRepository;
-import project.rtc.infrastructure.utils.ConsoleColors;
+import project.rtc.authorization.forgot_password.entities.PasswordResetToken;
+import project.rtc.authorization.forgot_password.repositories.ResetPasswordTokenRepository;
+import project.rtc.authorization.forgot_password.services.ForgotPasswordService;
+import project.rtc.infrastructure.exception.exceptions.InvalidTokenException;
 import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 import project.rtc.infrastructure.utils.mail.MailSenderService;
 
 @Service
 @RequiredArgsConstructor
-@Slf4j
-public class ForgotPasswordService {
+public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 
 	private final MailSenderService mailSenderService;
 	private final CredentialsRepository credentialsRepository;
 	private final ResetPasswordTokenRepository resetPasswordTokenRepository;
 	private final PasswordEncoder passwordEncoder;
+
+	@Value("${app.security.reset-password.jwt.expiry-time}")
+	private long expiryTimeForResetPasswordToken;
 	@Value("${app.security.jwt.secret_key}")
 	private String jwtSecretKey;
 
-	// This method is called to begin the password change process for the user.
-    // Allows you to assign a token for a given account for which the password is to be updated.
-	// And it sends to the user's e-mail address a link redirecting to enter a new password
-	public boolean startTheProcessOfChangingThePassword(String email, HttpServletResponse response) throws IOException {
-		Credentials credentials = credentialsRepository.findByEmail(email);
-		if(credentials == null)
-			return true;
+	public PasswordResetToken startTheProcessOfChangingThePassword(String email, HttpServletResponse response) throws MessagingException {
+		try {
+			credentialsRepository.findByEmail(email);
+		} catch (NoResultException e) {
+			return null;
+		}
 
-		PasswordResetToken resetPasswordToken = assignNewToken(email, 1800000);
+		PasswordResetToken resetPasswordToken = assignNewToken(email);
 		String link = "http://localhost:8080/app/forgot/password/tk/" + "?token=" + resetPasswordToken.getToken();
-		
-		String subject = "rtCommunicator";
-		String text = "Hello Marcin!\r\n"
+		mailSenderService.sendMessage(email, "rtCommunicator", prepareMessageText(link));
+		return resetPasswordToken;
+	}
+
+	public PasswordResetToken changePasswordIfTokenIsCorrect(String tokenFromUrl, String password) throws InvalidTokenException {
+		PasswordResetToken resetPasswordToken = resetPasswordTokenRepository.findByToken(tokenFromUrl);
+
+		// If token expired.
+		if(JwtTokenProvider.getTokenExpiration(jwtSecretKey, resetPasswordToken.getToken()).before(new Date()))
+			throw new InvalidTokenException("Token reset password expired: " + resetPasswordToken);
+
+		// If token not equal.
+		if(!resetPasswordToken.getToken().equals(tokenFromUrl))
+			throw new InvalidTokenException("Token reset is not equal !: " + resetPasswordToken);
+
+		String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, tokenFromUrl);
+		credentialsRepository.updatePasswordByEmail(email,passwordEncoder.encode(password));
+		resetPasswordTokenRepository.removeByToken(tokenFromUrl);
+		return resetPasswordToken;
+	}
+
+	// Enables assigning a new object of the PasswordResetToken.class type to a given user
+	// , which after being created is saved in the database.
+	// If the assignment action fails, null is returned.
+	private PasswordResetToken assignNewToken(String email) {
+		Date issuedAt = new Date(System.currentTimeMillis());
+		Date expiration = new Date(System.currentTimeMillis() + expiryTimeForResetPasswordToken);
+		PasswordResetToken resetPasswordToken = new PasswordResetToken(email
+				, JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expiration)
+				, new Timestamp(issuedAt.getTime())
+				, new Timestamp(expiration.getTime()));
+		return resetPasswordTokenRepository.save(resetPasswordToken);
+	}
+
+	private String prepareMessageText(String link){
+		return "Hello Marcin!\r\n"
 				+ "We received a request to reset your rtCommunicator password.\r\n"
 				+ "Enter the following password reset code: " + link;
-		
-		try {
-			mailSenderService.sendMessage(email, subject, text);
-			return true;
-		} catch (MessagingException e) {
-			System.out.println("ForgotPasswordService.send: The message could not be sent, mailSenderService problem");
-			return false;
-		} 
-	}
-	
-	
-	// Enables assigning a new object of the PasswordResetToken.class type to a given user, which after being created is saved in the database.
-	// If the assignment action fails, null is returned
-    private PasswordResetToken assignNewToken(String email, long expirationTimeInMilis) {
-    	
-    	if(expirationTimeInMilis <= 0) {
-    		throw new IllegalArgumentException(
-    				ConsoleColors.RED 
-    				+ "ForgotPasswordService.assignNewToken: expirationTimeInMilis cannot be <= 0"
-    				+ ConsoleColors.RESET);
-    	}
-		
-		Long currentTimeInMili = System.currentTimeMillis();
-		
-		Date issuedAt = new Date(currentTimeInMili);
-		Date expitation = new Date(currentTimeInMili + expirationTimeInMilis);
-		
-		
-		String token = JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expitation);
-		
-		PasswordResetToken resetPasswordToken = new PasswordResetToken();
-		resetPasswordToken.setEmail(email);
-		resetPasswordToken.setToken(token);
-		resetPasswordToken.setCreate_on(new Timestamp(issuedAt.getTime()));
-		resetPasswordToken.setExpiration_time(new Timestamp(expitation.getTime()));
-		
-		PasswordResetToken savedResetPasswordToken = resetPasswordTokenRepository.save(resetPasswordToken);
-		
-		if(savedResetPasswordToken != null)
-			return resetPasswordToken;
-		
-		
-		return null;
-	}
-	
-	// If the token provided by the user is correct (i.e. it matches the token assigned to the user and has not expired), the password change operation is started
-    // If the token is incorrect, it stops the password change process
-	public boolean changePasswordIfTokenIsCorrect(String tokenFromUrl, String password) {
-		
-		PasswordResetToken resetPasswordToken = resetPasswordTokenRepository.findByToken(tokenFromUrl);
-		
-		if(resetPasswordToken == null) 
-			return false;
-
-		Date currentDate = new Date();
-		
-		if(JwtTokenProvider.getTokenExpiration(jwtSecretKey, resetPasswordToken.getToken()).before(currentDate)) {
-			log.info("ForgotPasswordService.changePasswordIfTokenIsCorrect: token for user: "
-		+ JwtTokenProvider.getTokenSubject(jwtSecretKey, tokenFromUrl)
-		+ " expired");
-			
-			return false;
-		}
-		
-		if(resetPasswordToken.getToken().equals(tokenFromUrl)) {
-			String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, tokenFromUrl);
-			credentialsRepository.updatePasswordByEmail(email,passwordEncoder.encode(password));
-			resetPasswordTokenRepository.removeByToken(tokenFromUrl);
-	        return true;
-		}
-		
-		return false;
 	}
 	
 }

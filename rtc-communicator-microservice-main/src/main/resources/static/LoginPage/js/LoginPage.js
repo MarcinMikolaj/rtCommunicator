@@ -73,16 +73,14 @@ const main = () => {
 };
 
 const signInFuction_enter_key = (event) => {
-	if (event.keyCode === 13) {
+	if (event.keyCode === 13)
 		signInFunction();
-	}
 };
 
 const signInFunction = () => {
 	sendCredentialsToServer(credentialsLoginInput.value, credentialsPasswordInput.value, rememberMeInput.checked);
 	reset();
 };
-
 
 const reset = () => {
 	credentialsLoginInput.value = '';
@@ -96,7 +94,7 @@ const signInByGoogleRedirect = () => {window.location.href = "http://localhost:8
 const signInByFacebookRedirect = () => {window.location.href = "http://localhost:8080/oauth2/authorization/facebook";}
 
 //Redirect to Forgot password site
-const forgotPasswordRedirect = () => {window.location.href = "http://localhost:8080/app/forgot";}
+const forgotPasswordRedirect = () => {window.location.href = "http://localhost:8080/app/forgot/password";}
 
 //Redirect to Forgot password site
 const registerRedirect = () => {window.location.href = "http://localhost:8080/app/register";}
@@ -117,17 +115,13 @@ const sendCredentialsToServer = (email, password, remember_me) => {
 			remember_me: remember_me
 		}),
 	}).then((response) => {
-		if(response.status === 200){	
+		if(response.status === 200)
 			redirectToAppPanel();
-		} else if(response.status === 401) {
+		else if(response.status === 401)
 			errorMessage.style.display = 'flex';
-		} else {
-			//TODO: Prepare message for others http status
-	    }
 		console.log(response.json())
     }).catch((error) => console.log(error))
 };
-
 
 const showPasswordEye = () => {
 	credentialsPasswordInput.type = 'text';

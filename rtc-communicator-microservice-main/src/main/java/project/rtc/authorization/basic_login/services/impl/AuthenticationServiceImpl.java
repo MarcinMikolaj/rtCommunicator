@@ -20,9 +20,10 @@ import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
 import project.rtc.authorization.basic_login.services.AuthenticationService;
 import project.rtc.infrastructure.utils.CookieUtils;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 
 import java.io.IOException;
+import java.util.Date;
 
 import javax.servlet.http.Cookie;
 
@@ -30,30 +31,29 @@ import javax.servlet.http.Cookie;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
-
 	private final AuthenticationManager authenticationManager;
 	private final CredentialsService credentialsService;
-	private final JwtTokenProvider jwtTokenProvider;
+
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 
     //	Expire time for JWT token
-	@Value("${app.security.jwt.expiry_time}")
+	@Value("${app.security.jwt.expiry-time}")
 	private Integer expiryTime;
 
 	@Override
 	public void authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) throws AuthenticationException {
-
-		String authorizationToken;
-		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
-
 		if (!credentialsService.exist(loginRequestPayload))
 			throw new AuthenticationException();
 
-		usernamePasswordAuthenticationToken = new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(),
-				loginRequestPayload.getPassword());
-		Authentication authentication = authenticationManager.authenticate(usernamePasswordAuthenticationToken);
+		UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken =
+				new UsernamePasswordAuthenticationToken(loginRequestPayload.getEmail(), loginRequestPayload.getPassword());
+		authenticationManager.authenticate(usernamePasswordAuthenticationToken);
 
-		authorizationToken = jwtTokenProvider.createJwtToken(authentication, loginRequestPayload.getEmail(), null,
-				null);
+		String authorizationToken = JwtTokenProvider.create(jwtSecretKey
+				, loginRequestPayload.getEmail()
+				, new Date(System.currentTimeMillis())
+				, new Date(System.currentTimeMillis() + (long) 1800000));
 
 		response.addHeader("Authorization", "Bearer " + authorizationToken);
 		CookieUtils.addCookie(response, "jwt", authorizationToken,  expiryTime);

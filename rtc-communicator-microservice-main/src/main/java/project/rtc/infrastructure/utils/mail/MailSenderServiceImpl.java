@@ -16,22 +16,12 @@ public class MailSenderServiceImpl implements MailSenderService {
 
 	@Override
 	public void sendMessage(String to, String subject, String text) throws MessagingException {
-		
-		try {
-			
 			MimeMessage mimeMessage = javaMailSender.createMimeMessage();
-			
 			MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(mimeMessage);
-			
 			mimeMessageHelper.setTo(to);
 			mimeMessageHelper.setText(text);
 			mimeMessageHelper.setSubject(subject);
-			
 			javaMailSender.send(mimeMessage);
-			
-		} catch (MessagingException e) {
-			System.out.println(e.getMessage());
-		}
 	}
 
 }

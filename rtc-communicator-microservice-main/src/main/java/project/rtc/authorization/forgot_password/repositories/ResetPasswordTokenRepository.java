@@ -1,9 +1,11 @@
-package project.rtc.authorization.forgot_password.reset_password_token;
+package project.rtc.authorization.forgot_password.repositories;
+
+import project.rtc.authorization.forgot_password.entities.PasswordResetToken;
 
 public interface ResetPasswordTokenRepository {
 	
-	public PasswordResetToken save(PasswordResetToken resetPasswordToken);
-	public PasswordResetToken findByToken(String token);
-	public int removeByToken(String token);
+	PasswordResetToken save(PasswordResetToken resetPasswordToken);
+	PasswordResetToken findByToken(String token);
+	int removeByToken(String token);
 
 }
