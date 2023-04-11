@@ -13,9 +13,7 @@ import java.nio.file.Paths;
 public class FileUtils {
 	
 	public static String createSingleFolder(String pathToFolder) {
-		
 		Path path = Paths.get(pathToFolder);
-		
 		if(!Files.exists(path)) {
 			try {
 				Files.createDirectories(path);
@@ -25,12 +23,9 @@ public class FileUtils {
 		}
 		
 		return pathToFolder;
-		
 	}
-	
-	
+
 	public static void saveFileInDirectory(String filePath, String string) {
-		
 		try {
 			FileOutputStream fileOutputStream = new FileOutputStream(filePath);
 			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
@@ -47,9 +42,7 @@ public class FileUtils {
 	
 
 	public static String deserializeObjectAndGetFromDirectory(String imgPath){
-
         String imgInBase64 = null;
-
         try{
         	ObjectInputStream inputStream = new ObjectInputStream(new FileInputStream(imgPath));
             imgInBase64 = (String) inputStream.readObject();

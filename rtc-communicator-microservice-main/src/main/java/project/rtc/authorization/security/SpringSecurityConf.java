@@ -27,7 +27,6 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	private final CustomUserDetailsService customUserDetailsService;
 	private final AuthenticationSuccessHandler authenticationSuccessHandler;
 	private final JwtTokenAuthenticationFilter jwtTokenAuthenticationFilter;
-	
 
 	@Bean(BeanIds.AUTHENTICATION_MANAGER)
 	@Override
@@ -72,13 +71,10 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	               .antMatchers("/auth/**", "/oauth2/**").permitAll()	              
 			       .antMatchers("/app/login").permitAll()
 			       .antMatchers("/app/logout").permitAll()
-			       .antMatchers("/app/forgot").permitAll()
+			       .antMatchers("/app/forgot/password").permitAll()
 			       .antMatchers("/app/forgot/send").permitAll()
 			       .antMatchers("/app/forgot/password/tk/**").permitAll()
 			       .antMatchers("/app/forgot/credentials/update").permitAll()
-
-				   .antMatchers("/app/api/message/get/page").permitAll() //TODO: remove, Only for test
-
 			       .anyRequest().authenticated()
 			       .and()			       
 		    .oauth2Login()

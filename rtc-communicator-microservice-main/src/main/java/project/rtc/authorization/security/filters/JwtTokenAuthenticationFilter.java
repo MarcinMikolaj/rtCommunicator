@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -20,15 +21,16 @@ import org.springframework.web.filter.OncePerRequestFilter;
 import project.rtc.authorization.security.CustomUserDetailsService;
 import project.rtc.infrastructure.utils.ConsoleColors;
 import project.rtc.infrastructure.utils.CookieUtils;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 
 // This class is used to read JWT authentication token from the request, verify it, and set Spring Security’s SecurityContext if the token is valid.
 @Component
 @RequiredArgsConstructor
 public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
-	
+
     private final CustomUserDetailsService customUserDetailsService;
-	private final JwtTokenProvider jwtTokenProvider;
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 
 	@Override
 	protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
@@ -36,8 +38,8 @@ public class JwtTokenAuthenticationFilter extends OncePerRequestFilter {
 
 		try {	
 			String jwtToken = getJwtTokenFromCookie(request);
-			if(jwtTokenProvider.validateToken(jwtToken)) {
-				String username = jwtTokenProvider.getTokenSubject(jwtToken);
+			if(JwtTokenProvider.validateToken(jwtSecretKey, jwtToken)) {
+				String username = JwtTokenProvider.getTokenSubject(jwtSecretKey, jwtToken);
 				UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
 				
 				UsernamePasswordAuthenticationToken userAuthentication = 

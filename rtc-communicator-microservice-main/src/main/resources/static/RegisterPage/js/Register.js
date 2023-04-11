@@ -48,14 +48,8 @@ const prepareDOMElements = () => {
 // Prepare DOM Events
 const prepareDOMEvents = () => {
 	registerBtn.addEventListener('click', send);
-	
-	
-	redirectLoginPageBtn.forEach((btn) => {
-		btn.addEventListener('click', redirectloginPage);
-	})
-
+	redirectLoginPageBtn.forEach((btn) => {btn.addEventListener('click', redirectloginPage);})
 	profilePictureInput.addEventListener('change', setAddedUserImgNameInUI);
-
 	showPasswordBtn.addEventListener('click', showPasswordInUI);
 	hidePasswordBtn.addEventListener('click', hidePasswordInUI);
 };
@@ -70,9 +64,7 @@ const reset = () => {
 	emailInput.value = '';
 	nickInput.value = '';
 	passwordInput.value = '';
-
 	successMessageBox.style.display = 'none';
-
 	resetErrorMessage();
 };
 
@@ -92,30 +84,21 @@ const resetErrorMessage = () => {
 
 const send = () => {
 	resetErrorMessage();
-
 	let file = profilePictureInput.files[0];
 	let reader = new FileReader();
+	reader.onload = () => {sendRegisterRequestToServer(reader.result);};
+	reader.onerror = function (error) {console.log('Error: ', error);};
 
-	reader.onload = () => {
-		console.log(reader.result);
-		sendRegisterRequestToServer(reader.result);
-	};
-
-	reader.onerror = function (error) {
-		console.log('Error: ', error);
-	};
-
-	if (!!file) {
+	if (!!file)
 		reader.readAsDataURL(file);
-	} else {
+	else
 		sendRegisterRequestToServer(null);
-	}
+
 };
 
 // This method is responsible for send register request.
 const sendRegisterRequestToServer = (fileInBase64) => {
 	let profilePicture = createProfilePictureObject(fileInBase64);
-
 	fetch('http://localhost:8080/app/registration/create', {
 		method: 'POST',
 		headers: {

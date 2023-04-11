@@ -9,35 +9,21 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.util.SerializationUtils;
 
-public class CookieUtils {
+public final class CookieUtils {
 	
 	// Allows you to add a cookie to the HTTP response
     // expireTime - This is maximum age in seconds age when the cookie will expire.
-	public static void addCookie(HttpServletResponse response, String name, String value, int expireTime) {
-		
+	public static Cookie addCookie(HttpServletResponse response, String name, String value, int expireTime) {
 		Cookie cookie = new Cookie(name, value);
-		
 		cookie.setPath("/");
 		cookie.setMaxAge(expireTime);
 		cookie.setHttpOnly(true);
 		response.addCookie(cookie);
-		
+		return cookie;
 	}
-	
-	 // Allows you to add a cookie to the HTTP response
-     public static void addCookie(HttpServletResponse response, String name, String value) {
-		
-		Cookie cookie = new Cookie(name, value);
-		
-		cookie.setPath("/");
-		cookie.setHttpOnly(true);
-		response.addCookie(cookie);	
-	}
-     
+
      public static Optional<Cookie> getCookie(HttpServletRequest request, String name){
- 		
  		Cookie[] cookies = request.getCookies();
- 		
  		if(cookies != null && cookies.length > 0) {
  			for(Cookie cookie: cookies) {
  				if(cookie.getName().equals(name)) {
@@ -45,7 +31,6 @@ public class CookieUtils {
  				}
  			}
  		}
- 		
  		return Optional.empty();
  	}
 	
@@ -67,7 +52,7 @@ public class CookieUtils {
     }
 	
 	public static String serialize(Object object) {
-		return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(object));		
+		return Base64.getUrlEncoder().encodeToString(SerializationUtils.serialize(object));
 	}
 	
 	public static <T> T deserialize(Cookie cookie, Class<T> cls) {

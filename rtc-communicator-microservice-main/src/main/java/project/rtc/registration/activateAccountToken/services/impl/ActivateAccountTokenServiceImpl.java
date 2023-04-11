@@ -4,19 +4,20 @@ import java.sql.Timestamp;
 import java.util.Date;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 import project.rtc.registration.activateAccountToken.entities.ActivateAccountToken;
 import project.rtc.registration.activateAccountToken.repositories.ActivateAccountTokenRepository;
 import project.rtc.registration.activateAccountToken.services.ActivateAccountTokenService;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
 
 @Service
 @RequiredArgsConstructor
 public class ActivateAccountTokenServiceImpl implements ActivateAccountTokenService {
-	
 	private final ActivateAccountTokenRepository activateAccountTokenRepository;
-	private final JwtTokenProvider jwtTokenProvider;
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 
 	public ActivateAccountToken assignNewTokenToAccount(String email) {
 		
@@ -28,26 +29,18 @@ public class ActivateAccountTokenServiceImpl implements ActivateAccountTokenServ
 		Date issuedAt = new Date(currentTimeInMili);
 		Date expiration = new Date(currentTimeInMili + expirationTimeInMilis);
 		
-		authorizationToken = jwtTokenProvider.createJwtToken(email, issuedAt, expiration);
+		authorizationToken = JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expiration);
 		
 		Timestamp expirationAsTimestamp = new Timestamp(expiration.getTime());
 		Timestamp issuedAtAsTimestamp = new Timestamp(expiration.getTime());
 		
 		activateAccountToken = new ActivateAccountToken(email, authorizationToken, issuedAtAsTimestamp, expirationAsTimestamp);
 		activateAccountTokenRepository.create(activateAccountToken);
-		
 		return  activateAccountToken;
 	}
 	
 	
-	public ActivateAccountToken findByToken(String token) {
-		
-		ActivateAccountToken activateAccountToken;
-		
-		activateAccountToken = activateAccountTokenRepository.findByToken(token);
-		
-		return activateAccountToken;
-	}
+	public ActivateAccountToken findByToken(String token) {return activateAccountTokenRepository.findByToken(token);}
 	
 	public void delete(String email) {
 		activateAccountTokenRepository.deleteByEmail(email);

@@ -15,9 +15,7 @@ let wrapper; // main wrapper
 
 const prepareDOMElelemnts = () => {
 	emailInput = document.querySelector('.email-input');
-	sendForgotPasswordReuqestBtn = document.querySelector(
-		'.send-forgot-password-request-btn'
-	);
+	sendForgotPasswordReuqestBtn = document.querySelector('.send-forgot-password-request-btn');
 
 	//buttons
 	cancelButton = document.querySelector('.cancel-button');
@@ -30,10 +28,7 @@ const prepareDOMElelemnts = () => {
 };
 
 const prepareDOMEvents = () => {
-	sendForgotPasswordReuqestBtn.addEventListener(
-		'click',
-		sendForgotPasswordRequestToServer
-	);
+	sendForgotPasswordReuqestBtn.addEventListener('click', sendForgotPasswordRequestToServer);
 	cancelButton.addEventListener('click', loginPageRedirect);
 	redirectLoginPageBtn.addEventListener('click', loginPageRedirect);
 };
@@ -44,23 +39,20 @@ const main = () => {
 };
 
 const sendForgotPasswordRequestToServer = () => {
-	fetch('http://localhost:8080/app/forgot/send', {
+	let params = new URLSearchParams({email: emailInput.value})
+	fetch('http://localhost:8080/app/forgot/send' + '?'+ params, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 		},
-		'Access-Control-Allow-Origin': '*',
-		body: JSON.stringify({
-			email: emailInput.value,
-		}),
+		'Access-Control-Allow-Origin': '*'
 	})
 		.then((response) => {
-			if (response.status === 200) {
+			if (response.status === 200)
 				showSuccessMessage();
-			} else {
-				showFailureMessage();
-			}
+			 else
+				 showFailureMessage();
 			console.log(response);
 		})
 		.catch((error) => console.log(error));
@@ -80,6 +72,6 @@ const showSuccessMessage = () => {
 //Redirect to Login Page
 const loginPageRedirect = () => {
 	window.location.href = 'http://localhost:8080/app/login';
-};
+}
 
 document.addEventListener('DOMContentLoaded', main);

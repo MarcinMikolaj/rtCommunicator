@@ -23,20 +23,19 @@ import project.rtc.communicator.user.services.UserService;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
+import project.rtc.infrastructure.utils.token.JwtTokenProvider;
 import project.rtc.registration.dto.ProfilePicture;
 import project.rtc.infrastructure.utils.FileUtils;
-import project.rtc.infrastructure.utils.jwt.JwtTokenProvider;
 
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService {
-	
     private final CredentialsRepository credentialsRepository;
     private final UserRepository userRepository;
     private final RoomService roomService;
     private final CredentialsService credentialsService;
-    private final JwtTokenProvider jwtTokenProvider;
-
+	@Value("${app.security.jwt.secret_key}")
+	private String jwtSecretKey;
 	@Value("${app.file.user.pictures.path}")
     private String pathToProfilePictures;
 
@@ -49,7 +48,7 @@ public class UserServiceImpl implements UserService {
 
 	@Override
     public User getUser(HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException {
-	    String email = jwtTokenProvider.getTokenSubject(jwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
+	    String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, JwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
 		Optional<User> userOptional = Optional.of(userRepository
 						.findByEmail(email)
 						.orElseThrow(() -> new UserNotFoundException("UserService.getUser: User not found")));
@@ -60,7 +59,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserResponseDto getUserAndLoadPicture(HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
-		String email = jwtTokenProvider.getTokenSubject(jwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
+		String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, JwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		user = loadUserProfileImg(user);
 		return prepareDto(UserOperation.GET_USER, user);
@@ -181,10 +180,7 @@ public class UserServiceImpl implements UserService {
 		FileUtils.saveFileInDirectory(path, profilePicture.getFileInBase64());
 	}
 
-	private String generateUniqueId(){
-		//TODO: Check that, other users don't have assigned generated id.
-		return UUID.randomUUID().toString();
-	}
+	private String generateUniqueId(){return UUID.randomUUID().toString();}
 
 	private UserResponseDto prepareDto(UserOperation operation, User user){
 		return UserResponseDto.builder()
