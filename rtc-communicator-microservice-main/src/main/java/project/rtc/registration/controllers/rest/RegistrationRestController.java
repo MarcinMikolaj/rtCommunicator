@@ -6,8 +6,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import project.rtc.infrastructure.exception.exceptions.InvalidTokenException;
 import project.rtc.registration.dto.RegistrationRequestDto;
 
+import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -17,9 +19,10 @@ public interface RegistrationRestController {
 
     @PostMapping(path = "/create")
     ResponseEntity<?> register(@RequestBody @Valid RegistrationRequestDto registrationRequestDto)
-            throws MethodArgumentNotValidException;
+            throws MethodArgumentNotValidException, MessagingException;
 
     @GetMapping(path = "/activate")
-    ResponseEntity<String> activate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse);
+    ResponseEntity<?> activate(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse)
+            throws InvalidTokenException;
 
 }
