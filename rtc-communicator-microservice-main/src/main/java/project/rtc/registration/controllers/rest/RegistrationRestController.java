@@ -1,4 +1,4 @@
-package project.rtc.registration.controllers;
+package project.rtc.registration.controllers.rest;
 
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;

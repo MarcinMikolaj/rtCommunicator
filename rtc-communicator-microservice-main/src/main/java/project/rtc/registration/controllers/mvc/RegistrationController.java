@@ -1,4 +1,4 @@
-package project.rtc.registration.controllers;
+package project.rtc.registration.controllers.mvc;
 
 import org.springframework.web.bind.annotation.GetMapping;
 

@@ -1,4 +1,4 @@
-package project.rtc.registration.controllers.impl;
+package project.rtc.registration.controllers.rest.impl;
 
 import javax.mail.MessagingException;
 import javax.servlet.http.HttpServletRequest;
@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import project.rtc.infrastructure.exception.exceptions.InvalidTokenException;
 import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.impl.RegistrationServiceImpl;
-import project.rtc.registration.controllers.RegistrationRestController;
+import project.rtc.registration.controllers.rest.RegistrationRestController;
 
 @RestController
 @RequiredArgsConstructor

@@ -4,7 +4,6 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,6 +23,8 @@ import project.rtc.registration.dto.ProfilePicture;
 import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.infrastructure.utils.FileUtils;
+
+import javax.mail.MessagingException;
 
 @RestController
 @RequiredArgsConstructor
@@ -45,12 +46,11 @@ public class MyTest {
 	private static Map<String, User> testUsers = new HashMap<>();
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
-	public void invokeTests() throws MethodArgumentNotValidException, UserNotFoundException, RoomNotFoundException {
+	public void invokeTests() throws UserNotFoundException, RoomNotFoundException, MessagingException {
 		userRepository.deleteAll();
 		roomRepository.deleteAll();
 		messageRepository.deleteAll();
 		invitationRepository.deleteAll();
-		
 		createTestAccounts();
 
 		// test room 01
@@ -136,7 +136,7 @@ public class MyTest {
 	}
 
 	// This method create test user accounts
-	private void createTestAccounts() throws MethodArgumentNotValidException {
+	private void createTestAccounts() throws MessagingException {
 		User anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "anastazja2\\picture.bin");
 		User mateusz86 = createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423"
@@ -172,9 +172,9 @@ public class MyTest {
 	}
 	
 	private User createAccount(String email, String nick, String password, String authProvider, boolean statements, String pathToImg)
-			throws MethodArgumentNotValidException {
-			RegistrationRequestDto dto = new RegistrationRequestDto(email, nick, password, authProvider, statements, loadPicture(pathToImg));
-			return registrationServiceImpl.registerAccount(dto);
+			throws MessagingException {
+		return registrationServiceImpl.registerAccount(
+				new RegistrationRequestDto(email, nick, password, authProvider, statements, loadPicture(pathToImg)));
 	}
 	
 	// Imitacja dołanczania zdjęcia podczas rejestracji

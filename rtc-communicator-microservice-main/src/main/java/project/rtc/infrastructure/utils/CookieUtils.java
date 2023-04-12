@@ -11,7 +11,7 @@ import org.springframework.util.SerializationUtils;
 
 public final class CookieUtils {
 	
-	// Allows you to add a cookie to the HTTP response
+	// Allows you to add a cookie to the HTTP response.
     // expireTime - This is maximum age in seconds age when the cookie will expire.
 	public static Cookie addCookie(HttpServletResponse response, String name, String value, int expireTime) {
 		Cookie cookie = new Cookie(name, value);

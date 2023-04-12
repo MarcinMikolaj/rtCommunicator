@@ -19,29 +19,21 @@ public class ActivateAccountTokenServiceImpl implements ActivateAccountTokenServ
 	@Value("${app.security.jwt.secret_key}")
 	private String jwtSecretKey;
 
+	@Value("${app.registration.security.activate-account-by-email-expire-time}")
+	private long expiryTime;
+
 	public ActivateAccountToken assignNewTokenToAccount(String email) {
-		
-		String authorizationToken;
-		ActivateAccountToken activateAccountToken;
-		
-		Long expirationTimeInMilis = (long) 1800000;
-		Long currentTimeInMili = System.currentTimeMillis();
-		Date issuedAt = new Date(currentTimeInMili);
-		Date expiration = new Date(currentTimeInMili + expirationTimeInMilis);
-		
-		authorizationToken = JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expiration);
-		
-		Timestamp expirationAsTimestamp = new Timestamp(expiration.getTime());
-		Timestamp issuedAtAsTimestamp = new Timestamp(expiration.getTime());
-		
-		activateAccountToken = new ActivateAccountToken(email, authorizationToken, issuedAtAsTimestamp, expirationAsTimestamp);
-		activateAccountTokenRepository.create(activateAccountToken);
-		return  activateAccountToken;
+		Date issuedAt = new Date(System.currentTimeMillis());
+		Date expiration = new Date(System.currentTimeMillis() + expiryTime);
+
+		ActivateAccountToken activateAccountToken = new ActivateAccountToken(email
+				, JwtTokenProvider.create(jwtSecretKey, email, issuedAt, expiration)
+				, new Timestamp(expiration.getTime())
+				, new Timestamp(expiration.getTime()));
+		return activateAccountTokenRepository.create(activateAccountToken);
 	}
-	
-	
+
 	public ActivateAccountToken findByToken(String token) {return activateAccountTokenRepository.findByToken(token);}
-	
 	public void delete(String email) {
 		activateAccountTokenRepository.deleteByEmail(email);
 	}

@@ -1,7 +1,7 @@
-package project.rtc.registration.controllers.impl;
+package project.rtc.registration.controllers.mvc.impl;
 
 import org.springframework.stereotype.Controller;
-import project.rtc.registration.controllers.RegistrationController;
+import project.rtc.registration.controllers.mvc.RegistrationController;
 
 @Controller
 public class RegistrationControllerImpl implements RegistrationController {

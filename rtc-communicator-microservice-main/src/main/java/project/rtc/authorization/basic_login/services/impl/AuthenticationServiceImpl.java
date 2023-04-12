@@ -37,9 +37,8 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	@Value("${app.security.jwt.secret_key}")
 	private String jwtSecretKey;
 
-    //	Expire time for JWT token
-	@Value("${app.security.jwt.expiry-time}")
-	private Integer expiryTime;
+	@Value("${app.credentials.security.credentials-time-expire}")
+	private long expiryTime;
 
 	@Override
 	public void authenticate(HttpServletResponse response, LoginRequestPayload loginRequestPayload) throws AuthenticationException {
@@ -53,18 +52,15 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 		String authorizationToken = JwtTokenProvider.create(jwtSecretKey
 				, loginRequestPayload.getEmail()
 				, new Date(System.currentTimeMillis())
-				, new Date(System.currentTimeMillis() + (long) 1800000));
-
+				, new Date(System.currentTimeMillis() + expiryTime));
 		response.addHeader("Authorization", "Bearer " + authorizationToken);
-		CookieUtils.addCookie(response, "jwt", authorizationToken,  expiryTime);
+		CookieUtils.addCookie(response, "jwt", authorizationToken, (int) expiryTime);
 	}
 
 	@Override
 	public void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException {
-
 		CookieUtils.deleteCookie(request, response, "jwt");
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-
 		if (authentication != null) {
 			if (!authentication.isAuthenticated()){
 				response.sendRedirect("/app/login");
@@ -83,7 +79,6 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
 		for (Cookie cookie : request.getCookies())
 			cookie.setMaxAge(0);
-
 		response.sendRedirect("/app/login");
 	}
 }
