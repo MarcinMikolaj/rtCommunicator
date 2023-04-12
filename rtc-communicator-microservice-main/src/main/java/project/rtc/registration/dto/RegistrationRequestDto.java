@@ -20,12 +20,12 @@ public final class RegistrationRequestDto {
 
 	@NotBlank(message = "Email address cannot be empty")
 	@Email(message = "The email address must be in the correct format")
-	@ExistsByEmail(message = "An account with the given e-mail address already exists")
+	@ExistsByEmail()
 	private final String email;
 	@NotBlank(message = "Nick cannot be empty")
 	@Pattern(regexp = "^[a-zA-Z0-9]*$", message = "Nick can only contain letters and numbers")
 	@Size(max = 15, message = "Nickname can be up to 15 characters long")
-	@ExistsByNick(message = "An account with the given nickname exists")
+	@ExistsByNick()
 	private final String nick;
 	@Password(message = "The specified password is incorrect")
 	private final String password;
