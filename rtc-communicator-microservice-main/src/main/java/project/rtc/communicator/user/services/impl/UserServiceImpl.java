@@ -16,7 +16,7 @@ import project.rtc.authorization.basic_login.credentials.services.CredentialsSer
 import project.rtc.communicator.invitations.entities.Invitation;
 import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.user.entities.User;
-import project.rtc.communicator.user.dto.UserOperation;
+import project.rtc.communicator.user.entities.UserOperation;
 import project.rtc.communicator.user.repositories.UserRepository;
 import project.rtc.communicator.user.dto.UserResponseDto;
 import project.rtc.communicator.user.services.UserService;
@@ -52,7 +52,6 @@ public class UserServiceImpl implements UserService {
 		Optional<User> userOptional = Optional.of(userRepository
 						.findByEmail(email)
 						.orElseThrow(() -> new UserNotFoundException("UserService.getUser: User not found")));
-		
 		return userOptional.get();	
     }
 

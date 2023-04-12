@@ -1,4 +1,4 @@
-package project.rtc.communicator.user.dto;
+package project.rtc.communicator.user.entities;
 
 public enum UserOperation {
 	

@@ -74,6 +74,15 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler(InvitationNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ResponseEntity<?> handleInvitationNotFoundException(InvitationNotFoundException e, WebRequest requestMetadata){
+        e.printStackTrace();
+        return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
+                , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString())
+                , HttpStatus.NOT_FOUND);
+    }
+
     @ExceptionHandler(NoAuthorizationTokenException.class)
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<?> handleNoAuthorizationTokenException(NoAuthorizationTokenException e, WebRequest requestMetadata){

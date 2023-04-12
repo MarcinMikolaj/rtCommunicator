@@ -1,37 +1,21 @@
 package project.rtc.communicator.invitations.entities;
 
 import lombok.*;
+import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.annotation.Id;
 
-import java.io.Serializable;
-
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.NamedQueries;
-import javax.persistence.NamedQuery;
-import javax.persistence.Table;
-
-@Entity
-@Table(name = "invitation")
-@NamedQueries({
-	@NamedQuery(name ="Invitation.findByInvitationId", query = "SELECT i FROM Invitation i WHERE i.invitationId = :invitationId"),
-	@NamedQuery(name ="Invitation.findByInvited", query = "SELECT i FROM Invitation i WHERE i.invited = :invited"),
-	@NamedQuery(name = "Invitation.removeByInvitationId", query = "DELETE FROM Invitation i WHERE i.invitationId = :invitationId")
-})
+@Document
 @NoArgsConstructor
 @Getter
 @Setter
 @ToString
-// inviting and invited points to user nick
-public class Invitation implements Serializable{
-	
-	private static final long serialVersionUID = -3445901393203661534L;
+public class Invitation {
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private Long id;
+	private String mongoId;
 	private String invitationId;
 	private String roomId;
+
+	// Inviting and invited points to user nick.
 	private String inviting;
 	private String invited;
 	private String creation_date;
