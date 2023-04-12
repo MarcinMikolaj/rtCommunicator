@@ -183,8 +183,10 @@ const prepareDOMEvents = () => {
 	openAddFriendBoxBtn.addEventListener('click', openAddFriendBox);
 	openCreateGroupBoxBtn.addEventListener('click', openCreateGroupBox);
 	openManageAccountBoxBtn.addEventListener('click', openManageAccountBox);
-	myProfileImg.addEventListener('click', openManageAccountBox); 
+	myProfileImg.addEventListener('click', openManageAccountBox);
 	openInvitationBoxBtn.addEventListener('click', openInvitationBox);
+
+	openInvitationBoxBtn.addEventListener('click', getInvitationsRequest);
 
 	showOnlyFriendsBoxBtn.addEventListener('click', showFriendsBoxForMobile);
 	showMenuBtn.forEach((btn) => btn.addEventListener('click', openMenuBox));
@@ -198,9 +200,6 @@ const prepareDOMEvents = () => {
 	updateUserEmailBtn.addEventListener('click', changeEmailRequest);
 	updateUserPasswordBtn.addEventListener('click', changePasswordRequest);
 	updateProfilePictureBtn.addEventListener('click', updateProfilePictureRequest);
-	
-	// invitation actions
-	addNewFriendBtn.addEventListener('click', sendInvitationRequest);
 
 	// manage room actions
 	createRoomBtn.addEventListener('click', createRoomRequest);
@@ -502,8 +501,7 @@ const deleteAccountRequest = () => {
 
 const changeNickRequest = () => {
 	sendHttpRequestAccount('http://localhost:8080/app/account/update/nick'
-		, {nick: changeNickInput.value
-	})};
+		, {nick: changeNickInput.value})};
 const changeEmailRequest = () => {
 	sendHttpRequestAccount('http://localhost:8080/app/account/update/email'
 		, {email: updateUserEmailInput.value
@@ -570,7 +568,6 @@ const setLoggedUserInPanel =(user) => {
 // ***********************************************************
 // ----------- Box Manager and additional features -----------
 // ***********************************************************
-
 // Allows you to search for friends using the given pattern
 const searchFriend = (event) => {
 	let searchStringValue = event.target.value.toLowerCase().trim();
@@ -618,7 +615,6 @@ const openManageRoomBox = () => {
 		managerRoomBox.style.display = 'flex';
 		return;
 	}
-
 	managerRoomBox.style.display = 'flex';
 	communicatorBox.style.display = 'none';
 	roomBox.style.display = 'none';
@@ -629,7 +625,6 @@ const closeManagerRoomBox = () => {
 		managerRoomBox.style.display = 'none';
 		return;
 	}
-
 	managerRoomBox.style.display = 'none';
 	roomBox.style.display = 'flex';
 };
@@ -640,11 +635,9 @@ const showFriendsBoxForMobile = () => {
 };
 
 const openMenuBox = () => {
-	
-	if (window.innerWidth < 769) {
+	if (window.innerWidth < 769)
 		managerRoomBox.style.display = 'none';
-	}
-	
+
 	addFriendBox.style.display = 'none';
 	roomBox.style.display = 'none';
 	createGroupBox.style.display = 'none';
@@ -673,7 +666,6 @@ const openInvitationBox = () => {
 // *************************************************************
 // ----------------------- Set Room ---------------------
 // *************************************************************
-
 // Point to current message page which.
 let currentMessagePageCounter = 0;
 const currentMessagePageSize = 8;
@@ -1215,113 +1207,80 @@ const removeAllQueryResultMessageForAddFriend = () => {
 // ***********************************************************
 
 // The method enables querying the server for a list of invitations held by the user.
+//30s
 const updateInvitationList = () => {
-	const httpPath = 'http://localhost:8080/app/api/invitation/get/all';
-
-	// Load invitations after page load
-	getInvitationsRequest(httpPath);
-
-	// Update invitations periodically
-	setInterval(getInvitationsRequest(httpPath), 30000); //30s
+	// Get first invitation.
+	getInvitationsRequest()
+	// Get invitations periodically.
+	setInterval(() => getInvitationsRequest(), 30000);
 };
 
-function getInvitationsRequest(httpPath) {
-	fetch(httpPath, {
+function getInvitationsRequest() {
+	fetch('http://localhost:8080/app/api/invitation/get/all', {
 		method: 'GET',
-		headers: {
-			'Content-Type': 'application/json',
-		},
+		headers: {'Content-Type': 'application/json',},
 	})
 		.then((response) => response.json())
 		.then((data) => {
             console.log("Updated invitations");
             console.log(data);
-            addInvitation(data);
+			displayInvitationsInUI(data);
 		})
 		.catch((error) => console.log('err: ', error));
 }
 
 function acceptOrDeclineInvitationRequest(invitationId, path) {
-	fetch(path, {
+	let params = new URLSearchParams({invitationId: invitationId});
+	fetch(path + '?' + params, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({invitationId: invitationId})
+		}
 	})
 		.then((response) => {return response.json();})
 		.then(data => {
 			console.log(data)
-			addInvitation(data);})
+			displayInvitationsInUI(data)
+		})
 		.catch((error) => console.log(error));
 };
 
-//The method allows you to send a query regarding the invitation of a new user
-const sendInvitationRequest = () => {
-	fetch('http://localhost:8080/app/api/invitation/create', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			invited: addFriendInput.value,
-			inviting: currentlyLoggedUser.nick,
-			roomId: currentluSelectedRoomId
-		}),
-	})
-		.then((response) => {return response.json();})
-		.then((data) => {console.log(data);})
-		.catch((error) => console.log(error));
-
-		resteManageRoomInputs();
-};
-
 // ***********************************************************
-// ------------------- Invitation Manager --------------------
+// ------------------- Invitation UI --------------------
 // ***********************************************************
+
 // This section is responsible for the ability to add and display invitations for a given user in the user interface.
-
 // The method allows you to add a new friend request to the invitations list;
-function addInvitation(invitations) {
-	let invitationElement;
+function displayInvitationsInUI(invitations) {
 	let invitationList = document.querySelector('.invitation-list');
+	// Clear invitation html list before add new elements.
 	invitationList.innerHTML = '';
-	
-	invitations.forEach((invitation) => {
-		invitationElement = createInvitation(invitation);
-		invitationList.appendChild(invitationElement);
-	})
+	// Append prepared invitation html elements.
+	invitations.forEach((invitation) => {invitationList.appendChild(createInvitationHtmlElement(invitation))})
 }
 
-// Allows you to create invitation items
-function createInvitation(invitation) {
+// Create invitation html element.
+function createInvitationHtmlElement(invitation) {
 	let element = document.createElement('li');
-	
 	element.classList.add('invitation-box');
 	element.setAttribute('invitationId', invitation.invitationId);
 	element.innerHTML = `<img class="invitation-img" src="${invitation.user.profilePicture.fileInBase64}" alt="img">
 	<div class="invitation-description-box">
-
 		<div class="invitation-name-date-box">
 			<p class="invitation-name-field">${invitation.inviting}</p>
 			<p class="invitation-date-field">${invitation.creation_date}</p>
 		</div>
-
 		<div class="mutual-friends-box">
 			<i class="fa-solid fa-user-group"></i>
 			<p class="invitation-mutual-friends-field">0 wspólnych znajomych</p>
 		</div>
-
 		<div class="invitation-buttons-box">
 			<button class="invitation-button invitation-accept-button" invitationId=${invitation.invitationId}>Accept</button>
 			<button class="invitation-button invitation-reject-button" invitationId=${invitation.invitationId}>Reject</button>
 		</div>
 	</div>`;
-	
 	element.querySelector('.invitation-accept-button').addEventListener('click', CallAcceptInvitationRequest);
 	element.querySelector('.invitation-reject-button').addEventListener('click', CallDeclineInvitation);
 	return element;
@@ -1329,16 +1288,12 @@ function createInvitation(invitation) {
 
 const CallAcceptInvitationRequest = (event) => {
 	let invitationId = event.target.getAttribute('invitationId')
-	console.log('accept invitation, invitationId: ' + invitationId);
-	
 	if(invitationId !== null)
 		acceptOrDeclineInvitationRequest(invitationId , 'http://localhost:8080/app/api/invitation/accept');
 }
 
 const CallDeclineInvitation = (event) => {
 	let invitationId = event.target.getAttribute('invitationId');
-	console.log('decline invitation, invitationId: ' + invitationId);
-	
 	if(invitationId !== null)
 		acceptOrDeclineInvitationRequest(invitationId, 'http://localhost:8080/app/api/invitation/decline');
 }
@@ -1346,7 +1301,6 @@ const CallDeclineInvitation = (event) => {
 // ***********************************************************
 // ------------------------ Time Utils -----------------------
 // ***********************************************************
-
 // It is used to tell the user when the last message was delivered.
 // Function returns the time difference between the current date and the delivered date
 // The result returns the year if is greater than one, otherwise returns the number of weeks.

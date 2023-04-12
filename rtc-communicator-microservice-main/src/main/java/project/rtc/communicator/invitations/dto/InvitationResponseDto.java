@@ -5,6 +5,7 @@ import java.util.Date;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
+import project.rtc.communicator.invitations.entities.InvitationOperation;
 import project.rtc.communicator.user.entities.User;
 
 @Getter

@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import project.rtc.authorization.oauth2.provider.AuthProvider;
+import project.rtc.communicator.invitations.repositories.InvitationRepository;
 import project.rtc.communicator.invitations.services.InvitationService;
 import project.rtc.communicator.messager.entities.Message;
 import project.rtc.communicator.messager.repositories.MessageRepository;
@@ -35,6 +36,7 @@ public class MyTest {
 	private final RoomRepository roomRepository;
 	private final RoomService roomService;
 	private final InvitationService invitationService;
+	private final InvitationRepository invitationRepository;
 
 	@Value("${app.file.user.pictures.test.path}")
 	private String pathTestPictures;
@@ -47,6 +49,7 @@ public class MyTest {
 		userRepository.deleteAll();
 		roomRepository.deleteAll();
 		messageRepository.deleteAll();
+		invitationRepository.deleteAll();
 		
 		createTestAccounts();
 

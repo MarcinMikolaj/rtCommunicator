@@ -12,7 +12,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import project.rtc.communicator.invitations.entities.Invitation;
-import project.rtc.communicator.invitations.dto.InvitationOperation;
+import project.rtc.communicator.invitations.entities.InvitationOperation;
 import project.rtc.communicator.invitations.dto.InvitationResponseDto;
 import project.rtc.communicator.invitations.repositories.InvitationRepository;
 import project.rtc.communicator.invitations.services.InvitationService;
@@ -20,6 +20,7 @@ import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.user.entities.User;
 import project.rtc.communicator.user.repositories.UserRepository;
 import project.rtc.communicator.user.services.UserService;
+import project.rtc.infrastructure.exception.exceptions.InvitationNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
@@ -44,37 +45,24 @@ public class InvitationServiceImpl implements InvitationService {
 
 	@Override
 	public List<InvitationResponseDto> getInvitations(HttpServletRequest httpServletRequest) throws UserNotFoundException
-			, NoAuthorizationTokenException {
-		List<InvitationResponseDto> invitationResponseDtoList = new ArrayList<>();
-		List<Invitation> invitations =  getAllUserInvitations(httpServletRequest);
-		
-		invitations.stream()
-				.filter(i -> i != null)
-				.peek(i -> invitationResponseDtoList.add(prepareInvitationResponseDto(InvitationOperation.GET_ALL_INVITATIONS
-								, i.getInvitationId(), i.getInviting(), i.getInvited(), i.getCreation_date()
-						, userRepository.findByNick(i.getInviting()).get())))
-				.collect(Collectors.toList())
-				.size();
-
-		invitationResponseDtoList.stream()
-		   .filter(u -> u.getUser() != null)
-		   .filter(u -> u.getUser().getPathToProfileImg() != null)
-		   .peek(u -> userService.loadUserProfileImg(u.getUser()))
-		   .collect(Collectors.toList())
-		   .size();
-		
-		return invitationResponseDtoList;
-	}
-
-	private List<Invitation> getAllUserInvitations(HttpServletRequest httpServletRequest) throws UserNotFoundException
-			, NoAuthorizationTokenException {
-		return invitationRepository.findByInvited(userService.getUser(httpServletRequest).getNick());
+			, NoAuthorizationTokenException, InvitationNotFoundException {
+		List<Invitation> invitations = invitationRepository.findByInvited(userService.getUser(httpServletRequest).getNick())
+				.orElseThrow(InvitationNotFoundException::new);
+		return invitations.stream()
+				.filter(Objects::nonNull)
+				.map(i -> prepareInvitationResponseDto(InvitationOperation.GET_ALL_INVITATIONS
+						, i.getInvitationId(), i.getInviting(), i.getInvited(), i.getCreation_date()
+						, userRepository.findByNick(i.getInviting()).get()))
+				.filter(o -> o.getUser().getPathToProfileImg() != null)
+				.peek(o -> userService.loadUserProfileImg(o.getUser()))
+				.collect(Collectors.toList());
 	}
 
 	public List<InvitationResponseDto> acceptInvitation(String invitationId, HttpServletRequest httpServletRequest)
-			throws UserNotFoundException, RoomNotFoundException, NoAuthorizationTokenException {
-		Invitation invitation = invitationRepository.findByInvitationId(invitationId);
-		roomService.addUserToRoom(invitation.getRoomId(), invitation.getInvited());
+			throws UserNotFoundException, RoomNotFoundException, NoAuthorizationTokenException, InvitationNotFoundException {
+		Invitation invitation = invitationRepository.findByInvitationId(invitationId).orElseThrow(InvitationNotFoundException::new);
+		User user = userRepository.findByNick(invitation.getInvited()).orElseThrow(UserNotFoundException::new);
+		roomService.addUserToRoom(invitation.getRoomId(), user.getUserId());
 		invitationRepository.removeByInvitationId(invitationId);
 		// Remove the invitation from the user's invitation list.
 		userService.removeInvitation(invitation);
@@ -82,8 +70,8 @@ public class InvitationServiceImpl implements InvitationService {
 	}
 
 	public List<InvitationResponseDto> declineInvitation(String invitationId, HttpServletRequest httpServletRequest)
-			throws UserNotFoundException, NoAuthorizationTokenException {
-		Invitation invitation = invitationRepository.findByInvitationId(invitationId);
+			throws UserNotFoundException, NoAuthorizationTokenException, InvitationNotFoundException {
+		Invitation invitation = invitationRepository.findByInvitationId(invitationId).orElseThrow(InvitationNotFoundException::new);
 		invitationRepository.removeByInvitationId(invitationId);
 		// Remove the invitation from the user's invitation list.
 		userService.removeInvitation(invitation);
