@@ -331,13 +331,12 @@ const logoutRequest = () => {
 			Accept: 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			logout: true
-		}),})
+		}})
 		.then((response) => {
-			if(response.redirected === true)
+			if(response.status === 200)
 				window.location.replace(response.url);
+			else
+				console.log("A failure page should appear here");
 		})
 		.catch((error) => console.log(error));
 };

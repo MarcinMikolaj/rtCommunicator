@@ -15,7 +15,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
-import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
 import project.rtc.authorization.basic_login.services.AuthenticationService;
@@ -58,7 +57,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 	}
 
 	@Override
-	public void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException {
+	public void logout(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		CookieUtils.deleteCookie(request, response, "jwt");
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		if (authentication != null) {

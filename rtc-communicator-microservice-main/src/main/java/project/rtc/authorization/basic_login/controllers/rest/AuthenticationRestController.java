@@ -1,4 +1,4 @@
-package project.rtc.authorization.basic_login.controllers;
+package project.rtc.authorization.basic_login.controllers.rest;
 
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -6,7 +6,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
-import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -21,6 +20,5 @@ public interface AuthenticationRestController {
             , @RequestBody LoginRequestPayload loginRequest) throws AuthenticationException;
 
     @PostMapping("/logout")
-    ResponseEntity<?> logout(@RequestBody LogoutRequestPayload logoutRequestPayload
-            , HttpServletRequest request, HttpServletResponse response) throws IOException;
+    ResponseEntity<?> logout(HttpServletRequest request, HttpServletResponse response) throws IOException;
 }

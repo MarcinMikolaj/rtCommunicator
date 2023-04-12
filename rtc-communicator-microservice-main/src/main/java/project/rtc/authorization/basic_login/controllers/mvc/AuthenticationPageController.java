@@ -1,4 +1,4 @@
-package project.rtc.authorization.basic_login.controllers;
+package project.rtc.authorization.basic_login.controllers.mvc;
 
 import org.springframework.web.bind.annotation.GetMapping;
 
