@@ -1,12 +1,16 @@
 # rtCommunicator
 
 ## Table of contents
-* [General info](#general-info)
-* [Technologies](#technologies)
-* [About the project](#about-the-project)
-* [Functional and non-functional requirements](#functional-and-non-functional-requirements)
-* [Project status](#project-status)
-* [Contact](#contact)
+- [General info](#general-info)
+- [Technologies](#technologies)
+- [About the project](#about-the-project)
+   - [Main application interface](#main-application-interface)
+   - [Login](#login)
+   - [Registration](#registration)
+   - [Forgot password option](#forgot-password-option)
+- [Functional and non-functional requirements](#functional-and-non-functional-requirements)
+- [Project status](#project-status)
+- [Contact](#contact)
 
 ## General info
 The application is a messenger that enables the exchange of messages between users in real time, where the protocol is WebSocket.
@@ -32,21 +36,33 @@ The application gives you the ability to create and manage new rooms. Each user 
 
 ## About the project
 
-* Main application interface
+### Main application interface
 
 ![app_panel](https://user-images.githubusercontent.com/67873349/218342257-174ba860-a279-415f-a6fc-703b91de6913.JPG)
 
-* Login
+### Login
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/67873349/218344485-03caaae6-8f55-4621-98b2-67d762c52b4f.JPG" width="370">
 </p>
 
 
-* Registration
+### Registration
 
 <p align="center">
   <img src="https://user-images.githubusercontent.com/67873349/218344570-0f956688-0a4b-49c8-9a6f-fc2d85ed8541.JPG" width="370">
+</p>
+
+### Forgot password option
+
+Initialize set new password process for choose email adress.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/67873349/231785029-f9310450-10b9-4609-899e-8856acca0f53.JPG" width="520">
+</p>
+
+On your email box you will receive special link with auth token as param, which will redirect you to the password setting form.
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/67873349/231785457-048b782a-2857-42cc-9551-6d742fa37bde.JPG" width="520">
 </p>
 
 
@@ -102,7 +118,7 @@ The project has been completed, all functional and non-functional requirements h
 ## Contact
 
 Author: Marcin Mikołajczyk \
-Emial: marcin.mikolajczyk22@gmail.com \
+Email: marcin.mikolajczyk22@gmail.com \
 Project Link: https://github.com/MarcinMikolaj/rtCommunicator
 
 
