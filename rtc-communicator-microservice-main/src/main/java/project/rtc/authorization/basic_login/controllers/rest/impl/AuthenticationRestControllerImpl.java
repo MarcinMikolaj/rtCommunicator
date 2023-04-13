@@ -5,7 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import project.rtc.authorization.basic_login.controllers.rest.AuthenticationRestController;
-import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
+import project.rtc.authorization.basic_login.dto.LoginRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.services.AuthenticationService;
 

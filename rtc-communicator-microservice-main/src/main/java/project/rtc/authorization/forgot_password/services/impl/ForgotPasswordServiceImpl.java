@@ -42,7 +42,7 @@ public class ForgotPasswordServiceImpl implements ForgotPasswordService {
 		}
 
 		PasswordResetToken resetPasswordToken = assignNewToken(email);
-		String link = "http://localhost:8080/app/forgot/password/tk/" + "?token=" + resetPasswordToken.getToken();
+		String link = "http://localhost:8080/app/forgot/password/tk" + "?token=" + resetPasswordToken.getToken();
 		mailSenderService.sendMessage(email, "rtCommunicator", prepareMessageText(link));
 		return resetPasswordToken;
 	}

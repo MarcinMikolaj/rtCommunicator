@@ -14,7 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
+import project.rtc.authorization.basic_login.dto.LoginRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;
 import project.rtc.authorization.basic_login.services.AuthenticationService;

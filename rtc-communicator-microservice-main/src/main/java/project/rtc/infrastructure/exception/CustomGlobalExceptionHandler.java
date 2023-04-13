@@ -1,8 +1,11 @@
 package project.rtc.infrastructure.exception;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
+import org.springframework.validation.FieldError;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,24 +18,35 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 import project.rtc.infrastructure.exception.exceptions.*;
 import project.rtc.infrastructure.dto.ApiExceptionDto;
 
+import javax.validation.ConstraintViolationException;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @RestControllerAdvice
+@Slf4j
 public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException e
             , HttpHeaders headers, HttpStatus status, WebRequest request) {
-        Map<String, Object> body = prepareResponseMap(ex, status);
-        ex.printStackTrace();
+        Map<String, Object> body = prepareResponseMap(e, status);
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(body, headers, status);
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ResponseEntity<?> exceptionConstraintViolationException(ConstraintViolationException e){
+        log.error(e.getMessage() + e.getLocalizedMessage());
+        Map<String, Object> body = prepareResponseMap(e, HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(body, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(Exception.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ResponseEntity<?> exception(Exception e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.INTERNAL_SERVER_ERROR, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
@@ -96,7 +110,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleInvalidTokenException(InvalidTokenException e, WebRequest requestMetadata){
         e.printStackTrace();
-        return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.UNAUTHORIZED, Collections.singletonList(e.getMessage())
+        return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.BAD_REQUEST, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.BAD_REQUEST);
     }
@@ -113,13 +127,30 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
                     .stream()
                     .map(ObjectError::getDefaultMessage)
                     .collect(Collectors.toList());
-        }else
+        } else
             errors.add(e.getMessage());
         body.put("errors", errors);
         body.put("stackTrace", e.getStackTrace());
         return body;
     }
 
+    private Map prepareResponseMap(ConstraintViolationException e, HttpStatus httpStatus){
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("timestamp", new Date());
+        body.put("status", httpStatus.value());
+        List<FieldError> errors = new ArrayList<>();
+        if(e instanceof ConstraintViolationException){
+            errors = e.getConstraintViolations().stream()
+                    .map(constraintViolation -> new FieldError(constraintViolation.getRootBeanClass().getName()
+                            , constraintViolation.getPropertyPath().toString()
+                            , constraintViolation.getMessage()))
+                    .collect(Collectors.toList());
+        }
+        body.put("errors", errors);
+        body.put("stackTrace", e.getStackTrace());
+        return body;
+    }
+    
     private ApiExceptionDto prepareExceptionDto(Exception e, HttpStatus httpStatus, List<String> messages,
                                                 String path, String method){
         return ApiExceptionDto.builder()

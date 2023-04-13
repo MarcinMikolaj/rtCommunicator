@@ -1,4 +1,4 @@
-package project.rtc.authorization.basic_login.controllers.dto;
+package project.rtc.authorization.basic_login.dto;
 
 import lombok.Data;
 

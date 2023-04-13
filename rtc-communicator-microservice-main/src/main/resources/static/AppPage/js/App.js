@@ -222,7 +222,6 @@ const main = () => {
 	// get user information like profile picture, nick etc.
 	getLoggedUser();
 
-	// get connect webSocket
 	//connectWebSocket();
 	updateInvitationList();
 };
@@ -309,7 +308,6 @@ const sendMessageByWebSocketOverSTOMP = () => {
 		userNick: currentlyLoggedUser.nick,
 		creationTimeInMillisecondsUTC: new Date().getTime()
 	}
-		
 	client.send('/app/messenger', {}, JSON.stringify(body));
 
 	// Create message element and add to communication panel.
@@ -321,14 +319,13 @@ const sendMessageByWebSocketOverSTOMP = () => {
 };
 
 // ***********************************************************
-// ---------------- Logout Requests -----------------
+// ---------------------- Logout Requests --------------------
 // ***********************************************************
-
 const logoutRequest = () => {
 	fetch('http://localhost:8080/app/logout', {
 		method: 'POST',
 		headers: {
-			Accept: 'application/json',
+			'Accept': 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		}})
@@ -364,15 +361,7 @@ function sendHttpRequestRoom(url, body){
 			} else if(data.status === 400)
 				console.log("LOAD VALIDATION MESSAGE FORM DTO");
 			else
-				console.log("RECEIVED EXCEPTION FROM SERVER");
-
-			    // TODO: Display valid info for user.
-				// if(data.status === 201){
-				// 	currentRoomList = data.rooms;
-				// 	unreadMessages = data.unreadMessages;
-				//	setRoomsInPanel(data.rooms, data.unreadMessages);
-			    // 	addStatementMessageToRoomManagerInUI(data.statements);
-				// }
+				console.log("A failure page should appear here");
 		})
 		.catch((error) => console.log(error));
 		resteManageRoomInputs();

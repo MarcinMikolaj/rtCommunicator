@@ -5,7 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
+import project.rtc.authorization.basic_login.dto.LoginRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 
 public interface AuthenticationService {
