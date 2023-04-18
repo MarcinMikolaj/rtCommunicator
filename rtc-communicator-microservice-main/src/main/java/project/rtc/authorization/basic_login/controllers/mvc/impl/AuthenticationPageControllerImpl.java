@@ -1,7 +1,7 @@
-package project.rtc.authorization.basic_login.controllers.impl;
+package project.rtc.authorization.basic_login.controllers.mvc.impl;
 
 import org.springframework.stereotype.Controller;
-import project.rtc.authorization.basic_login.controllers.AuthenticationPageController;
+import project.rtc.authorization.basic_login.controllers.mvc.AuthenticationPageController;
 
 @Controller
 public class AuthenticationPageControllerImpl implements AuthenticationPageController {

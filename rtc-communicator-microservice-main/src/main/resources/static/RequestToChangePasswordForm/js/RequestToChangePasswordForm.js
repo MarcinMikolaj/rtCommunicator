@@ -1,46 +1,52 @@
-// Variables
+// Buttons
+// Cancel change password action btn.
+let cancelButton;
 
-//buttons
-let cancelButton; // cancel change password action btn
-let redirectLoginPageBtn; // redirect to login page btn
-let sendForgotPasswordReuqestBtn; // send change password requets to server btn
+// Redirect to login page btn.
+let redirectLoginPageBtn;
 
-//inputs
+// Send change password requests to server btn.
+let sendForgotPasswordRequestBtn;
+
+// Inputs
 let emailInput;
 
-// boxes
-let failureMessage; // show when status other than 200
-let successMessage; // show when status = 200
-let wrapper; // main wrapper
+// Wrappers.
+// Show when status other than 200.
+let failureMessage;
 
-const prepareDOMElelemnts = () => {
+// Show when status = 200.
+let successMessage;
+
+// Main wrapper.
+let wrapper;
+
+const prepareDOMElements = () => {
+	// Inputs
 	emailInput = document.querySelector('.email-input');
-	sendForgotPasswordReuqestBtn = document.querySelector('.send-forgot-password-request-btn');
 
-	//buttons
+	// Buttons
+	sendForgotPasswordRequestBtn = document.querySelector('.send-forgot-password-request-btn');
 	cancelButton = document.querySelector('.cancel-button');
 	redirectLoginPageBtn = document.querySelector('.redirect-login-page-btn');
 
-	// boxes
+	// Wrappers
 	failureMessage = document.querySelector('.failure-message');
 	successMessage = document.querySelector('.success-message');
 	wrapper = document.querySelector('.wrapper');
 };
 
 const prepareDOMEvents = () => {
-	sendForgotPasswordReuqestBtn.addEventListener('click', sendForgotPasswordRequestToServer);
+	sendForgotPasswordRequestBtn.addEventListener('click', sendForgotPasswordRequestToServer);
 	cancelButton.addEventListener('click', loginPageRedirect);
 	redirectLoginPageBtn.addEventListener('click', loginPageRedirect);
 };
 
-const main = () => {
-	prepareDOMElelemnts();
-	prepareDOMEvents();
-};
+const main = () => {prepareDOMElements(); prepareDOMEvents();};
 
 const sendForgotPasswordRequestToServer = () => {
 	let params = new URLSearchParams({email: emailInput.value})
-	fetch('http://localhost:8080/app/forgot/send' + '?'+ params, {
+	fetch('http://localhost:8080/app/forgot/api/initialize' + '?' + params, {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
@@ -49,11 +55,11 @@ const sendForgotPasswordRequestToServer = () => {
 		'Access-Control-Allow-Origin': '*'
 	})
 		.then((response) => {
+			console.log(response);
 			if (response.status === 200)
 				showSuccessMessage();
 			 else
 				 showFailureMessage();
-			console.log(response);
 		})
 		.catch((error) => console.log(error));
 };
@@ -70,8 +76,6 @@ const showSuccessMessage = () => {
 };
 
 //Redirect to Login Page
-const loginPageRedirect = () => {
-	window.location.href = 'http://localhost:8080/app/login';
-}
+const loginPageRedirect = () => {window.location.href = 'http://localhost:8080/app/login';}
 
 document.addEventListener('DOMContentLoaded', main);

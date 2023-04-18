@@ -13,7 +13,6 @@ import project.rtc.registration.dto.ProfilePicture;
 public interface UserService {
 
 	// Returns the user with a registered and saved account, it also loads the photo to the returned user.
-	// Throw UserNotFoundException if user not found.
 	UserResponseDto getUserAndLoadPicture(HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
 
@@ -26,10 +25,10 @@ public interface UserService {
 			throws UserNotFoundException, NoAuthorizationTokenException;
 	UserResponseDto updateUserEmail(String email, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
-	UserResponseDto updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
+	UserResponseDto updateUserPassword(String password, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException;
 
-	// Returns the user with a registered and saved account, otherwise he throws UserNotFoundException
+	// Returns the user with a registered and saved account.
 	User getUser(HttpServletRequest httpServletRequest) throws UserNotFoundException, NoAuthorizationTokenException;
 	User getUser(String userId) throws UserNotFoundException;
 

@@ -11,7 +11,6 @@ import javax.validation.Payload;
 
 import project.rtc.infrastructure.validators.user.impl.PasswordValidator;
 
-
 // Password must contain at least one digit [0-9].
 // Password must contain at least one lowercase Latin character [a-z].
 // Password must contain at least one uppercase Latin character [A-Z].
@@ -25,8 +24,7 @@ import project.rtc.infrastructure.validators.user.impl.PasswordValidator;
 	ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Password {
-	
-	String message() default "The password is incorrect";
+	String message() default "The password does not meet the rules";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default{};
 	boolean isEnabled() default true;

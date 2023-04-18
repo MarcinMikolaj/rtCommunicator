@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
+import project.rtc.authorization.basic_login.dto.LoginRequestPayload;
 import project.rtc.authorization.basic_login.credentials.entities.Credentials;
 import project.rtc.authorization.basic_login.credentials.repositories.CredentialsRepository;
 import project.rtc.authorization.basic_login.credentials.services.CredentialsService;

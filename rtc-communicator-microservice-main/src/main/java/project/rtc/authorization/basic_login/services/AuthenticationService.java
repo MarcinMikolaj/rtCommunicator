@@ -5,8 +5,7 @@ import java.io.IOException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import project.rtc.authorization.basic_login.controllers.dto.LoginRequestPayload;
-import project.rtc.authorization.basic_login.controllers.dto.LogoutRequestPayload;
+import project.rtc.authorization.basic_login.dto.LoginRequestPayload;
 import project.rtc.infrastructure.exception.exceptions.AuthenticationException;
 
 public interface AuthenticationService {
@@ -18,6 +17,6 @@ public interface AuthenticationService {
 	// This method allows the currently logged-in user to log out. Clear current SecurityContext.
 	// The assigned authorization token is revoked.
 	// Set current Authentication to false.
-	void logout(HttpServletRequest request, HttpServletResponse response, LogoutRequestPayload logoutRequestPayload) throws IOException;
+	void logout(HttpServletRequest request, HttpServletResponse response) throws IOException;
 
 }

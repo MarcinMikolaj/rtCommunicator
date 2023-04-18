@@ -12,6 +12,7 @@ import lombok.ToString;
 import project.rtc.infrastructure.validators.user.ExistsByEmail;
 import project.rtc.infrastructure.validators.user.ExistsByNick;
 import project.rtc.infrastructure.validators.user.Password;
+import project.rtc.infrastructure.validators.user.ProfilePictureExtension;
 
 // Class represents the user's request to create an account in application
 @AllArgsConstructor
@@ -34,5 +35,6 @@ public final class RegistrationRequestDto {
 	@AssertTrue(message = "You must agree all statements")
 	private final boolean statements;
 	@ToString.Exclude
+	@ProfilePictureExtension
 	private final ProfilePicture picture;
 }

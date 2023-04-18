@@ -222,7 +222,6 @@ const main = () => {
 	// get user information like profile picture, nick etc.
 	getLoggedUser();
 
-	// get connect webSocket
 	//connectWebSocket();
 	updateInvitationList();
 };
@@ -309,7 +308,6 @@ const sendMessageByWebSocketOverSTOMP = () => {
 		userNick: currentlyLoggedUser.nick,
 		creationTimeInMillisecondsUTC: new Date().getTime()
 	}
-		
 	client.send('/app/messenger', {}, JSON.stringify(body));
 
 	// Create message element and add to communication panel.
@@ -321,23 +319,21 @@ const sendMessageByWebSocketOverSTOMP = () => {
 };
 
 // ***********************************************************
-// ---------------- Logout Requests -----------------
+// ---------------------- Logout Requests --------------------
 // ***********************************************************
-
 const logoutRequest = () => {
 	fetch('http://localhost:8080/app/logout', {
 		method: 'POST',
 		headers: {
-			Accept: 'application/json',
+			'Accept': 'application/json',
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({
-			logout: true
-		}),})
+		}})
 		.then((response) => {
-			if(response.redirected === true)
+			if(response.status === 200)
 				window.location.replace(response.url);
+			else
+				console.log("A failure page should appear here");
 		})
 		.catch((error) => console.log(error));
 };
@@ -365,15 +361,7 @@ function sendHttpRequestRoom(url, body){
 			} else if(data.status === 400)
 				console.log("LOAD VALIDATION MESSAGE FORM DTO");
 			else
-				console.log("RECEIVED EXCEPTION FROM SERVER");
-
-			    // TODO: Display valid info for user.
-				// if(data.status === 201){
-				// 	currentRoomList = data.rooms;
-				// 	unreadMessages = data.unreadMessages;
-				//	setRoomsInPanel(data.rooms, data.unreadMessages);
-			    // 	addStatementMessageToRoomManagerInUI(data.statements);
-				// }
+				console.log("A failure page should appear here");
 		})
 		.catch((error) => console.log(error));
 		resteManageRoomInputs();
@@ -439,10 +427,10 @@ const leaveRoomRequest = () => {
 	}) };
 
 // ***********************************************************
-// ---------------------- Account Requests -------------------
+// ---------------------- User Requests ----------------------
 // ***********************************************************
 const getLoggedUser = () => {
-	fetch('http://localhost:8080/app/account/get', {
+	fetch('http://localhost:8080/app/api/user/get', {
 		method: 'GET',
 		headers: {'Content-Type': 'application/json'},
 	})
@@ -456,8 +444,27 @@ const getLoggedUser = () => {
 		.catch((error) => console.log('err: ', error));
 };
 
+const deleteAccountRequest = () => {
+	fetch('http://localhost:8080/app/api/user/delete' + '?'
+		+ new URLSearchParams({email: removeAccountInput.value}), {
+		method: 'POST',
+		headers: {
+			Accept: 'application/json',
+			'Content-type': 'application/json',
+			'Access-Control-Allow-Origin': '*',
+		},
+	}).then((response) => {return response.json()})
+		.then((data) => {
+			if(data.status === 200)
+				window.location.replace(login_page_adress);
+			 else
+				displayErrorMessage(data.errors, 'm_a_delete_account');
+		})
+		.catch((error) => console.log(error));
+	resteAccountManagerInputs();
+};
 
-function sendHttpRequestAccount(url, body) {
+function sendUpdateUserRequest(url, messageWrapperClassName) {
 	fetch(url, {
 		method: 'POST',
 		headers: {
@@ -465,66 +472,45 @@ function sendHttpRequestAccount(url, body) {
 			'Content-type': 'application/json',
 			'Access-Control-Allow-Origin': '*',
 		},
-		body: JSON.stringify(body),
 	})
 		.then((response) => {return response.json()})
 		.then((data) => {
-			currentlyLoggedUser = data.user;
-			setLoggedUserInPanel(data.user)
-			addStatementMessageToRoomManagerInUI(data.statements);
+			if(data.status === 200){
+				currentlyLoggedUser = data.user;
+				setLoggedUserInPanel(data.user);
+				displaySuccessMessage('OK', messageWrapperClassName);
+			} else if(data.status === 400){
+				displayErrorMessage(data.errors, messageWrapperClassName);
+			} else
+				console.log("Display error page");
 		})
 		.catch((error) => console.log(error));
 	resteAccountManagerInputs();
 }
-
-const deleteAccountRequest = () => {	
-	fetch('http://localhost:8080/app/account/delete', {
-		method: 'POST',
-		headers: {
-			Accept: 'application/json',
-			'Content-type': 'application/json',
-			'Access-Control-Allow-Origin': '*',
-		},
-		body: JSON.stringify({email: removeAccountInput.value}),
-	}).then((response) => {return response.json()})
-	  .then((data) => {
-			if(data.success === true){			
-				console.log('Adress replace: ' + login_page_adress);
-				window.location.replace(login_page_adress);
-			} else {
-				addStatementMessageToRoomManagerInUI(data.statements);
-			}
-		})
-		.catch((error) => console.log(error));		
-		resteAccountManagerInputs();
-};
-
 const changeNickRequest = () => {
-	sendHttpRequestAccount('http://localhost:8080/app/account/update/nick'
-		, {nick: changeNickInput.value})};
+	sendUpdateUserRequest('http://localhost:8080/app/api/user/update/nick' + '?'
+		+ new URLSearchParams({nick: changeNickInput.value}), 'm_a_change_user_nick')
+}
+
 const changeEmailRequest = () => {
-	sendHttpRequestAccount('http://localhost:8080/app/account/update/email'
-		, {email: updateUserEmailInput.value
-	})};
+	sendUpdateUserRequest('http://localhost:8080/app/api/user/update/email' + '?'
+		+ new URLSearchParams({email: updateUserEmailInput.value}), 'm_a_update_user_email')
+}
+
+// TODO: updateUserPasswordConfirmByLoginInput.value
 const changePasswordRequest = () => {
-	sendHttpRequestAccount('http://localhost:8080/app/account/update/password'
-		, {
-		email: updateUserPasswordConfirmByLoginInput.value
-			, password: updateUserPasswordInput.value
-	})};
+	sendUpdateUserRequest('http://localhost:8080/app/api/user/update/password' + '?'
+		+ new URLSearchParams({password: updateUserPasswordInput.value}), 'm_a_update_user_password')
+}
 
 const updateProfilePictureRequest = () => {
 	let file = updateProfilePictureInput.files[0];
 	let reader = new FileReader();
-
 	reader.onload = () => {
-		console.log(reader.result);
 		document.querySelector('.b').src = reader.result; 
 		s(reader.result);
 	};
-
 	reader.onerror = function (error) {console.log('Error: ', error);};
-
 	if (!!file)
 		reader.readAsDataURL(file);
 	 else
@@ -533,7 +519,7 @@ const updateProfilePictureRequest = () => {
 
 const s = (fileInBase64) => {
 	let file = updateProfilePictureInput.files[0];
-	fetch('http://localhost:8080/app/account/update/picture', {
+	fetch('http://localhost:8080/app/api/user/update/picture', {
 		method: 'POST',
 		headers: {
 			Accept: 'application/json',
@@ -541,24 +527,57 @@ const s = (fileInBase64) => {
 			'Access-Control-Allow-Origin': '*',
 		},
 		body: JSON.stringify({
-			profilePicture: {
 				name: file.name,
 				type: file.type,
 				size: file.size,
 				fileInBase64: fileInBase64,
-			}}),
+			}),
 	})
 		.then((response) => {return response.json()})
 		.then((data) => {
-			if(data.success === true){
-				//TODO: setRoomsInPanel(data.rooms);
-			}
-			addStatementMessageToRoomManagerInUI(data.statements);
+			if(data.status === 200)
+				displaySuccessMessage('OK', 'm_a_update_profile_picture');
+			 else if(data.status === 400)
+				displayErrorMessage(data.errors, 'm_a_update_profile_picture');
+			 else
+				console.log("Display error page");
 		})
 		.catch((error) => console.log(error));
 		resteAccountManagerInputs();
 };
 
+const displayErrorMessage = (errors, errorWrapperClassName) => {
+	removeAllQueryResultMessageForAccountManager();
+	errors.forEach(er => createErrorMessage(er.defaultMessage, errorWrapperClassName))
+}
+const displaySuccessMessage = (message, errorWrapperClassName) => {
+	removeAllQueryResultMessageForAccountManager();
+	createSuccessMessage(message, errorWrapperClassName)
+}
+const createErrorMessage = (message, className) => {
+	let li = document.createElement('li');
+	li.classList.add('manager-account-option-message');
+	li.addEventListener('click', () => li.remove());
+	li.classList.add('manager-account-option-fail-message');
+	li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${message}</p>`;
+	document.querySelector('.' + className).appendChild(li);
+};
+const createSuccessMessage = (message, className) => {
+	let li = document.createElement('li');
+	li.classList.add('manager-account-option-message');
+	li.addEventListener('click', () => li.remove());
+	li.classList.add('manager-account-option-success-message');
+	li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${message}</p>`;
+	document.querySelector('.' + className).appendChild(li);
+}
+// Allows you to delete all created messages related to the query result for account management.
+const removeAllQueryResultMessageForAccountManager = () => {
+	let liElementsArray = document.querySelectorAll('.manager-account-option-message');
+	for (var i = 0, len = liElementsArray.length; i < len; i++) {
+		liElementsArray[i].innerHTML = '';
+		liElementsArray[i].remove();
+	}
+}
 // Method allows you to set information such as nickname or profile picture in the user interface.
 const setLoggedUserInPanel =(user) => {
 	myProfileImg.src = user.profilePicture.fileInBase64;
@@ -571,96 +590,92 @@ const setLoggedUserInPanel =(user) => {
 // Allows you to search for friends using the given pattern
 const searchFriend = (event) => {
 	let searchStringValue = event.target.value.toLowerCase().trim();
-
 	for (const friend of friendList.children) {
 		const friendNameValue = friend
 			.querySelector('.friend-name')
 			.innerHTML.toLowerCase();
-
 		if (friendNameValue.indexOf(searchStringValue) !== -1) {
 			friend.style.display = 'flex';
-		} else {
+		} else
 			friend.style.display = 'none';
-		}
 	}
 };
 
 const showCommunicatorBoxForMobile = () => {
 	if (window.innerWidth > 769)
 		return;
-
-	roomBox.style.display = 'none';
-	communicatorBox.style.display = 'flex';
-	communicatorContent.scrollTop = communicatorContent.scrollHeight;
+	roomBox.style.display = 'none'
+	communicatorBox.style.display = 'flex'
+	communicatorContent.scrollTop = communicatorContent.scrollHeight
 };
 
 const openManageAccountBox = () => {
-	roomBox.style.display = 'none';
-	menuBox.style.display = 'none';
-	manageAccountBox.style.display = 'flex';
+	roomBox.style.display = 'none'
+	menuBox.style.display = 'none'
+	manageAccountBox.style.display = 'flex'
 };
 
 const openCreateGroupBox = () => {
-	menuBox.style.display = 'none';
-	createGroupBox.style.display = 'flex';
+	menuBox.style.display = 'none'
+	createGroupBox.style.display = 'flex'
 };
 
 const closeCreateGroupBox = () => {
-	createGroupBox.style.display = 'none';
-	menuBox.style.display = 'flex';
+	createGroupBox.style.display = 'none'
+	menuBox.style.display = 'flex'
 };
 
 const openManageRoomBox = () => {
 	if (window.innerWidth > 769) {
-		managerRoomBox.style.display = 'flex';
+		managerRoomBox.style.display = 'flex'
 		return;
 	}
-	managerRoomBox.style.display = 'flex';
-	communicatorBox.style.display = 'none';
-	roomBox.style.display = 'none';
+	managerRoomBox.style.display = 'flex'
+	communicatorBox.style.display = 'none'
+	roomBox.style.display = 'none'
 };
 
 const closeManagerRoomBox = () => {
 	if (window.innerWidth > 769) {
-		managerRoomBox.style.display = 'none';
+		managerRoomBox.style.display = 'none'
 		return;
 	}
-	managerRoomBox.style.display = 'none';
-	roomBox.style.display = 'flex';
+	managerRoomBox.style.display = 'none'
+	roomBox.style.display = 'flex'
 };
 
 const showFriendsBoxForMobile = () => {
-	roomBox.style.display = 'flex';
-	communicatorBox.style.display = 'none';
+	roomBox.style.display = 'flex'
+	communicatorBox.style.display = 'none'
 };
 
 const openMenuBox = () => {
 	if (window.innerWidth < 769)
-		managerRoomBox.style.display = 'none';
+		managerRoomBox.style.display = 'none'
 
-	addFriendBox.style.display = 'none';
-	roomBox.style.display = 'none';
-	createGroupBox.style.display = 'none';
-	manageAccountBox.style.display = 'none';
-	invitationsBox.style.display = 'none';
-	menuBox.style.display = 'flex';
+	addFriendBox.style.display = 'none'
+	roomBox.style.display = 'none'
+	createGroupBox.style.display = 'none'
+	manageAccountBox.style.display = 'none'
+	invitationsBox.style.display = 'none'
+	menuBox.style.display = 'flex'
 };
 
 const openFriendsBox = () => {
-	addFriendBox.style.display = 'none';
-	menuBox.style.display = 'none';
-	roomBox.style.display = 'flex';
+	addFriendBox.style.display = 'none'
+	menuBox.style.display = 'none'
+	roomBox.style.display = 'flex'
 };
 
 const openAddFriendBox = () => {
-	menuBox.style.display = 'none';
-	roomBox.style.display = 'none';
-	addFriendBox.style.display = 'flex';
+	menuBox.style.display = 'none'
+	roomBox.style.display = 'none'
+	addFriendBox.style.display = 'flex'
 };
 
 const openInvitationBox = () => {
-	menuBox.style.display = 'none';
-	invitationsBox.style.display = 'flex';
+	menuBox.style.display = 'none'
+	invitationsBox.style.display = 'flex'
 };
 
 // *************************************************************
@@ -1052,10 +1067,9 @@ const sendUpdateReadMessagesRequest = (body) => {
 // **************************************************************************************************************
 // ---------------- Display query result messages in UI for Room Manager and Account Manager --------------------
 // **************************************************************************************************************
-
 // Handles the display of the room management response message for the appropriate list.
 const addStatementMessageToRoomManagerInUI = (statements) => {
-	
+
 	removeAllQueryResultMessageForRoomManager();
 	removeAllQueryResultMessageForAccountManager();
 	removeAllQueryResultMessageForAddFriend();
@@ -1086,18 +1100,18 @@ const addStatementMessageToRoomManagerInUI = (statements) => {
 			case 'REMOVE_USER_FROM_ROOM':
 				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_remove_user_from_room');
 				break;
-			case 'UPDATE_USER_NICK':
-			    loadResultMessageForAccountManagerQuery(statements, 'm_a_change_user_nick');
-			    break;
-			case 'UPDATE_USER_EMAIL':
-			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_email');
-			    break;
+			//case 'UPDATE_USER_NICK':
+			//   loadResultMessageForAccountManagerQuery(statements, 'm_a_change_user_nick');
+			//    break;
+			//case 'UPDATE_USER_EMAIL':
+			//    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_email');
+			//    break;
 			case 'UPDATE_USER_PASSWORD':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_password');
 			    break;
-			case 'UPDATE_USER_PICTURE':
-			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_profile_picture');
-			    break;
+			//case 'UPDATE_USER_PICTURE':
+			//    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_profile_picture');
+			//    break;
 			case 'DELETE_ACCOUNT':
 			    loadResultMessageForAccountManagerQuery(statements, 'm_a_delete_account');
 			    break;
@@ -1185,15 +1199,6 @@ const removeAllQueryResultMessageForRoomManager = () => {
 }
 
 // Allows you to delete all created messages related to the query result for account management.
-const removeAllQueryResultMessageForAccountManager = () => {
-	let liElementsArray = document.querySelectorAll('.manager-account-option-message');
-	for (var i = 0, len = liElementsArray.length; i < len; i++) {
-    liElementsArray[i].innerHTML = '';
-     liElementsArray[i].remove();
-   }
-}
-
-// Allows you to delete all created messages related to the query result for account management.
 const removeAllQueryResultMessageForAddFriend = () => {
 	let liElementsArray = document.querySelectorAll('.add-friend-message');
 	for (var i = 0, len = liElementsArray.length; i < len; i++) {
@@ -1221,12 +1226,8 @@ function getInvitationsRequest() {
 		headers: {'Content-Type': 'application/json',},
 	})
 		.then((response) => response.json())
-		.then((data) => {
-            console.log("Updated invitations");
-            console.log(data);
-			displayInvitationsInUI(data);
-		})
-		.catch((error) => console.log('err: ', error));
+		.then(data => displayInvitationsInUI(data))
+		.catch(error => console.log('err: ', error));
 }
 
 function acceptOrDeclineInvitationRequest(invitationId, path) {
