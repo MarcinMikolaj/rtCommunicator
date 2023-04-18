@@ -11,7 +11,7 @@ import project.rtc.infrastructure.exception.exceptions.RoomNotFoundException;
 import project.rtc.communicator.room.dto.RoomRequestDto;
 import project.rtc.infrastructure.exception.exceptions.NoAuthorizationTokenException;
 import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
-import project.rtc.infrastructure.groups.room.*;
+import project.rtc.infrastructure.groups.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;

@@ -1,7 +1,6 @@
 package project.rtc.communicator.user.entities;
 
 public enum UserOperation {
-	
 	TEST_USER,
 	GET_USER,
 	DELETE_ACCOUNT,
@@ -9,5 +8,4 @@ public enum UserOperation {
 	UPDATE_USER_EMAIL,
 	UPDATE_USER_PASSWORD,
 	UPDATE_USER_PICTURE,
-
 }

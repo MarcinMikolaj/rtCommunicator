@@ -177,7 +177,7 @@ public class MyTest {
 				new RegistrationRequestDto(email, nick, password, authProvider, statements, loadPicture(pathToImg)));
 	}
 	
-	// Imitacja dołanczania zdjęcia podczas rejestracji
+	// Imitation setting picture.
 	public ProfilePicture loadPicture(String pathToImg) {
 		String pictureInBase64 = FileUtils.deserializeObjectAndGetFromDirectory(pathToImg);
 		ProfilePicture profilePicture = new ProfilePicture("profile.bin", "bin", 0, pictureInBase64);

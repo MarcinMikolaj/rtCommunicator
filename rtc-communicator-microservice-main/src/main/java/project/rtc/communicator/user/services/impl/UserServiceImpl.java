@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import project.rtc.authorization.basic_login.credentials.entities.Credentials;
@@ -61,7 +62,7 @@ public class UserServiceImpl implements UserService {
 		String email = JwtTokenProvider.getTokenSubject(jwtSecretKey, JwtTokenProvider.getJwtTokenFromCookie(httpServletRequest));
 		User user = userRepository.findByEmail(email).orElseThrow(UserNotFoundException::new);
 		user = loadUserProfileImg(user);
-		return prepareDto(UserOperation.GET_USER, user);
+		return prepareDto(UserOperation.GET_USER, HttpStatus.OK, user);
 	}
 
 	@Override
@@ -69,7 +70,7 @@ public class UserServiceImpl implements UserService {
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		deleteUser(user);
-		return prepareDto(UserOperation.DELETE_ACCOUNT, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
+		return prepareDto(UserOperation.DELETE_ACCOUNT, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
 	}
 
 	@Override
@@ -78,7 +79,7 @@ public class UserServiceImpl implements UserService {
 		User user = getUser(httpServletRequest);
 		user.setNick(nick);
 		userRepository.save(user);
-		return prepareDto(UserOperation.UPDATE_USER_NICK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
+		return prepareDto(UserOperation.UPDATE_USER_NICK, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
 	}
 
 	@Override
@@ -89,15 +90,15 @@ public class UserServiceImpl implements UserService {
 		user.setEmail(email);
 		userRepository.save(user);
 		credentialsRepository.updateEmailById(email, credentials.getId());
-		return prepareDto(UserOperation.UPDATE_USER_EMAIL, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
+		return prepareDto(UserOperation.UPDATE_USER_EMAIL, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
 	}
 
 	@Override
-	public UserResponseDto updateUserPassword(String email, String password, HttpServletRequest httpServletRequest)
+	public UserResponseDto updateUserPassword(String password, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
 		credentialsService.updatePasswordByEmail(user.getEmail(), password);
-		return prepareDto(UserOperation.UPDATE_USER_PASSWORD, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
+		return prepareDto(UserOperation.UPDATE_USER_PASSWORD, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
 	}
 
 	@Override
@@ -109,7 +110,7 @@ public class UserServiceImpl implements UserService {
 		String path = pathToUserDirectory + "//" + "picture.bin";
 		user.setPathToProfileImg(path);
 		FileUtils.saveFileInDirectory(path, profilePicture.getFileInBase64());
-		return prepareDto(UserOperation.UPDATE_USER_PICTURE, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
+		return prepareDto(UserOperation.UPDATE_USER_PICTURE, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));
 	}
 
 	public User deleteUser(User u) {
@@ -181,9 +182,10 @@ public class UserServiceImpl implements UserService {
 
 	private String generateUniqueId(){return UUID.randomUUID().toString();}
 
-	private UserResponseDto prepareDto(UserOperation operation, User user){
+	private UserResponseDto prepareDto(UserOperation operation, HttpStatus httpStatus,  User user){
 		return UserResponseDto.builder()
 				.timestamp(new Date())
+				.status(httpStatus.value())
 				.operation(operation)
 				.user(user)
 				.build();

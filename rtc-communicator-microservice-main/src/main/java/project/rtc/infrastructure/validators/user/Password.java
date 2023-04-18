@@ -24,7 +24,6 @@ import project.rtc.infrastructure.validators.user.impl.PasswordValidator;
 	ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Password {
-	
 	String message() default "The password does not meet the rules";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default{};

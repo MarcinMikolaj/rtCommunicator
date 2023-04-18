@@ -9,20 +9,17 @@ import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import project.rtc.infrastructure.validators.user.impl.ImgFileExtensionValidator;
+import project.rtc.infrastructure.validators.user.impl.ProfilePictureExtensionValidator;
 
 @Documented
-@Constraint(validatedBy = ImgFileExtensionValidator.class)
+@Constraint(validatedBy = ProfilePictureExtensionValidator.class)
 @Target({ElementType.FIELD,
 	ElementType.PARAMETER,
 	ElementType.METHOD,
 	ElementType.ANNOTATION_TYPE})
 @Retention(RetentionPolicy.RUNTIME)
-public @interface ImgFileExtension {
-	
+public @interface ProfilePictureExtension {
 	String message() default "Incorrect file extension";
 	Class<?>[] groups() default {};
 	Class<? extends Payload>[] payload() default{};
-	boolean isEnabled() default true;
-
 }

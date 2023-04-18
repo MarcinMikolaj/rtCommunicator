@@ -2,7 +2,7 @@ package project.rtc.communicator.room.dto;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import project.rtc.infrastructure.groups.room.*;
+import project.rtc.infrastructure.groups.*;
 import project.rtc.infrastructure.validators.room.*;
 
 import javax.validation.constraints.NotBlank;

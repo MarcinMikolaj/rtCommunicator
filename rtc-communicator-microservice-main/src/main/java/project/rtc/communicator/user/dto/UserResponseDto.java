@@ -14,8 +14,8 @@ import project.rtc.communicator.user.entities.UserOperation;
 @ToString
 @Builder
 public class UserResponseDto {
-
 	private Date timestamp;
+	private int status;
 	private UserOperation operation;
 	private User user;
 }
