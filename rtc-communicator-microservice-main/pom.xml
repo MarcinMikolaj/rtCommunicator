@@ -20,6 +20,24 @@
 		<spring-cloud.version>2021.0.6</spring-cloud.version>
 	</properties>
 
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.profiles.active>dev</spring.profiles.active>
+			</properties>
+		</profile>
+		<profile>
+			<id>docker</id>
+			<properties>
+				<spring.profiles.active>docker</spring.profiles.active>
+			</properties>
+			<activation>
+				<activeByDefault>true</activeByDefault>
+			</activation>
+		</profile>
+	</profiles>
+
 	<dependencies>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
