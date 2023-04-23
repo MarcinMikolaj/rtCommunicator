@@ -1,0 +1,60 @@
+version: '3.1'
+services:
+  mysqldb:
+    container_name: 'mysql-db-for-rtc-app'
+    image: mysql:8.0.33
+    restart: always
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_DATABASE: rtc_db
+      MYSQL_ROOT_PASSWORD: root
+  mongo:
+    container_name: 'mongo-db-for-rtc-app'
+    image: mongo
+    restart: always
+    ports:
+      - "27017:27017"
+    environment:
+#      MONGO_INITDB_ROOT_USERNAME: root
+#      MONGO_INITDB_ROOT_PASSWORD: root
+      MONGO_INITDB_DATABASE: communicator_db
+  application:
+    container_name: 'rtc-communicator-microservice-main'
+    build: ./rtc-communicator-microservice-main
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysqldb
+      - mongo
+      - eureka
+  eureka:
+    container_name: 'rtc-communicator-eureka'
+    build: ./rtc-communicator-eureka
+    ports:
+      - "8761:8761"
+
+
+  #  client:
+  #    build: ./docker-compose-sample-gui
+  #    ports:
+  #      - "8081:8081"
+  #    depends_on:
+  #      - api
+  #  prometheus:
+  #    image: prom/prometheus:latest
+  #    container_name: prometheus
+  #    hostname: localhost
+  #    volumes:
+  #      - ./docker-compose-sample-api/src/main/resources/prometheus.yml:/etc/prometheus/prometheus.yml
+  #    ports:
+  #      - "9090:9090"
+  #  grafana:
+  #    container_name: grafana
+  #    image: grafana/grafana
+  #    ports:
+  #      - "3000:3000"
+  #    depends_on:
+  #      - prometheus
+
+
