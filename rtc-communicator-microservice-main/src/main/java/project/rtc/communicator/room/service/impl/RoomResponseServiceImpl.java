@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import project.rtc.communicator.invitations.services.InvitationService;
+import project.rtc.communicator.messager.repositories.MessageRepository;
 import project.rtc.communicator.room.dto.*;
 import project.rtc.communicator.room.entities.Room;
 import project.rtc.communicator.user.services.UserService;
@@ -29,9 +30,9 @@ import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @RequiredArgsConstructor
 public class RoomResponseServiceImpl implements RoomResponseService {
-
 	private final UserService userService;
 	private final MessageService messageService;
+	private final MessageRepository messageRepository;
 	private final RoomService roomService;
 	private final InvitationService invitationService;
 
@@ -129,17 +130,11 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	}
 
 	private List<RoomDto> prepareRoomDtoList(String userId) throws UserNotFoundException, RoomNotFoundException {
-		List<RoomDto> roomsDto = new ArrayList<>();
-		List<Room> rooms = roomService.getAllUserRooms(userId);
-
-		for(Room r:rooms)
-			roomsDto.add(buildRoomD(r, roomService.getUsersFromRoom(r.getRoomId(), true)));
-
-		return roomsDto;
+		List<RoomDto> results = new ArrayList<>();
+		for(Room r:roomService.getAllUserRooms(userId))
+			results.add(new RoomDto(r.getRoomId(), r.getName(),
+					messageRepository.findFirstByRoomIdOrderByCreationTimeInMillisecondsUTCDesc(r.getRoomId()).orElseThrow(),
+					roomService.getUsersFromRoom(r.getRoomId(), true)));
+		return results;
 	}
-
-	private RoomDto buildRoomD(Room room, List<User> users){
-		return new RoomDto(room, users);
-	}
-
 }

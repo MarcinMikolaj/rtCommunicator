@@ -135,7 +135,7 @@ public class MyTest {
 		createTestInvitations(roomId08, "mateusz86", "anastazja2");
 	}
 
-	// This method create test user accounts
+	// This method create test user accounts.
 	private void createTestAccounts() throws MessagingException {
 		User anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "anastazja2\\picture.bin");
