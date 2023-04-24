@@ -1,3 +1,7 @@
+// Parameters to set.
+const updateUserInvitationsTimeInMilliseconds = 300000
+const login_page_address = 'http://localhost:8080/app/panel'
+
 // Variables
 let currentRoomList; // The list includes all rooms assigned to the logged in user
 let currentSelectedRoom; // The conversation room selected by the user
@@ -88,8 +92,6 @@ let updateUserEmailBtn;
 let updateUserPasswordBtn;
 let updateProfilePictureBtn;
 
-const login_page_adress = 'http://localhost:8080/app/panel'
-
 // Prepare DOM Elements
 const prepareDOMElements = () => {
 	friendList = document.getElementById('room-list');
@@ -175,8 +177,7 @@ const prepareDOMEvents = () => {
 	openManageAccountBoxBtn.addEventListener('click', openManageAccountBox);
 	myProfileImg.addEventListener('click', openManageAccountBox);
 	openInvitationBoxBtn.addEventListener('click', openInvitationBox);
-
-	openInvitationBoxBtn.addEventListener('click', getInvitationsRequest);
+	openInvitationBoxBtn.addEventListener('click', getInvitationsRequest); // manage invitation actions
 	showOnlyFriendsBoxBtn.addEventListener('click', showFriendsBoxForMobile);
 	showMenuBtn.forEach((btn) => btn.addEventListener('click', openMenuBox));
 	openManageRoomBtn.addEventListener('click', openManageRoomBox);
@@ -203,12 +204,8 @@ const main = () => {
 	prepareDOMElements();
 	prepareDOMEvents();
 	reset(); // reset user interface before load data
-
-	// get user information like profile picture, nick etc.
-	getLoggedUser();
-
-	//connectWebSocket();
-	updateInvitationList();
+	getLoggedUser(); // get user information like profile picture, nick etc.
+	updateInvitationList(); //connectWebSocket();
 };
 
 const reset = () => {
@@ -300,7 +297,7 @@ const sendMessageByWebSocketOverSTOMP = () => {
 };
 
 // ***********************************************************
-// ---------------------- Logout Requests --------------------
+// --------------------- Logout Requests --------------------
 // ***********************************************************
 const logoutRequest = () => {
 	fetch('http://localhost:8080/app/logout', {
@@ -472,7 +469,7 @@ const deleteAccountRequest = () => {
 	}).then((response) => {return response.json()})
 		.then((data) => {
 			if(data.status === 200)
-				window.location.replace(login_page_adress);
+				window.location.replace(login_page_address);
 			 else
 				displayErrorMessage(data.errors, 'm_a_delete_account');
 		})
@@ -1005,10 +1002,8 @@ const sendUpdateReadMessagesRequest = (body) => {
 // ***********************************************************
 // The method enables querying the server for a list of invitations held by the user.
 const updateInvitationList = () => {
-	// Get first invitation.
-	getInvitationsRequest()
-	// Get invitations periodically.
-	setInterval(() => getInvitationsRequest(), 30000);
+	getInvitationsRequest(); // Get first invitation.
+	setInterval(() => getInvitationsRequest(), updateUserInvitationsTimeInMilliseconds); // Get invitations periodically.
 };
 
 function getInvitationsRequest() {
@@ -1046,8 +1041,10 @@ function acceptOrDeclineInvitationRequest(invitationId, path) {
 // The method allows you to add a new friend request to the invitations list;
 function displayInvitationsInUI(invitations) {
 	let invitationList = document.querySelector('.invitation-list');
+
 	// Clear invitation html list before add new elements.
 	invitationList.innerHTML = '';
+
 	// Append prepared invitation html elements.
 	invitations.forEach((invitation) => {invitationList.appendChild(createInvitationHtmlElement(invitation))})
 }
@@ -1060,12 +1057,16 @@ function createInvitationHtmlElement(invitation) {
 	element.innerHTML = `<img class="invitation-img" src="${invitation.user.profilePicture.fileInBase64}" alt="img">
 	<div class="invitation-description-box">
 		<div class="invitation-name-date-box">
-			<p class="invitation-name-field">${invitation.inviting}</p>
+			<p class="invitation-name-field">${invitation.roomName}</p>
 			<p class="invitation-date-field">${invitation.creation_date}</p>
+		</div>
+		<div class="inviting-user-name">
+			<i class="fa-solid fa-house"></i>
+			<p class="invitation-mutual-friends-field">Inviting: ${invitation.inviting}</p>
 		</div>
 		<div class="mutual-friends-box">
 			<i class="fa-solid fa-user-group"></i>
-			<p class="invitation-mutual-friends-field">0 wspólnych znajomych</p>
+			<p class="invitation-mutual-friends-field">0 mutual friends</p>
 		</div>
 		<div class="invitation-buttons-box">
 			<button class="invitation-button invitation-accept-button" invitationId=${invitation.invitationId}>Accept</button>
