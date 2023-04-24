@@ -2,12 +2,9 @@
 let currentRoomList; // The list includes all rooms assigned to the logged in user
 let currentSelectedRoom; // The conversation room selected by the user
 let currentluSelectedRoomId; // Is the identifier of the currently selected room
-
 let currentlyLoggedUser; // Contain email, nick, profilePicture, roomsId (list)
 let unreadMessages; // Represents the number of unread messages for each room on a key-value basis (room id: number)
-
 let client; // WebSocket Client
-
 let friendList; // Presents list of friends, ul element
 let searchFriendInput; // Field to enter a friend nick to find him
 
@@ -166,18 +163,11 @@ const prepareDOMElements = () => {
 const prepareDOMEvents = () => {
 	searchFriendInput.addEventListener('keyup', searchFriend);
 	communicatorContent.addEventListener('scroll', getMessagePageForScrollApi);
-
     friendList.addEventListener('click', showCommunicatorBoxForMobile);
     friendList.addEventListener('click', setRoom);
-
-	enterMessageInput.addEventListener(
-		'keypress',
-		addRightMessageToUIByEnterKeyPress
-	);
+	enterMessageInput.addEventListener('keypress', addRightMessageToUIByEnterKeyPress);
 	sendMessageBtn.addEventListener('click', sendMessageByWebSocketOverSTOMP);
-
-	document.querySelector('.communicator-box').addEventListener('click', clearNofification);
-
+	document.querySelector('.communicator-box').addEventListener('click', clearNotification);
 	// Menu open box buttons
 	openRoomsBoxBtn.addEventListener('click', openFriendsBox);
 	openAddFriendBoxBtn.addEventListener('click', openAddFriendBox);
@@ -187,20 +177,16 @@ const prepareDOMEvents = () => {
 	openInvitationBoxBtn.addEventListener('click', openInvitationBox);
 
 	openInvitationBoxBtn.addEventListener('click', getInvitationsRequest);
-
 	showOnlyFriendsBoxBtn.addEventListener('click', showFriendsBoxForMobile);
 	showMenuBtn.forEach((btn) => btn.addEventListener('click', openMenuBox));
-
 	openManageRoomBtn.addEventListener('click', openManageRoomBox);
 	closeManagerRoomBoxBtn.addEventListener('click', closeManagerRoomBox);
-	
 	// manage account actions
 	changeNickBtn.addEventListener('click', changeNickRequest);
 	removeAccountBtn.addEventListener('click', deleteAccountRequest);
 	updateUserEmailBtn.addEventListener('click', changeEmailRequest);
 	updateUserPasswordBtn.addEventListener('click', changePasswordRequest);
 	updateProfilePictureBtn.addEventListener('click', updateProfilePictureRequest);
-
 	// manage room actions
 	createRoomBtn.addEventListener('click', createRoomRequest);
 	addNewUserToRoomBtn.addEventListener('click', addUserToRoomRequest);
@@ -208,7 +194,6 @@ const prepareDOMEvents = () => {
     removeRoomBtn.addEventListener('click', removeRoomRequest);
     renameRoomBtn.addEventListener('click', renameRoomRequest);
     leaveRoomBtn.addEventListener('click', leaveRoomRequest);
-    
     // logout
 	logoutBtn.addEventListener('click', logoutRequest);
 };
@@ -260,7 +245,6 @@ const resteAccountManagerInputs = () => {
 // **************************************************************************
 // -------------------- Message manager WebSocket STOMP ---------------------
 // **************************************************************************
-
 const connectWebSocket = (data) => {
 	client = Stomp.client('ws://localhost:8080/messenger');
 	client.connect({ username: currentlyLoggedUser.email}, function (frame) {
@@ -294,13 +278,10 @@ const addRightMessageToUIByEnterKeyPress = (event) => {
 
 const sendMessageByWebSocketOverSTOMP = () => {
 	let messageContent = enterMessageInput.value
-	
 	if(enterMessageInput.value.length < 1)
 		return;
-
 	if(currentluSelectedRoomId == null)
 		return;
-
 	let body = {
 		roomId: currentluSelectedRoomId,
 		content: messageContent,
@@ -355,10 +336,9 @@ function sendHttpRequestRoom(url, body){
 		.then((response) => {return response.json()})
 		.then((data) => {
 			console.log(data);
-			if(data.status === 200){
-				console.log("LOAD ROOMS FROM RECEIVED DTO");
-				setRoomsInPanel(data.rooms, data.unreadMessages);
-			} else if(data.status === 400)
+			if(data.status === 200)
+				setRoomWindowsInPanel(data.rooms, data.unreadMessages);
+			else if(data.status === 400)
 				console.log("LOAD VALIDATION MESSAGE FORM DTO");
 			else
 				console.log("A failure page should appear here");
@@ -497,7 +477,6 @@ const changeEmailRequest = () => {
 		+ new URLSearchParams({email: updateUserEmailInput.value}), 'm_a_update_user_email')
 }
 
-// TODO: updateUserPasswordConfirmByLoginInput.value
 const changePasswordRequest = () => {
 	sendUpdateUserRequest('http://localhost:8080/app/api/user/update/password' + '?'
 		+ new URLSearchParams({password: updateUserPasswordInput.value}), 'm_a_update_user_password')
@@ -587,7 +566,7 @@ const setLoggedUserInPanel =(user) => {
 // ***********************************************************
 // ----------- Box Manager and additional features -----------
 // ***********************************************************
-// Allows you to search for friends using the given pattern
+// Allows you to search for friends using the given pattern.
 const searchFriend = (event) => {
 	let searchStringValue = event.target.value.toLowerCase().trim();
 	for (const friend of friendList.children) {
@@ -679,12 +658,11 @@ const openInvitationBox = () => {
 };
 
 // *************************************************************
-// ----------------------- Set Room ---------------------
+// -------------------------- Set Room -------------------------
 // *************************************************************
 // Point to current message page which.
 let currentMessagePageCounter = 0;
 const currentMessagePageSize = 8;
-
 const setRoom = (e) => {
 	let currentRoom = e.target.closest('.friend');
 	console.log("selected roomId: " + e.target.closest('.friend').getAttribute('roomId'));
@@ -714,7 +692,7 @@ const setRoom = (e) => {
 				setCurrentSelectedRoomAndCurrentRoomList(data)
 
 				// Show selected room in left panel.
-				setRoomsInPanel(data.rooms, data.unreadMessages);
+				setRoomWindowsInPanel(data.rooms, data.unreadMessages);
 
 				// Show selected room in conversation panel.
 				setSelectedRoomInPanel();
@@ -742,17 +720,17 @@ const setCurrentSelectedRoomAndCurrentRoomList = (data) => {
 
 // Allows you to display information about the currently selected room in interface.
 const setSelectedRoomInPanel = (room) => {
-	// If no room is selected
+	// If no room is selected.
 	if(currentluSelectedRoomId === null){
 		console.log("Can't display selected room: selected room id is null !");
 		return;
 	}
 
-	// clear before load new content
+	// Clear before load new content.
 	selectedRoomPicture.src = '';
 	selectedRoomName.innerHTML = '';
 
-	// set room picture
+	// Set room picture.
 	let picture;
 	currentSelectedRoom.users.forEach((user) => {picture = user.profilePicture.fileInBase64;})
 	selectedRoomPicture.src = picture;
@@ -764,7 +742,6 @@ const setSelectedRoomInPanel = (room) => {
 // *************************************************************
 // ----------------------- Message Manager ---------------------
 // *************************************************************
-
 // This function call getMessagePageApi(page, size) on scrollTop === 0.
 const getMessagePageForScrollApi = (e) => {
 	if(e.target.scrollTop === 0){
@@ -779,13 +756,11 @@ const getMessagePageApi = (page, size) => {
 		console.log("Cant set message page for user because no room selected !");
 		return;
 	}
-
 	const params = new URLSearchParams({
 		roomId: currentluSelectedRoomId,
 		size: size,
 		page: page
 	})
-
 	fetch('http://localhost:8080/app/api/message/get/page' + '?' + params, {
 		method: 'GET',
 		headers: {'Content-type': 'application/json',}
@@ -793,12 +768,10 @@ const getMessagePageApi = (page, size) => {
 		.then(response => {return response.json()})
 		.then(response => {return setMessagePageInPanel(response.messages, response.currentPage)})
 		.catch((error) => console.log(error));
-
 	return 1;
 }
 
-// Allow get userId form selected room
-// example. getUserIdByNick(removeUserFromRoomInput.value, currentSelectedRoom);
+// Allow get userId form selected room.
 function getUserIdByNick(nick, room){
 	let result;
 	room.users.forEach(u => {if(u.nick === nick) result =  u.userId;});
@@ -812,7 +785,7 @@ function setMessagePageInPanel(messages, page)  {
 		return;
 
 	// Clear message list if this is first page.
-	// This condition should be called from the first fetch (get message page api)
+	// This condition should be called from the first fetch (get message page api).
 	if(page <= 0)
 		communicatorContent.innerHTML = '';
 
@@ -850,10 +823,8 @@ const createRightMessage = (content) => {
 // If direction false add new element to the end, if true add at the beginning.
 const createLeftMessage = (message) => {
 	let picture = getUserPictureFromRoom(currentSelectedRoom, message.userNick);
-			
 	let element = document.createElement('div');
 	element.classList.add('left-message-box');
-	
 	element.innerHTML = `<li class="left-message-box">
                     <img class="current-friend-img" src="${picture}" alt="img">
                     <p class="left-message">${message.content}</p>
@@ -875,149 +846,78 @@ function getUserPictureFromRoom(room, nick) {
 	}
 	return picture;
 }
-
-const addTimeMessageToUI = (dateMilisecondsUTCLast, dateMilisecondsUTCOneBeforeLast) => {
-	let current_date = new Date();
-	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
-	let result_to_print = '';
-	
-	let a = new Date (parseInt(dateMilisecondsUTCLast));
-	let b = new Date (parseInt(dateMilisecondsUTCOneBeforeLast));
-
-	let diffBetweenLastTwoMessage = diff_minutes(a, b);
-
-	if(diffBetweenLastTwoMessage <= 3)
-		return;
-
-	//choose a format
-	let diff = diff_days(current_date, delivered_date);
-	//console.log("diff: " + diff)
-	
-	if(diff < 1){
-		result_to_print = delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} else if(diff >= 1 && diff < 7) {
-		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		result_to_print = days[delivered_date.getDay()] + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} else {
-		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} 
-
-	// Create element and add to user interface (message list)
-	let element = document.createElement('p');
-	element.classList.add('message-date');
-	element.innerHTML = `${result_to_print}`;
-	communicatorContent.appendChild(element);
-}
-
-const addTimeMessageToUIOnlyForFirstMessage = (dateMilisecondsUTCLast) => {
-	let current_date = new Date();
-	let delivered_date = new Date(parseInt(dateMilisecondsUTCLast));
-	let result_to_print = '';
-	
-	//choose a format
-	let diff = diff_days(current_date, delivered_date);
-	
-	if(diff < 1)
-		result_to_print = delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	else if(diff >= 1 && diff < 7) {
-		let days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-		result_to_print = days[delivered_date.getDay()] + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-	} else
-		result_to_print = delivered_date.getDay() + "." + delivered_date.getMonth() + "." + delivered_date.getFullYear() + ', ' + delivered_date.getHours() + ':' + delivered_date.getMinutes();
-
-	
-	// Create element and add to user interface (message list)
-	let element = document.createElement('p');
-	element.classList.add('message-date');
-	element.innerHTML = `${result_to_print}`;
-	communicatorContent.appendChild(element);
-}
-
 // ******************************************************************************
-// ---------------- Room manager: display rooms in UI -------------------
+// ----------------------- Room manager: display rooms in UI --------------------
 // ******************************************************************************
-
-const setRoomsInPanel = (rooms, unreadMessages) => {
+// Clear old room window list and call prepareDataForRoomWindowAndAppend to all delivered rooms.
+const setRoomWindowsInPanel = (rooms, unreadMessages) => {
 	friendList.innerHTML = '';
-	rooms.forEach((room) => loadRooms(room, unreadMessages));
+	rooms.forEach((room) => prepareDataForRoomWindowAndAppend(room, unreadMessages));
 }
 
-// This function allow add new friend in UI to FriendList,
-// attributes: user nick (nick), who send last message (lastMessageCreator), last message in convertation (lastmessageContent), last message time or date (lastMessagetime)
-const loadRooms = (room, unreadMessages) => {
-	let lastmessageContent = "Write first message !";
-	let lastMessageCreator = "...";
-	let lastMessagetime = "...";
+// This function prepare data for now room window and call appendNewRoomWindowToRooList function to add window in UI.
+const prepareDataForRoomWindowAndAppend = (room, unreadMessages) => {
+	let lastMessageContent;
+	let lastMessageCreator;
+	let lastMessageDate;
 	let numberOfUnreadMessages = unreadMessages[room.roomId];
-
-
-	//  TODO: change.
-	// if(room.messages.length > 0){
-	// 	room.messages.forEach((message) => {
-	// 	  lastmessageContent = message.content;
-	// 	  lastMessageCreator = message.userNick;
-	// 	  lastMessagetime = getDateDiffirence(parseInt(message.creationTimeInMillisecondsUTC));
-	//     })
-	// }
-
-	// if (lastmessageContent.length > 15) {
-	// 	lastmessageContent = lastmessageContent.substring(0, 13);
-	// 	lastmessageContent += '..';
-	// }
-	
-	const friend = document.createElement('li');
-	friend.classList.add('friend');
-	friend.setAttribute('roomId', room.roomId);
-	
+	if(room.lastMessage){
+		lastMessageCreator = room.lastMessage.userNick
+		lastMessageContent = room.lastMessage.content
+		lastMessageDate = prepareDateForRoomWindowInUi(parseInt(room.lastMessage.creationTimeInMillisecondsUTC));
+		if (lastMessageContent.length > 15) {
+			lastMessageContent = lastMessageContent.substring(0, 13);
+			lastMessageContent += '..';
+		}
+	} else {
+		lastMessageContent = "Write first message !";
+		lastMessageCreator = "";
+		lastMessageDate = "";
+	}
 	let lastUserPicture;
+	room.users.forEach((user) => {lastUserPicture = user.profilePicture.fileInBase64});
+	appendNewRoomWindowToRoomList(room.roomId, room.name, lastUserPicture, lastMessageCreator, lastMessageContent, lastMessageDate, numberOfUnreadMessages);
+};
 
-	//load picture
-	room.users.forEach((user) => {
-		lastUserPicture = user.profilePicture.fileInBase64
-	});
-
+const appendNewRoomWindowToRoomList = (roomId, roomName, roomPicture, lastMessageCreatorName, lastMessageContent, lastMessageDate, numberOfUnreadMessages) => {
+	const roomWindow = document.createElement('li');
+	roomWindow.classList.add('friend');
+	roomWindow.setAttribute('roomId', roomId);
 	if(unreadMessages !== null && numberOfUnreadMessages >= 1){
-		
-		friend.innerHTML = `<div class="friend-img">
-	    <img class="profile-img" src="${lastUserPicture}" alt="img">
+		roomWindow.innerHTML = `<div class="friend-img">
+	    <img class="profile-img" src="${roomPicture}" alt="img">
 	    <div class="activity-light activity-light-red"></div>
 	</div>
 	<div class="friend-describe">
-	    <p class="friend-name">${room.name}</p>
-	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent} ${lastMessagetime}</p>
+	    <p class="friend-name">${roomName}</p>
+	    <p class="friend-last-message">${lastMessageCreatorName}: ${lastMessageContent} ${lastMessageDate}</p>
 	</div>
 	<div class="new-message-notification"><i class="fa-solid fa-comment new-message-notification-img"></i>
                         <p class="new-message-notification-text">new message</p>
                         <p class="new-message-notification-counter">${numberOfUnreadMessages}</p></div>`;
 	} else {
-		
-		friend.innerHTML = `<div class="friend-img">
-	    <img class="profile-img" src="${lastUserPicture}" alt="img">
+		roomWindow.innerHTML = `<div class="friend-img">
+	    <img class="profile-img" src="${roomPicture}" alt="img">
 	    <div class="activity-light activity-light-red"></div>
 	</div>
 	<div class="friend-describe">
-	    <p class="friend-name">${room.name}</p>
-	    <p class="friend-last-message">${lastMessageCreator}: ${lastmessageContent} ${lastMessagetime}</p>
+	    <p class="friend-name">${roomName}</p>
+	    <p class="friend-last-message">${lastMessageCreatorName}: ${lastMessageContent} ${lastMessageDate}</p>
 	</div>
 	<div class="new-message-notification"></div>`;
 	}
+	friendList.append(roomWindow);
+}
 
-	friendList.append(friend);
-};
-
-
-// Allows you to add an unread notification counter item to the room item
+// Allows you to add an unread notification counter item to the room item.
 function addMessageCounterElementToRoom(message) {
 	let roomListDOM;
 	let roomId;
 	let notificationElement;
-	
 	roomListDOM = document.querySelectorAll('.room-list .friend');
-
 	roomListDOM.forEach(room => {
 		roomId = room.getAttribute('roomId');
 		unreadMessages[roomId] = unreadMessages[roomId] + 1;
-		
 		if(message.roomId === roomId) {
 			notificationElement = room.querySelector('.new-message-notification');
 			notificationElement.innerHTML = `<i class="fa-solid fa-comment new-message-notification-img"></i>
@@ -1027,19 +927,16 @@ function addMessageCounterElementToRoom(message) {
 	})
 }
 
-// clear notifications after clicking on communicator because
-const clearNofification = () => {
+// Clear notifications after clicking on communicator.
+const clearNotification = () => {
 	let roomListDOM;
 	let notificationElement;
 	let roomId;
-	
 	if(currentluSelectedRoomId === null || typeof currentluSelectedRoomId === "undefined")
 		return;
-
 	roomListDOM = document.querySelectorAll('.room-list .friend');
 	roomListDOM.forEach(room => {
 		roomId = room.getAttribute('roomId');
-		
 		if(currentluSelectedRoomId === roomId) {
 			notificationElement = room.querySelector('.new-message-notification');
 			notificationElement.innerHTML = ``;
@@ -1047,7 +944,6 @@ const clearNofification = () => {
 	})
 	if(unreadMessages[currentluSelectedRoomId] > 0)
 	     sendUpdateReadMessagesRequest({roomId: currentluSelectedRoomId})
-
 	unreadMessages[currentluSelectedRoomId] = 0;
 }
 
@@ -1064,155 +960,10 @@ const sendUpdateReadMessagesRequest = (body) => {
 		.catch((error) => console.log(error));
 }
 
-// **************************************************************************************************************
-// ---------------- Display query result messages in UI for Room Manager and Account Manager --------------------
-// **************************************************************************************************************
-// Handles the display of the room management response message for the appropriate list.
-const addStatementMessageToRoomManagerInUI = (statements) => {
-
-	removeAllQueryResultMessageForRoomManager();
-	removeAllQueryResultMessageForAccountManager();
-	removeAllQueryResultMessageForAddFriend();
-	
-	statements.forEach((statements) => {
-		switch (statements.action) {
-			case 'CREATE_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_create_room');
-				break;
-			case 'GET_ROOMS':
-				console.log('GET_ROOMS');
-				break;
-			case 'CREATE_ROOM_WITH_FRIEND':
-				loadResultMessageForAddFriendQuery(statements, 'm_r_o_b_create_room_with_friend');
-				break;
-			case 'REMOVE_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_remove_room');
-				break;
-			case 'RENAME_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_rename_room');
-				break;
-			case 'LEAVE_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_leave_room');
-				break;
-			case 'ADD_USER_TO_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_add_user_to_room');
-				break;
-			case 'REMOVE_USER_FROM_ROOM':
-				loadResultMessageForRoomManagerQuery(statements, 'm_r_o_b_remove_user_from_room');
-				break;
-			//case 'UPDATE_USER_NICK':
-			//   loadResultMessageForAccountManagerQuery(statements, 'm_a_change_user_nick');
-			//    break;
-			//case 'UPDATE_USER_EMAIL':
-			//    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_email');
-			//    break;
-			case 'UPDATE_USER_PASSWORD':
-			    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_user_password');
-			    break;
-			//case 'UPDATE_USER_PICTURE':
-			//    loadResultMessageForAccountManagerQuery(statements, 'm_a_update_profile_picture');
-			//    break;
-			case 'DELETE_ACCOUNT':
-			    loadResultMessageForAccountManagerQuery(statements, 'm_a_delete_account');
-			    break;
-			default:
-			    console.log(`Unable to handle the type statement, statement.type: ${statements.roomAction}`);
-		}
-	});
-};
-
-// This method adds and displays a message and the execution status of the query operation for the server for room management.
-const loadResultMessageForRoomManagerQuery = (statements, className) => {
-	let li = document.createElement('li');
-	li.classList.add('manager-room-option-message');
-	li.addEventListener('click', () => li.remove());
-
-	switch (statements.type) {
-     case 'SUCCES_STATEMENT':    
-          li.classList.add('manager-room-option-success-message');
-	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
-          break;
-     case 'ERROR_STATEMENT':
-         li.classList.add('manager-room-option-fail-message');
-	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
-         break;        
-     default:
-         console.log(`No message handling of this type. message:${statements.message}`);
-    }
-	
-	document.querySelector('.' + className).appendChild(li);
-};
-
-
-// This method adds and displays a message and the execution status of the query operation for the server for account management.
-const loadResultMessageForAccountManagerQuery = (statements, className) => {
-	let li = document.createElement('li');
-	li.classList.add('manager-account-option-message');
-	li.addEventListener('click', () => li.remove());
-
-	switch (statements.type) {
-     case 'SUCCES_STATEMENT':    
-          li.classList.add('manager-account-option-success-message');
-	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
-          break;
-     case 'ERROR_STATEMENT':
-         li.classList.add('manager-account-option-fail-message');
-	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
-         break;        
-     default:
-         console.log(`No message handling of this type. message:${statements.message}`);
-    }
-	
-	document.querySelector('.' + className).appendChild(li);
-};
-
-// This method adds and displays a message and the execution status of the query operation for the server for add friend feature.
-const loadResultMessageForAddFriendQuery = (statements, className) => {
-	let li = document.createElement('li');
-	li.classList.add('add-friend-message');
-	li.addEventListener('click', () => li.remove());
-
-	switch (statements.type) {
-     case 'SUCCES_STATEMENT':    
-          li.classList.add('add-friend-success-message');
-	      li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${statements.message}</p>`;
-          break;
-     case 'ERROR_STATEMENT':
-         li.classList.add('add-friend-fail-message');
-	     li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${statements.message}</p>`;
-         break;        
-     default:
-         console.log(`No message handling of this type. message:${statements.message}`);
-    }
-	
-	document.querySelector('.' + className).appendChild(li);
-};
-
-
-// Allows you to delete all created messages related to the query result for room management.
-const removeAllQueryResultMessageForRoomManager = () => {
-	let liElementsArray = document.querySelectorAll('.manager-room-option-message-box');
-	for (var i = 0, len = liElementsArray.length; i < len; i++) {
-    liElementsArray[i].innerHTML = '';
-    //liElementsArray[i].remove();
-   }
-}
-
-// Allows you to delete all created messages related to the query result for account management.
-const removeAllQueryResultMessageForAddFriend = () => {
-	let liElementsArray = document.querySelectorAll('.add-friend-message');
-	for (var i = 0, len = liElementsArray.length; i < len; i++) {
-    liElementsArray[i].innerHTML = '';
-    liElementsArray[i].remove();
-   }
-}
-
 // ***********************************************************
 // -------------------- Invitation Requests ------------------
 // ***********************************************************
-
 // The method enables querying the server for a list of invitations held by the user.
-//30s
 const updateInvitationList = () => {
 	// Get first invitation.
 	getInvitationsRequest()
@@ -1251,7 +1002,6 @@ function acceptOrDeclineInvitationRequest(invitationId, path) {
 // ***********************************************************
 // ------------------- Invitation UI --------------------
 // ***********************************************************
-
 // This section is responsible for the ability to add and display invitations for a given user in the user interface.
 // The method allows you to add a new friend request to the invitations list;
 function displayInvitationsInUI(invitations) {
@@ -1303,120 +1053,82 @@ const CallDeclineInvitation = (event) => {
 // ------------------------ Time Utils -----------------------
 // ***********************************************************
 // It is used to tell the user when the last message was delivered.
-// Function returns the time difference between the current date and the delivered date
+// Function returns the time difference between the current date and the delivered date.
 // The result returns the year if is greater than one, otherwise returns the number of weeks.
 // If the difference is less than a week, it returns the number of days.
 // If the difference is less than the day, the time in hours is returned.
-// If the difference is less than the hour, the time in minuts is returned.
+// If the difference is less than the hour, the time in minutes is returned.
 // If the difference is less than the one minute, a message is returned "now".
-function getDateDiffirence(delivered_date_in_miliseconds_utc) {
+function prepareDateForRoomWindowInUi(dateInMillisecondsUtc) {
 	let result;
 	let current_date = new Date();
-	let delivered_date = new Date(delivered_date_in_miliseconds_utc);
-	
-	//console.log(current_date);
-	//console.log("delivered_date_in_miliseconds_utc" + delivered_date_in_miliseconds_utc);
-	//console.log(delivered_date);
-
-	if (current_date < delivered_date) {
-		console.log('delivered_date is less then current_date');
+	let delivered_date = new Date(dateInMillisecondsUtc);
+	if (current_date < delivered_date)
 		return undefined;
-	}
 
 	// Years
 	result = diff_years(current_date, delivered_date);
-
 	if (result >= 1)
-		return Math.trunc(result) + ' year';
+		return Math.trunc(result) + ' year ago';
 
 	// Weeks
 	result = diff_weeks(current_date, delivered_date);
-
 	if (result >= 1)
-		return Math.trunc(result) + ' week';
+		return Math.trunc(result) + ' week ago';
 
 	// Days
 	result = diff_days(current_date, delivered_date);
-
 	if (result >= 1 && result <= 6)
-		return Math.trunc(result) + ' days';
+		return Math.trunc(result) + ' days ago';
 
 	// Hours
 	result = diff_hours(current_date, delivered_date);
-
 	if (result >= 1 && result <= 23)
-		return Math.trunc(result) + ' hour';
+		return Math.trunc(result) + ' hour ago';
 
-	// minuts
+	// Minutes
 	result = diff_minutes(current_date, delivered_date);
 
 	if (result >= 1 && result <= 59)
-		return Math.trunc(result) + ' min';
+		return Math.trunc(result) + ' min ago';
 
 	return 'now';
 }
 
-// Allows you to calculate the difference between the dates in minutes
+// Allows you to calculate the difference between the dates in minutes.
 function diff_minutes(dt2, dt1) {
-	// One day in seconds
-	const oneMintute = 60;
-
-	// Calculating the time diffirence between two dates
-	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
-
-	// Calculating the number of minuts between two dates
-	return diffInTime / oneMintute;
+	const oneMinute = 60; // One day in seconds
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000; // Calculating the time difference between two dates
+	return diffInTime / oneMinute; // Calculating the number of minutes between two dates
 }
 
-// Allows you to calculate the difference between the dates in hours
+// Allows you to calculate the difference between the dates in hours.
 function diff_hours(dt2, dt1) {
-	// One day in seconds
-	const oneHour = 60 * 60;
-
-	// Calculating the time diffirence between two dates
-	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
-
-	// Calculating the number of hours between two dates
-	return diffInTime / oneHour;
+	const oneHour = 60 * 60; // One day in seconds.
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000; // Calculating the time difference between two dates
+	return diffInTime / oneHour; // Calculating the number of hours between two dates
 }
 
-// Allows you to calculate the difference between the dates in days
+// Allows you to calculate the difference between the dates in days.
 function diff_days(dt2, dt1) {
-	// One day in seconds
-	const oneDay = 60 * 60 * 24;
-
-	// Calculating the time diffirence between two dates
-	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000;
-
-	// Calculating the number of days between two dates
-	return diffInTime / oneDay;
+	const oneDay = 60 * 60 * 24; // One day in seconds.
+	let diffInTime = (dt2.getTime() - dt1.getTime()) / 1000; // Calculating the time difference between two dates.
+	return diffInTime / oneDay; // Calculating the number of days between two dates.
 }
 
 // Allows you to calculate the difference between the dates in weeks
 function diff_weeks(dt2, dt1) {
-	// One week in seconds
-	let oneWeek = 60 * 60 * 24 * 7;
-
-	// Calculating the time diffirence between two dates
-	let diff = (dt2.getTime() - dt1.getTime()) / 1000;
-
-	// Calculating the number of weeks between two dates
-	return Math.abs(diff / oneWeek);
+	let oneWeek = 60 * 60 * 24 * 7; // One week in seconds.
+	let diff = (dt2.getTime() - dt1.getTime()) / 1000; // Calculating the time difference between two dates.
+	return Math.abs(diff / oneWeek); // Calculating the number of weeks between two dates.
 }
 
-// Allows you to calculate the difference between the dates in years
+// Allows you to calculate the difference between the dates in years.
 function diff_years(dt2, dt1) {
-	// Calculating the time diffirence between two dates
-	let diff = (dt2.getTime() - dt1.getTime()) / 1000;
+	let diff = (dt2.getTime() - dt1.getTime()) / 1000; // Calculating the time difference between two dates.
 	diff /= 60 * 60 * 24;
-
 	return Math.abs(diff / 365.25);
 }
 
-
-// ***********************************************************
-// --------------------- DOM Content Load --------------------
-// ***********************************************************
-
-// call main function
+// Call main function on DOMContentLoaded.
 document.addEventListener('DOMContentLoaded', main);

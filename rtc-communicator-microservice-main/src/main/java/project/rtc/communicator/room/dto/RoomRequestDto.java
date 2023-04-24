@@ -23,9 +23,7 @@ public class RoomRequestDto {
 	@NotBlank(groups = {}, message = "No user name selected")
 	@UserExistByNick(groups = {AddUserToRoomGroup.class}, message = "User dont exist")
 	private String userNick;
-
 	private String changedUserId;
-
 	@Size(groups = {RenameRoomNameGroup.class, CreateRoomGroup.class}, max = 20, min = 3, message = "Allowable name length 3-20 character.")
 	@IsRoomNameNotAssigned(groups = {RenameRoomNameGroup.class, CreateRoomGroup.class}, message = "Room name is already assigned !")
 	private String roomName;

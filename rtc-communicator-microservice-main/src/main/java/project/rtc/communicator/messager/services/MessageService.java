@@ -8,6 +8,7 @@ import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import java.util.Optional;
 
 public interface MessageService {
 	
@@ -17,9 +18,11 @@ public interface MessageService {
 	Map<String, Object> getMessagePage(String roomId, int page, int size) throws MessageNotFoundException;
 	
 	// This method allows you to send messages to all users in the room through the use of websocket.
-	// The method accepts a message to be sent to users, the message must have an assigned room identifier, otherwise it will be thrown IllegalArgumentException.
+	// The method accepts a message to be sent to users, the message must have an assigned room identifier,
+	// otherwise it will be thrown IllegalArgumentException.
 	// Return users emails to which message was send.
-	List<String> send(String destination, Message message) throws NoSuchElementException, RoomNotFoundException, UserNotFoundException;
+	List<String> send(String destination, Message message) throws NoSuchElementException, RoomNotFoundException,
+			UserNotFoundException;
 
 	// It allows you to set all messages in a given room to be read by the user.
 	// The method returns a list of messages for which the change was made.

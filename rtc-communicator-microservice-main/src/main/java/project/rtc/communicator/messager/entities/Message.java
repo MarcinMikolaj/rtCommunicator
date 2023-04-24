@@ -18,7 +18,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Setter
 @ToString
 public class Message {
-	
 	@Id
 	private String mongoId;
 	private String messageId;
