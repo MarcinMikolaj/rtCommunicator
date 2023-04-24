@@ -110,6 +110,22 @@
   color: #535353;
 }
 
+.invitations-box .invitation-list .invitation-box .invitation-description-box .inviting-user-name {
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: horizontal;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: row;
+    flex-direction: row;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.invitations-box .invitation-list .invitation-box .invitation-description-box .inviting-user-name .fa-house {
+    margin-right: 5px;
+}
+
 .invitations-box .invitation-list .invitation-box .invitation-description-box .mutual-friends-box {
   display: -webkit-box;
   display: -ms-flexbox;

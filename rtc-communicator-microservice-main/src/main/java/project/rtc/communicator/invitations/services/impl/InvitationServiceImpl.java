@@ -16,6 +16,7 @@ import project.rtc.communicator.invitations.entities.InvitationOperation;
 import project.rtc.communicator.invitations.dto.InvitationResponseDto;
 import project.rtc.communicator.invitations.repositories.InvitationRepository;
 import project.rtc.communicator.invitations.services.InvitationService;
+import project.rtc.communicator.room.repositories.RoomRepository;
 import project.rtc.communicator.room.service.RoomService;
 import project.rtc.communicator.user.entities.User;
 import project.rtc.communicator.user.repositories.UserRepository;
@@ -29,11 +30,11 @@ import project.rtc.infrastructure.exception.exceptions.UserNotFoundException;
 @Scope(ConfigurableBeanFactory.SCOPE_SINGLETON)
 @RequiredArgsConstructor
 public class InvitationServiceImpl implements InvitationService {
-
 	private final InvitationRepository invitationRepository;
 	private final UserService userService;
 	private final UserRepository userRepository;
 	private final RoomService roomService;
+	private final RoomRepository roomRepository;
 
 	@Override
 	public Invitation create(String roomId, String invited, String inviting) throws UserNotFoundException {
@@ -51,7 +52,10 @@ public class InvitationServiceImpl implements InvitationService {
 		return invitations.stream()
 				.filter(Objects::nonNull)
 				.map(i -> prepareInvitationResponseDto(InvitationOperation.GET_ALL_INVITATIONS
-						, i.getInvitationId(), i.getInviting(), i.getInvited(), i.getCreation_date()
+						, i.getInvitationId()
+						, roomRepository.findByRoomId(i.getRoomId()).get().getName()
+						, i.getInviting(), i.getInvited()
+						, i.getCreation_date()
 						, userRepository.findByNick(i.getInviting()).get()))
 				.filter(o -> o.getUser().getPathToProfileImg() != null)
 				.peek(o -> userService.loadUserProfileImg(o.getUser()))
@@ -83,11 +87,12 @@ public class InvitationServiceImpl implements InvitationService {
 	}
 
 	private InvitationResponseDto prepareInvitationResponseDto(InvitationOperation operation, String invitationId
-			, String inviting, String invited, String creation_date, User user){
+			, String roomName, String inviting, String invited, String creation_date, User user){
 		return InvitationResponseDto.builder()
 				.timestamp(new Date())
 				.operation(operation)
 				.invitationId(invitationId)
+				.roomName(roomName)
 				.inviting(inviting)
 				.invited(invited)
 				.creation_date(creation_date)

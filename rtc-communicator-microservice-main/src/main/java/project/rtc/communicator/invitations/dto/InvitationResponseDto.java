@@ -12,10 +12,10 @@ import project.rtc.communicator.user.entities.User;
 @ToString
 @Builder
 public final class InvitationResponseDto {
-
 	public final Date timestamp;
 	public final InvitationOperation operation;
 	public final String invitationId;
+	public final String roomName;
 	public final String inviting;
 	public final String invited;
 	public final String creation_date;
