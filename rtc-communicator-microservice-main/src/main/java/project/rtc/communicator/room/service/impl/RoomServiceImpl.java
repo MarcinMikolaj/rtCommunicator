@@ -1,6 +1,7 @@
 package project.rtc.communicator.room.service.impl;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -43,14 +44,14 @@ public class RoomServiceImpl implements RoomService {
 	}
 
 	public Room removeRoom(String roomId) throws UserNotFoundException, RoomNotFoundException {
-		List<String> usersId = roomRepository.findByRoomId(roomId).orElseThrow(RoomNotFoundException::new).getUsersId();
-		denyUsersAccessToRoom(roomId, usersId);
+		//List<String> usersId = roomRepository.findByRoomId(roomId).orElseThrow(RoomNotFoundException::new).getUsersId();
+		denyAllUsersAccessToRoom(roomId);
 		return roomRepository.deleteByRoomId(roomId);
 	}
 
 	public Room removeUserFromRoom(String roomId, String userId) throws RoomNotFoundException, UserNotFoundException {
 		Room room = roomRepository.findByRoomId(roomId).orElseThrow(RoomNotFoundException::new);
-		denyUsersAccessToRoom(room.getRoomId(), room.getUsersId());
+		denyUsersAccessToRoom(Collections.singletonList(userId), room.getRoomId());
 		room.getUsersId().removeIf(id -> id.equals(userId));
 		return roomRepository.save(room);
 	}
@@ -68,15 +69,32 @@ public class RoomServiceImpl implements RoomService {
 		return userRepository.save(user);
 	}
 
-	private List<String> denyUsersAccessToRoom(String roomId, List<String> usersId) throws UserNotFoundException, RoomNotFoundException {
+
+	private List<String> denyAllUsersAccessToRoom(String roomId) throws RoomNotFoundException {
 		List<User> users = getUsersFromRoom(roomId, false);
-		users.stream()
+		return users.stream()
 				.filter(Objects::nonNull)
 				.filter(u -> u.getMongoId() != null)
 				.filter(u -> u.getRoomsId().contains(roomId))
 				.peek(u -> u.getRoomsId().removeIf(id -> id.equals(roomId)))
-				.forEach(u -> userRepository.save(u));
-		return usersId;
+				.peek(u -> userRepository.save(u))
+				.map(User::getUserId)
+				.collect(Collectors.toList());
+	}
+
+	private List<String> denyUsersAccessToRoom(List<String> usersId, String roomId) {
+		List<User> users = new ArrayList<>();
+		for(String userId: usersId)
+			users.add(userRepository.findByUserId(userId).orElseThrow());
+
+		return users.stream()
+				.filter(Objects::nonNull)
+				.filter(u -> u.getMongoId() != null)
+				.filter(u -> u.getRoomsId().contains(roomId))
+				.peek(u -> u.getRoomsId().removeIf(id -> id.equals(roomId)))
+				.peek(u -> userRepository.save(u))
+				.map(User::getUserId)
+				.collect(Collectors.toList());
 	}
 
 	public List<User> getUsersFromRoom(String roomId, boolean withPicture) throws RoomNotFoundException {

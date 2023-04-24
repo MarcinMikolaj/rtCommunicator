@@ -14,7 +14,6 @@ import javax.validation.constraints.Size;
 @IsRoomContainUser(groups = {RemoveUserFromRoomGroup.class})
 @IsEqualsRoomName(groups = {RemoveRoomGroup.class})
 public class RoomRequestDto {
-
 	private String userId;
 	private RoomOperation action;
 	@NotBlank(groups = {RenameRoomNameGroup.class, AddUserToRoomGroup.class, RemoveRoomGroup.class,
