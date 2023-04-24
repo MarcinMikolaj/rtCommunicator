@@ -56,6 +56,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<?> handleAuthenticationException(AuthenticationException e, WebRequest requestMetadata) {
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.UNAUTHORIZED, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.UNAUTHORIZED);
@@ -65,6 +66,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.NOT_FOUND);
@@ -74,6 +76,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleRoomNotFoundException(RoomNotFoundException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.NOT_FOUND);
@@ -83,6 +86,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleMessageNotFoundException(RoomNotFoundException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.NOT_FOUND);
@@ -92,6 +96,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<?> handleInvitationNotFoundException(InvitationNotFoundException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.NOT_FOUND, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString())
                 , HttpStatus.NOT_FOUND);
@@ -101,6 +106,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ResponseEntity<?> handleNoAuthorizationTokenException(NoAuthorizationTokenException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.UNAUTHORIZED, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.UNAUTHORIZED);
@@ -110,6 +116,7 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ResponseEntity<?> handleInvalidTokenException(InvalidTokenException e, WebRequest requestMetadata){
         e.printStackTrace();
+        log.error(e.getMessage() + e.getLocalizedMessage());
         return new ResponseEntity<>(prepareExceptionDto(e, HttpStatus.BAD_REQUEST, Collections.singletonList(e.getMessage())
                 , requestMetadata.getDescription(false), ((ServletWebRequest) requestMetadata).getHttpMethod().toString()),
                 HttpStatus.BAD_REQUEST);
@@ -119,16 +126,14 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("timestamp", new Date());
         body.put("status", httpStatus.value());
-
-        List<String> errors = new ArrayList<>();
+        List<FieldError> errors = new ArrayList<>();
         if(e instanceof MethodArgumentNotValidException){
             errors = ((MethodArgumentNotValidException) e).getBindingResult()
                     .getAllErrors()
                     .stream()
-                    .map(ObjectError::getDefaultMessage)
+                    .map(error -> new FieldError(error.getObjectName(), "", error.getDefaultMessage()))
                     .collect(Collectors.toList());
-        } else
-            errors.add(e.getMessage());
+        }
         body.put("errors", errors);
         body.put("stackTrace", e.getStackTrace());
         return body;

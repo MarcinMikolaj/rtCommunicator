@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Transactional;
 import project.rtc.communicator.user.entities.User;
 
 public interface UserRepository extends MongoRepository<User, String> {
-
 	Optional<User> findByNick(String nick);
 	Optional<User> findByEmail(String email);
 	Optional<User> findByUserId(String userId);

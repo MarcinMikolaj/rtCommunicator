@@ -132,8 +132,9 @@ public class RoomResponseServiceImpl implements RoomResponseService {
 	private List<RoomDto> prepareRoomDtoList(String userId) throws UserNotFoundException, RoomNotFoundException {
 		List<RoomDto> results = new ArrayList<>();
 		for(Room r:roomService.getAllUserRooms(userId))
-			results.add(new RoomDto(r.getRoomId(), r.getName(),
-					messageRepository.findFirstByRoomIdOrderByCreationTimeInMillisecondsUTCDesc(r.getRoomId()).orElseThrow(),
+			results.add(new RoomDto(r.getRoomId(),
+					r.getName(),
+					messageRepository.findFirstByRoomIdOrderByCreationTimeInMillisecondsUTCDesc(r.getRoomId()).orElse(null),
 					roomService.getUsersFromRoom(r.getRoomId(), true)));
 		return results;
 	}

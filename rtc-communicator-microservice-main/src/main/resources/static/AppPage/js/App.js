@@ -320,10 +320,9 @@ const logoutRequest = () => {
 };
 
 // ***********************************************************
-// ----------------------- Room Requests ---------------------
+// ---------------------- Room Requests ----------------------
 // ***********************************************************
-
-function sendHttpRequestRoom(url, body){
+function sendHttpRequestRoom(url, body, messageWrapperClassName){
 	fetch(url, {
 		method: 'POST',
 		headers: {
@@ -336,10 +335,12 @@ function sendHttpRequestRoom(url, body){
 		.then((response) => {return response.json()})
 		.then((data) => {
 			console.log(data);
-			if(data.status === 200)
+			if(data.status === 200){
 				setRoomWindowsInPanel(data.rooms, data.unreadMessages);
+				displaySuccessMessageForRoomManager('Success !', messageWrapperClassName);
+			}
 			else if(data.status === 400)
-				console.log("LOAD VALIDATION MESSAGE FORM DTO");
+				displayErrorMessageForRoomManager(data.errors, messageWrapperClassName);
 			else
 				console.log("A failure page should appear here");
 		})
@@ -362,7 +363,7 @@ const createRoomRequest = () => {
 		, roomId: 'none'
 		, userNick: 'none'
 		, roomName: createRoomInput.value
-	})};
+	}, "m_r_o_b_create_room")};
 const addUserToRoomRequest = () => {
 	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/add',
 	{
@@ -371,8 +372,9 @@ const addUserToRoomRequest = () => {
 		, changedUserId: getUserIdByNick(addNewUserToRoomInput.value , currentSelectedRoom)
 		, userNick: addNewUserToRoomInput.value
 		, roomName: 'none'
-	})};
+	}, "m_r_o_b_add_user_to_room")};
 const removeUserFromRoomRequest = () => {
+	let params = new URLSearchParams({})
 	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/remove',
 	{
 		userId: currentlyLoggedUser.userId
@@ -380,7 +382,7 @@ const removeUserFromRoomRequest = () => {
 		, changedUserId: getUserIdByNick(removeUserFromRoomInput.value, currentSelectedRoom)
 		, userNick: removeUserFromRoomInput.value
 		, roomName: 'none'
-	})};
+	}, "m_r_o_b_remove_user_from_room")};
 const renameRoomRequest = () => {
 	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/name/update',
 	{
@@ -388,7 +390,7 @@ const renameRoomRequest = () => {
 		, roomId: currentluSelectedRoomId
 		, userNick: 'none'
 		, roomName: renameRoomInput.value
-	})};
+	}, "m_r_o_b_rename_room")};
 const removeRoomRequest = () => {
 	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/remove',
 	{
@@ -396,7 +398,7 @@ const removeRoomRequest = () => {
 		, roomId: currentluSelectedRoomId
 		, userNick: 'none'
 		, roomName: removeRoomInput.value
-	})};
+	}, "m_r_o_b_remove_room")};
 const leaveRoomRequest = () => {
 	sendHttpRequestRoom('http://localhost:8080/app/rtc/room/user/leave',
 	{
@@ -404,7 +406,41 @@ const leaveRoomRequest = () => {
 		, roomId: currentluSelectedRoomId
 		, userNick: 'none'
 		, roomName: 'none'
-	}) };
+	}, "m_r_o_b_leave_room")};
+
+// ***********************************************************
+// ---------------------- Room Errors ----------------------
+// ***********************************************************
+const displayErrorMessageForRoomManager = (errors, errorWrapperClassName) => {
+	removeAllQueryResultMessageForRoomManager();
+	errors.forEach(er => createErrorMessageForRoomManager(er.defaultMessage, errorWrapperClassName));
+}
+const displaySuccessMessageForRoomManager = (message, errorWrapperClassName) => {
+	removeAllQueryResultMessageForRoomManager();
+	createSuccessMessageForRoomManager(message, errorWrapperClassName);
+}
+const createErrorMessageForRoomManager = (message, className) => {
+	let li = document.createElement('li');
+	li.classList.add('manager-room-option-message');
+	li.addEventListener('click', () => li.remove());
+	li.classList.add('manager-room-option-fail-message');
+	li.innerHTML = `<i class="fa-solid fa-bomb"></i><p>${message}</p>`;
+	document.querySelector('.' + className).appendChild(li);
+};
+const createSuccessMessageForRoomManager = (message, className) => {
+	let li = document.createElement('li');
+	li.classList.add('manager-room-option-message');
+	li.addEventListener('click', () => li.remove());
+	li.classList.add('manager-room-option-success-message');
+	li.innerHTML = `<i class="fa-solid fa-thumbs-up"></i><p>${message}</p>`;
+	document.querySelector('.' + className).appendChild(li);
+}
+// Allows you to delete all created messages related to the query result for room management.
+const removeAllQueryResultMessageForRoomManager = () => {
+	let liElementsArray = document.querySelectorAll('.manager-room-option-message-box');
+	for (var i = 0, len = liElementsArray.length; i < len; i++)
+		liElementsArray[i].innerHTML = '';
+}
 
 // ***********************************************************
 // ---------------------- User Requests ----------------------
@@ -525,13 +561,16 @@ const s = (fileInBase64) => {
 		resteAccountManagerInputs();
 };
 
+// ***********************************************************
+// ---------------------- User Errors ----------------------
+// ***********************************************************
 const displayErrorMessage = (errors, errorWrapperClassName) => {
 	removeAllQueryResultMessageForAccountManager();
-	errors.forEach(er => createErrorMessage(er.defaultMessage, errorWrapperClassName))
+	errors.forEach(er => createErrorMessage(er.defaultMessage, errorWrapperClassName));
 }
 const displaySuccessMessage = (message, errorWrapperClassName) => {
 	removeAllQueryResultMessageForAccountManager();
-	createSuccessMessage(message, errorWrapperClassName)
+	createSuccessMessage(message, errorWrapperClassName);
 }
 const createErrorMessage = (message, className) => {
 	let li = document.createElement('li');
@@ -557,6 +596,7 @@ const removeAllQueryResultMessageForAccountManager = () => {
 		liElementsArray[i].remove();
 	}
 }
+
 // Method allows you to set information such as nickname or profile picture in the user interface.
 const setLoggedUserInPanel =(user) => {
 	myProfileImg.src = user.profilePicture.fileInBase64;
