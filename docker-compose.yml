@@ -22,6 +22,9 @@ services:
   application:
     container_name: 'rtc-communicator-microservice-main'
     build: ./rtc-communicator-microservice-main
+    volumes:
+      - profile-picture-volume:/storage/rtc-communicator-disk/profile_pictures_prod/
+      - profile-picture-test-volume:/storage/rtc-communicator-disk/profile_pictures_test/
     ports:
       - "8080:8080"
     depends_on:
@@ -33,6 +36,23 @@ services:
     build: ./rtc-communicator-eureka
     ports:
       - "8761:8761"
+volumes:
+  profile-picture-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\storage\rtc-communicator-disk\profile_pictures_prod\
+      o: bind
+  profile-picture-test-volume:
+    driver: local
+    driver_opts:
+      type: none
+      device: C:\storage\rtc-communicator-disk\profile_pictures_test\
+      o: bind
+
+
+
+
 
 
   #  client:
