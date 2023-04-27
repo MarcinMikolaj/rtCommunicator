@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -39,6 +40,7 @@ public class UserServiceImpl implements UserService {
 	private String jwtSecretKey;
 	@Value("${app.file.user.pictures.path}")
     private String pathToProfilePictures;
+	private Environment environment;
 
 	public User create(String nick, String email, ProfilePicture profilePicture) {
 		String path = createPath(nick);
@@ -105,9 +107,19 @@ public class UserServiceImpl implements UserService {
 	public UserResponseDto updateUserPicture(ProfilePicture profilePicture, HttpServletRequest httpServletRequest)
 			throws UserNotFoundException, NoAuthorizationTokenException {
 		User user = getUser(httpServletRequest);
-		// create path to profile picture
+
+		// Create path to profile picture.
 		String pathToUserDirectory = FileUtils.createSingleFolder(pathToProfilePictures + user.getNick());
-		String path = pathToUserDirectory + "//" + "picture.bin";
+		String path;
+
+		if (Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+			path = pathToUserDirectory + "//" + "picture.bin";
+		} else if (Arrays.asList(environment.getActiveProfiles()).contains("docker")){
+			path = pathToUserDirectory + "/" + "picture.bin";
+		} else {
+			throw new RuntimeException("You can't create test accounts if no profile (dev,docker) was choose !");
+		}
+
 		user.setPathToProfileImg(path);
 		FileUtils.saveFileInDirectory(path, profilePicture.getFileInBase64());
 		return prepareDto(UserOperation.UPDATE_USER_PICTURE, HttpStatus.OK, loadUserProfileImg(userRepository.findById(user.getMongoId()).get()));

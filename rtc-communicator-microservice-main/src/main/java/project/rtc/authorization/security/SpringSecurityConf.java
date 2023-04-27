@@ -61,19 +61,20 @@ public class SpringSecurityConf extends WebSecurityConfigurerAdapter {
 	                        "/**/*.css",
 	                        "/**/*.js")
 	                        .permitAll()
-				   .antMatchers("/my-api-docs").permitAll() // openAPI docs
-				   .antMatchers("/my-api-docs.yaml").permitAll() // openAPI docs
-				   .antMatchers("/actuator/**/*").permitAll() // Spring Boot Actuator
-	               .antMatchers("/").permitAll() //test 
-	               .antMatchers("/app/register").permitAll() // GET register form
-	               .antMatchers("/app/registration/create").permitAll() // POST create account
-	               .antMatchers("/app/registration/activate").permitAll() // POST activate account
+				   .antMatchers("/my-api-docs").permitAll() // openAPI docs.
+				   .antMatchers("/my-api-docs.yaml").permitAll() // openAPI docs.
+				   .antMatchers("/actuator/**/*").permitAll() // Spring Boot Actuator.
+	               .antMatchers("/").permitAll() // Create test communicator structure.
+	               .antMatchers("/app/register").permitAll() // GET register form.
+	               .antMatchers("/app/registration/create").permitAll() // POST create account.
+	               .antMatchers("/app/registration/activate").permitAll() // POST activate account.
 	               .antMatchers("/auth/**", "/oauth2/**").permitAll()	              
 			       .antMatchers("/app/login").permitAll()
 			       .antMatchers("/app/logout").permitAll()
 			       .antMatchers("/app/forgot/password/**").permitAll()
 			       .antMatchers("/app/forgot/api/initialize").permitAll()
 			       .antMatchers("/app/forgot/api/execute").permitAll()
+				   .antMatchers("/api/version").permitAll() // Get Api version.
 			       .anyRequest().authenticated()
 			       .and()			       
 		    .oauth2Login()

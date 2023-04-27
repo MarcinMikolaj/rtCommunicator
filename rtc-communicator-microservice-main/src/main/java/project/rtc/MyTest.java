@@ -4,6 +4,7 @@ import java.util.*;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
@@ -24,12 +25,12 @@ import project.rtc.registration.dto.RegistrationRequestDto;
 import project.rtc.registration.services.impl.RegistrationServiceImpl;
 import project.rtc.infrastructure.utils.FileUtils;
 
+import javax.mail.IllegalWriteException;
 import javax.mail.MessagingException;
 
 @RestController
 @RequiredArgsConstructor
 public class MyTest {
-	
 	private final RegistrationServiceImpl registrationServiceImpl;
 	private final MessageRepository messageRepository;
 	private final MessageService messageService;
@@ -38,11 +39,9 @@ public class MyTest {
 	private final RoomService roomService;
 	private final InvitationService invitationService;
 	private final InvitationRepository invitationRepository;
-
+	private final Environment environment;
 	@Value("${app.file.user.pictures.test.path}")
 	private String pathTestPictures;
-
-	// Nick, User
 	private static Map<String, User> testUsers = new HashMap<>();
 
 	@RequestMapping(path = "/", method = RequestMethod.GET)
@@ -137,26 +136,63 @@ public class MyTest {
 
 	// This method create test user accounts.
 	private void createTestAccounts() throws MessagingException {
-		User anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
+
+		User anastazja2 = null;
+		User mateusz86 = null;
+		User ewelina32 = null;
+		User mionszu2 = null;
+		User kacper78 = null;
+		User kasia = null;
+		User magdaPiwowar = null;
+		User paulinka = null;
+		User JulkaFromFrance = null;
+		User AsIa = null;
+
+		if (Arrays.asList(environment.getActiveProfiles()).contains("dev")) {
+			anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "anastazja2\\picture.bin");
-		User mateusz86 = createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423"
+			mateusz86 = createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423"
 				, AuthProvider.local.toString(), true, pathTestPictures + "mateusz86\\picture.bin");
-		User ewelina32 = createAccount("ewelina@gmail.com", "ewelina32", "d2A@1234"
+			ewelina32 = createAccount("ewelina@gmail.com", "ewelina32", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "ewelina32\\picture.bin");
-		User mionszu2 = createAccount("miłosz.mad@o2.pl", "mionszu2", "d1d2A@d12234"
+			mionszu2 = createAccount("miłosz.mad@o2.pl", "mionszu2", "d1d2A@d12234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "mionszu2\\picture.bin");
-		User kacper78 = createAccount("kacper78@gov.pl", "kacper78", "d2A@1234"
+			kacper78 = createAccount("kacper78@gov.pl", "kacper78", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "kacper78\\picture.bin");
-		User kasia = createAccount("kasia900@gmail.com", "kasia", "d2A@1234"
+			kasia = createAccount("kasia900@gmail.com", "kasia", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "kasia\\picture.bin");
-		User magdaPiwowar = createAccount("magda8920@yahoo.pl", "magdaPiwowar", "d2A@1234"
+			magdaPiwowar = createAccount("magda8920@yahoo.pl", "magdaPiwowar", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "magdaPiwowar\\picture.bin");
-		User paulinka = createAccount("paulina@mail.com", "paulinka", "d2A@1234"
+			paulinka = createAccount("paulina@mail.com", "paulinka", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "paulinka\\picture.bin");
-		User JulkaFromFrance = createAccount("julia@gmail.com", "JulkaFromFrance", "d2A@1234"
+			JulkaFromFrance = createAccount("julia@gmail.com", "JulkaFromFrance", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "JulkaFromFrance\\picture.bin");
-		User AsIa = createAccount("asia2@gmail.com", "AsIa", "d2A@1234"
+			AsIa = createAccount("asia2@gmail.com", "AsIa", "d2A@1234"
 				, AuthProvider.local.toString(), true, pathTestPictures + "AsIa\\picture.bin");
+		} else if (Arrays.asList(environment.getActiveProfiles()).contains("docker")) {
+			anastazja2 = createAccount("marcin.mikolajczyk22@gmail.com", "anastazja2", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "anastazja2/picture.bin");
+			mateusz86 = createAccount("mateusz87@gmail.com", "mateusz86", "#d2G@123423"
+					, AuthProvider.local.toString(), true, pathTestPictures + "mateusz86/picture.bin");
+			ewelina32 = createAccount("ewelina@gmail.com", "ewelina32", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "ewelina32/picture.bin");
+			mionszu2 = createAccount("miłosz.mad@o2.pl", "mionszu2", "d1d2A@d12234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "mionszu2/picture.bin");
+			kacper78 = createAccount("kacper78@gov.pl", "kacper78", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "kacper78/picture.bin");
+			kasia = createAccount("kasia900@gmail.com", "kasia", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "kasia/picture.bin");
+			magdaPiwowar = createAccount("magda8920@yahoo.pl", "magdaPiwowar", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "magdaPiwowar/picture.bin");
+			paulinka = createAccount("paulina@mail.com", "paulinka", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "paulinka/picture.bin");
+			JulkaFromFrance = createAccount("julia@gmail.com", "JulkaFromFrance", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "JulkaFromFrance/picture.bin");
+			AsIa = createAccount("asia2@gmail.com", "AsIa", "d2A@1234"
+					, AuthProvider.local.toString(), true, pathTestPictures + "AsIa/picture.bin");
+		} else{
+			throw new IllegalWriteException("You can't create test accounts if no profile (dev,docker) was choose");
+		}
 
 		testUsers.put("anastazja2", anastazja2);
 		testUsers.put("mateusz86",  mateusz86);
@@ -170,7 +206,8 @@ public class MyTest {
 		testUsers.put("JulkaFromFrance", JulkaFromFrance);
 		testUsers.put("AsIa", AsIa);
 	}
-	
+
+	// Creat test account.
 	private User createAccount(String email, String nick, String password, String authProvider, boolean statements, String pathToImg)
 			throws MessagingException {
 		return registrationServiceImpl.registerAccount(
@@ -184,13 +221,13 @@ public class MyTest {
 		return profilePicture;
 	}
 	
-	// Create test message
+	// Create test message.
 	private Message createTestMessage(String roomId, String userId, String owner, String content, String dateMilisecondsUTC)
 			throws RoomNotFoundException, UserNotFoundException {
 		return messageService.create(new Message(roomId, userId, owner, content, dateMilisecondsUTC));
 	}
 
-	// Create test room, return roomId
+	// Create test room, return roomId.
 	private String createTestRooms(List<String> emails, String roomName) throws UserNotFoundException {
 		List<String> usersId = new ArrayList<>();
         for(String email: emails)
